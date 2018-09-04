@@ -1,0 +1,435 @@
+import { Either, left, right } from "fp-ts/lib/Either";
+
+const isObject = (x: unknown): x is object => typeof x === "object";
+const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
+const isNumber = (x: unknown): x is number => typeof x === "number";
+
+export type ValidatorFn<A> = (value: anything) => Either<string, A>;
+export interface Validator<A> {
+  (value: anything): Either<string, A>;
+  unsafeCast(value: anything): A;
+  /**
+   * We want to refine to a new type given an original type, like isEven, or casting to a more
+   * specific type
+   */
+  refine<B>(
+    refinementTest: (value: A | B) => value is B,
+    named?: string
+  ): Validator<B>;
+  refine(refinementTest: (value: A) => boolean, named?: string): Validator<A>;
+}
+
+export function unsafeMatchThrow<A>(validatorFn: ValidatorFn<A>) {
+  const unsafeMatch = (value: anything): A => {
+    const matched = validatorFn(value);
+    return matched.fold<A>(
+      error => {
+        throw new Error(`Failed to enforce type: ${error}`);
+      },
+      x => x
+    );
+  };
+  return unsafeMatch;
+}
+
+/**
+ * Ensure that we can extend the validator with a more specific validator
+ */
+export function refinementMatch<A, B extends A>(
+  toValidEither: ValidatorFn<A>,
+  typeCheck: (a: A | B) => a is B,
+  failureName?: string
+): Validator<B>;
+export function refinementMatch<A>(
+  toValidEither: ValidatorFn<A>,
+  typeCheck: (a: A) => boolean,
+  failureName?: string
+): Validator<A>;
+export function refinementMatch<A>(
+  toValidEither: ValidatorFn<A>,
+  typeCheck: (a: A) => boolean,
+  failureName = typeCheck.name
+) {
+  const validateRefinement: ValidatorFn<A> = (value: anything) =>
+    toValidEither(value).chain(
+      valueA =>
+        typeCheck(valueA)
+          ? right(valueA)
+          : left(`failed ${failureName}(${JSON.stringify(valueA)})`)
+    );
+  return toValidator(validateRefinement);
+}
+
+function toValidator<A>(
+  validate: (value: anything) => Either<string, A>
+): Validator<A> {
+  return Object.assign(validate, {
+    unsafeCast: unsafeMatchThrow(validate),
+    refine(typeCheck: (value: A) => boolean, failureName = typeCheck.name) {
+      return refinementMatch(validate, typeCheck, failureName);
+    }
+  });
+}
+
+function shapeMatch<A extends {}>(
+  testShape: { [key in keyof A]: Validator<A[key]> },
+  value: Partial<A>
+) {
+  return Object.entries(testShape).reduce<{
+    validated: (keyof A)[];
+    missing: (keyof A)[];
+    validationErrors: [keyof A, string][];
+  }>(
+    (acc, entry) => {
+      const key = entry[0] as keyof A;
+      const validator = testShape[key];
+      if (key in value) {
+        // tslint:disable-next-line:no-any
+        validator(value[key] as any).fold(
+          error => {
+            acc.validationErrors.push([key, error]);
+          },
+          () => {
+            acc.validated.push(key);
+          }
+        );
+      } else {
+        acc.missing.push(key);
+      }
+      return acc;
+    },
+    { validated: [], missing: [], validationErrors: [] }
+  );
+}
+
+type anything = {} | undefined | null;
+
+/**
+ * Create a custom type guard
+ * @param test A function that will determine runtime if the value matches
+ * @param testName A name for that function, useful when it fails
+ */
+export function test<A>(
+  test: (value: anything | A) => value is A,
+  testName?: string
+): Validator<A>;
+/**
+ * Create a custom validation for new types, or even for any kind of refinements
+ * to validations (like an even function)
+ * @param test A function that will determine runtime if the value matches
+ * @param testName A name for that function, useful when it fails
+ */
+export function test(
+  test: (value: anything) => boolean,
+  testName?: string
+): Validator<anything>;
+
+export function test(
+  fnTest: (value: anything) => boolean,
+  testName: string = fnTest.name || "test"
+): Validator<anything> {
+  const isValidEither: ValidatorFn<anything> = (value: anything) =>
+    fnTest(value)
+      ? right(value)
+      : left(`failed ${testName}(${JSON.stringify(value)})`);
+
+  return toValidator(isValidEither);
+}
+
+export const any = test(() => true, "any");
+
+export function literal<A extends string | number | boolean>(
+  isEqualToValue: A
+) {
+  return test<A>(
+    (a): a is A => a === isEqualToValue,
+    `literal[${JSON.stringify(isEqualToValue)}]`
+  );
+}
+
+export const regex = test<RegExp>(
+  (x): x is RegExp => x instanceof RegExp,
+  "regex"
+);
+
+export const number = test(isNumber);
+
+// tslint:disable-next-line:no-any Need this for casting any function into shape
+export const isFunction = test<(...args: any[]) => any>(
+  (x): x is ((...args: anything[]) => anything) => isFunctionTest(x),
+  "isFunction"
+);
+
+export const boolean = test<boolean>(
+  (x): x is boolean => x === true || x === false,
+  "boolean"
+);
+
+export const object = test<object>(isObject);
+
+export const isArray = test<ArrayLike<anything>>(Array.isArray);
+
+const isString = (x: unknown): x is string => typeof x === "string";
+export const string = test<string>((x): x is string => isString(x), "string");
+
+/**
+ * Union is a good tool to make sure that the validated value
+ * is in the union of all the validators passed in. Basically an `or`
+ * operator for validators.
+ */
+export function some<A, B, C, D>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>,
+  toValidEitherC: Validator<C>,
+  toValidEitherD: Validator<D>
+): Validator<A | B | C | D>;
+
+export function some<A, B, C>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>,
+  toValidEitherC: Validator<C>
+): Validator<A | B | C>;
+
+export function some<A, B>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>
+): Validator<A | B>;
+
+export function some<A>(...args: Validator<A>[]): Validator<A>;
+
+export function some(...args: Validator<anything>[]): Validator<anything> {
+  const validateUnion: ValidatorFn<anything> = value => {
+    const errors: string[] = [];
+    if (
+      args.some(fnTest => {
+        const result = fnTest(value);
+        if (result.isRight()) {
+          return true;
+        }
+        if (result.isLeft()) {
+          errors.push(result.value);
+        }
+        return false;
+      })
+    ) {
+      return right(value);
+    }
+    return left(`fail some(${errors.join(", ")})`);
+  };
+  return toValidator(validateUnion);
+}
+
+/**
+ * Intersection is a good tool to make sure that the validated value
+ * is in the intersection of all the validators passed in. Basically an `and`
+ * operator for validators
+ */
+export function every<A, B, C, D>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>,
+  toValidEitherC: Validator<C>,
+  toValidEitherD: Validator<D>
+): Validator<A & B & C & D>;
+export function every<A, B, C>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>,
+  toValidEitherC: Validator<C>
+): Validator<A & B & C>;
+export function every<A, B>(
+  toValidEitherA: Validator<A>,
+  toValidEitherB: Validator<B>
+): Validator<A & B>;
+
+export function every<A>(...args: Validator<A>[]): Validator<A>;
+
+export function every(...args: Validator<anything>[]): Validator<anything> {
+  const validateIntersection: ValidatorFn<anything> = value => {
+    const errors: string[] = [];
+    if (
+      args.every(fnTest => {
+        const result = fnTest(value);
+        if (result.isRight()) {
+          return true;
+        }
+        if (result.isLeft()) {
+          errors.push(result.value);
+        }
+        return false;
+      })
+    ) {
+      return right(value);
+    }
+    return left(`fail every(${errors.join(", ")})`);
+  };
+  return toValidator(validateIntersection);
+}
+export const isPartial = <A extends {}>(
+  testShape: { [key in keyof A]: Validator<A[key]> }
+): Validator<Partial<A>> => {
+  const validatePartial: ValidatorFn<Partial<A>> = value => {
+    if (!isObject(value)) {
+      return left(`notAnObject(${JSON.stringify(value)})`);
+    }
+    const shapeMatched = shapeMatch(testShape, value);
+    if (shapeMatched.validated.length > 0) {
+      return right(value);
+    }
+    if (shapeMatched.validationErrors.length === 0) {
+      return right(value);
+    }
+    return left(
+      `fail partial(${shapeMatched.validationErrors.map(
+        ([key, error]) => `@${key} -> ${error}`
+      )})`
+    );
+  };
+  return toValidator(validatePartial);
+};
+/**
+ * Good for duck typing an object, with optional values
+ * @param testShape Shape of validators, to ensure we match the shape
+ */
+export const partial = <A extends {}>(
+  testShape: { [key in keyof A]: Validator<A[key]> }
+): Validator<Partial<A>> => every(object, isPartial(testShape));
+/**
+ * Good for duck typing an object
+ * @param testShape Shape of validators, to ensure we match the shape
+ */
+
+export const isShape = <A extends {}>(
+  testShape: { [key in keyof A]: Validator<A[key]> }
+) => {
+  const validateShape: ValidatorFn<A> = value => {
+    if (!isObject(value)) {
+      return left(`notAnObject(${JSON.stringify(value)})`);
+    }
+    const shapeMatched = shapeMatch(testShape, value);
+    if (shapeMatched.validationErrors.length > 0) {
+      return left(
+        `validationErrors(${shapeMatched.validationErrors
+          .map(([key, error]) => `@${key} -> ${error}`)
+          .join(", ")})`
+      );
+    }
+    if (shapeMatched.missing.length > 0) {
+      return left(`missing(${shapeMatched.missing.join(", ")})`);
+    }
+    return right(value as A);
+  };
+  return toValidator(validateShape);
+};
+
+export function refinementMatchEither<A, B extends A>(
+  toValidEither: Validator<A>,
+  typeCheck: (a: A) => Validator<B>
+) {
+  const validateRefinementEither: ValidatorFn<B> = (value: anything) =>
+    toValidEither(value).chain(valueA => typeCheck(valueA)(valueA));
+  return toValidator(validateRefinementEither);
+}
+
+export const shape = <A extends {}>(
+  testShape: { [key in keyof A]: Validator<A[key]> }
+): Validator<A> => every(object, isShape(testShape));
+
+export function tuple<A>(tupleShape: [Validator<A>]): Validator<[A]>;
+
+export function tuple<A, B>(
+  tupleShape: [Validator<A>, Validator<B>]
+): Validator<[A, B]>;
+
+export function tuple<A, B, C>(
+  tupleShape: [Validator<A>, Validator<B>, Validator<C>]
+): Validator<[A, B, C]>;
+
+export function tuple(tupleShape: ArrayLike<Validator<anything>>) {
+  return every(
+    isArray,
+    isShape({ ...tupleShape, length: literal(tupleShape.length) })
+  );
+}
+
+export interface ChainMatches<OutcomeType> {
+  when<B>(
+    test: Validator<B>,
+    thenFn: (b: B) => OutcomeType
+  ): ChainMatches<OutcomeType>;
+  defaultTo(value: OutcomeType): OutcomeType;
+  defaultToLazy(getValue: () => OutcomeType): OutcomeType;
+}
+
+class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
+  constructor(private value: OutcomeType) {}
+  when<B>(
+    fnTest: Validator<B>,
+    thenFn: (b: B) => OutcomeType
+  ): ChainMatches<OutcomeType> {
+    return this as ChainMatches<OutcomeType>;
+  }
+  defaultTo(defaultValue: OutcomeType) {
+    return this.value;
+  }
+  defaultToLazy(getValue: () => OutcomeType): OutcomeType {
+    return this.value;
+  }
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
+  constructor(private a: anything) {}
+
+  when<B>(
+    toValidEither: Validator<B>,
+    thenFn: (b: B) => OutcomeType
+  ): ChainMatches<OutcomeType> {
+    const testedValue = toValidEither(this.a);
+    if (testedValue.isRight()) {
+      return new Matched<OutcomeType>(
+        thenFn(testedValue.value)
+      ) as ChainMatches<OutcomeType>;
+    }
+    return this as ChainMatches<OutcomeType>;
+  }
+
+  defaultTo(value: OutcomeType) {
+    return value;
+  }
+
+  defaultToLazy(getValue: () => OutcomeType): OutcomeType {
+    return getValue();
+  }
+}
+
+/**
+ * Want to be able to bring in the declarative nature that a functional programming
+ * language feature of the pattern matching and the switch statement. With the destructors
+ * the only thing left was to find the correct structure then move move forward.
+ * Using a structure in chainable fashion allows for a syntax that works with typescript
+ * while looking similar to matches statements in other languages
+ *
+ * Use: matches('a value').when(matches.isNumber, (aNumber) => aNumber + 4).defaultTo('fallback value')
+ */
+
+export const matches = Object.assign(
+  function matchesFn<Result>(value: anything) {
+    return new MatchMore<Result>(value);
+  },
+  {
+    some,
+    tuple,
+    regex,
+    number,
+    isFunction,
+    object,
+    string,
+    shape,
+    partial,
+    literal,
+    every,
+    test,
+    any,
+    boolean
+  }
+);
+export default matches;
