@@ -7,23 +7,24 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:latest-browser
+    - image: circleci/node:8.9.1
+
 jobs:
   test:
-    <<: *defaults  
+    <<: *defaults
     steps:
       - checkout
 
       - restore_cache:
           keys:
-          - v1-dependencies-.
-          # fallback to using the latest cache if no exact match is found
-	  - v1-dependencies-
+            - v1-dependencies-
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-      - run: yarn install
+      - run: npm install
       - run:
           name: Run tests
-          command: yarn test
+          command: npm test
 
       - save_cache:
           paths:
@@ -33,7 +34,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-deploy:
+  deploy:
     <<: *defaults
     steps:
       - attach_workspace:
