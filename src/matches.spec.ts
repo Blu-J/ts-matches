@@ -49,6 +49,22 @@ describe("matches", () => {
         })
       );
     });
+    test("a matcher will always be a function to Either of the same type or string on error", () => {
+      fc.assert(
+        fc.property(
+          gens.matcherPairs,
+          fc.anything(),
+          ({ matcher }, example) => {
+            const matchedValue = matcher(example);
+            if (matchedValue.isLeft()) {
+              expect(typeof matchedValue.value).toBe("string");
+            } else {
+              expect(matchedValue.value).toBe(example);
+            }
+          }
+        )
+      );
+    });
     test("a matched value will not go to default", () => {
       fc.assert(
         fc.property(gens.testSetup, testSetup => {
