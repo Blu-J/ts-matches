@@ -51,6 +51,17 @@ const matcherPairsSimple = fc.oneof<ReturnType<typeof matchPairOf>>(
   matcherString,
   matcherNat
 );
+const matcherArrayOf = matcherPairsSimple.chain(pair =>
+  fc
+    .array(fc.constant(pair))
+    .map(pairs =>
+      matchPairOf(
+        matches.arrayOf(pair.matcher),
+        pairs.map(x => x.example),
+        `arrayOf ${pair.type}`
+      )
+    )
+);
 const fillArray = <A>(length: number, fill: (i: number) => A) => {
   const answer: A[] = [];
   while (answer.length < length) {
@@ -107,7 +118,8 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
 export const matcherPairs = fc.oneof(
   matcherPairsSimple,
   matcherShape,
-  matcherTuple
+  matcherTuple,
+  matcherArrayOf
 );
 
 export const testSetupInformation = <A>(
