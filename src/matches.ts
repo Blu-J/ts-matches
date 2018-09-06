@@ -354,6 +354,30 @@ export function tuple(tupleShape: ArrayLike<Validator<unknown>>) {
   );
 }
 
+/**
+ * We would like to validate that all of the array is of the same type
+ * @param validator What is the validator for the values in the array
+ */
+export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
+  return toValidator(value =>
+    isArray(value)
+      .map(x => Array.from(x))
+      .chain(currentArray => {
+        const lefts = Array.from(currentArray)
+          .map(validator)
+          .map((x, i): [Either<string, A>, number] => [x, i])
+          .filter(([x]) => x.isLeft());
+        if (lefts.length > 0) {
+          return left(
+            `validationErrors(${lefts
+              .map(([left, index]) => `@${index} -> ${left.value}`)
+              .join(", ")}`
+          );
+        }
+        return right(value as A[]);
+      })
+  );
+}
 export interface ChainMatches<OutcomeType> {
   when<B>(
     test: Validator<B>,
@@ -421,6 +445,7 @@ export const matches = Object.assign(
   },
   {
     array: isArray,
+    arrayOf,
     some,
     tuple,
     regex,

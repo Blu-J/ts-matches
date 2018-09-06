@@ -50,6 +50,7 @@ So to use this, there is the exported default which is a function for the patter
 | Attribute | Description |
 | --- | --- |
 | array | Testing that any array is good |
+| arrayOf | Testing that any array is good and filled with type passed in |
 | some | That one of the matchers pass |
 | tuple | That we match a tuple of validators |
 | regex | That we are a regex |
