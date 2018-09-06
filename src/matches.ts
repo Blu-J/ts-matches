@@ -1,13 +1,15 @@
 import { Either, left, right } from "fp-ts/lib/Either";
 
-const isObject = (x: unknown): x is object => typeof x === "object";
+const isObject = (x: unknown): x is object =>
+  Object.prototype.toString.call(x) === "[object Object]" ||
+  Object.prototype.toString.call(x) === "[object Array]";
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
-export type ValidatorFn<A> = (value: anything) => Either<string, A>;
+export type ValidatorFn<A> = (value: unknown) => Either<string, A>;
 export interface Validator<A> {
-  (value: anything): Either<string, A>;
-  unsafeCast(value: anything): A;
+  (value: unknown): Either<string, A>;
+  unsafeCast(value: unknown): A;
   /**
    * We want to refine to a new type given an original type, like isEven, or casting to a more
    * specific type
@@ -20,7 +22,7 @@ export interface Validator<A> {
 }
 
 export function unsafeMatchThrow<A>(validatorFn: ValidatorFn<A>) {
-  const unsafeMatch = (value: anything): A => {
+  const unsafeMatch = (value: unknown): A => {
     const matched = validatorFn(value);
     return matched.fold<A>(
       error => {
@@ -50,7 +52,7 @@ export function refinementMatch<A>(
   typeCheck: (a: A) => boolean,
   failureName = typeCheck.name
 ) {
-  const validateRefinement: ValidatorFn<A> = (value: anything) =>
+  const validateRefinement: ValidatorFn<A> = (value: unknown) =>
     toValidEither(value).chain(
       valueA =>
         typeCheck(valueA)
@@ -61,7 +63,7 @@ export function refinementMatch<A>(
 }
 
 function toValidator<A>(
-  validate: (value: anything) => Either<string, A>
+  validate: (value: unknown) => Either<string, A>
 ): Validator<A> {
   return Object.assign(validate, {
     unsafeCast: unsafeMatchThrow(validate),
@@ -102,15 +104,13 @@ function shapeMatch<A extends {}>(
   );
 }
 
-type anything = {} | undefined | null;
-
 /**
  * Create a custom type guard
  * @param test A function that will determine runtime if the value matches
  * @param testName A name for that function, useful when it fails
  */
-export function test<A>(
-  test: (value: anything | A) => value is A,
+export function guard<A>(
+  test: (value: unknown | A) => value is A,
   testName?: string
 ): Validator<A>;
 /**
@@ -119,16 +119,16 @@ export function test<A>(
  * @param test A function that will determine runtime if the value matches
  * @param testName A name for that function, useful when it fails
  */
-export function test(
-  test: (value: anything) => boolean,
+export function guard(
+  test: (value: unknown) => boolean,
   testName?: string
-): Validator<anything>;
+): Validator<unknown>;
 
-export function test(
-  fnTest: (value: anything) => boolean,
+export function guard(
+  fnTest: (value: unknown) => boolean,
   testName: string = fnTest.name || "test"
-): Validator<anything> {
-  const isValidEither: ValidatorFn<anything> = (value: anything) =>
+): Validator<unknown> {
+  const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
     fnTest(value)
       ? right(value)
       : left(`failed ${testName}(${JSON.stringify(value)})`);
@@ -136,41 +136,45 @@ export function test(
   return toValidator(isValidEither);
 }
 
-export const any = test(() => true, "any");
+export const any = guard(() => true, "any");
 
 export function literal<A extends string | number | boolean>(
   isEqualToValue: A
 ) {
-  return test<A>(
+  return guard<A>(
     (a): a is A => a === isEqualToValue,
     `literal[${JSON.stringify(isEqualToValue)}]`
   );
 }
 
-export const regex = test<RegExp>(
+export const regex = guard<RegExp>(
   (x): x is RegExp => x instanceof RegExp,
   "regex"
 );
 
-export const number = test(isNumber);
+export const number = guard(isNumber);
+
+export const natural = number.refine(
+  (x: number) => x >= 0 && x === Math.floor(x)
+);
 
 // tslint:disable-next-line:no-any Need this for casting any function into shape
-export const isFunction = test<(...args: any[]) => any>(
-  (x): x is ((...args: anything[]) => anything) => isFunctionTest(x),
+export const isFunction = guard<(...args: any[]) => any>(
+  (x): x is ((...args: unknown[]) => unknown) => isFunctionTest(x),
   "isFunction"
 );
 
-export const boolean = test<boolean>(
+export const boolean = guard<boolean>(
   (x): x is boolean => x === true || x === false,
   "boolean"
 );
 
-export const object = test<object>(isObject);
+export const object = guard<object>(isObject);
 
-export const isArray = test<ArrayLike<anything>>(Array.isArray);
+export const isArray = guard<ArrayLike<unknown>>(Array.isArray);
 
 const isString = (x: unknown): x is string => typeof x === "string";
-export const string = test<string>((x): x is string => isString(x), "string");
+export const string = guard<string>((x): x is string => isString(x), "string");
 
 /**
  * Union is a good tool to make sure that the validated value
@@ -197,8 +201,8 @@ export function some<A, B>(
 
 export function some<A>(...args: Validator<A>[]): Validator<A>;
 
-export function some(...args: Validator<anything>[]): Validator<anything> {
-  const validateUnion: ValidatorFn<anything> = value => {
+export function some(...args: Validator<unknown>[]): Validator<unknown> {
+  const validateUnion: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
     if (
       args.some(fnTest => {
@@ -242,8 +246,8 @@ export function every<A, B>(
 
 export function every<A>(...args: Validator<A>[]): Validator<A>;
 
-export function every(...args: Validator<anything>[]): Validator<anything> {
-  const validateIntersection: ValidatorFn<anything> = value => {
+export function every(...args: Validator<unknown>[]): Validator<unknown> {
+  const validateIntersection: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
     if (
       args.every(fnTest => {
@@ -324,7 +328,7 @@ export function refinementMatchEither<A, B extends A>(
   toValidEither: Validator<A>,
   typeCheck: (a: A) => Validator<B>
 ) {
-  const validateRefinementEither: ValidatorFn<B> = (value: anything) =>
+  const validateRefinementEither: ValidatorFn<B> = (value: unknown) =>
     toValidEither(value).chain(valueA => typeCheck(valueA)(valueA));
   return toValidator(validateRefinementEither);
 }
@@ -343,7 +347,7 @@ export function tuple<A, B, C>(
   tupleShape: [Validator<A>, Validator<B>, Validator<C>]
 ): Validator<[A, B, C]>;
 
-export function tuple(tupleShape: ArrayLike<Validator<anything>>) {
+export function tuple(tupleShape: ArrayLike<Validator<unknown>>) {
   return every(
     isArray,
     isShape({ ...tupleShape, length: literal(tupleShape.length) })
@@ -377,7 +381,7 @@ class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
 
 // tslint:disable-next-line:max-classes-per-file
 class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
-  constructor(private a: anything) {}
+  constructor(private a: unknown) {}
 
   when<B>(
     toValidEither: Validator<B>,
@@ -412,14 +416,16 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
  */
 
 export const matches = Object.assign(
-  function matchesFn<Result>(value: anything) {
+  function matchesFn<Result>(value: unknown) {
     return new MatchMore<Result>(value);
   },
   {
+    array: isArray,
     some,
     tuple,
     regex,
     number,
+    natural,
     isFunction,
     object,
     string,
@@ -427,7 +433,7 @@ export const matches = Object.assign(
     partial,
     literal,
     every,
-    test,
+    guard,
     any,
     boolean
   }
