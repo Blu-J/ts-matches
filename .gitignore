@@ -3,3 +3,5 @@ lib/
 node_modules/
 .vscode/
 junit.xml
+.npmrc
+package-lock.json
