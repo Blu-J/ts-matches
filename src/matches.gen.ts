@@ -115,11 +115,52 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
 
   return matchPairOf(matcher, example, type);
 });
-export const matcherPairs = fc.oneof(
+const matcherShapePartial = fc
+  .dictionary(fc.string(), matcherPairsSimple)
+  .map(x => {
+    type testingShape = Partial<
+      { [key in keyof typeof x]: (typeof x)[key]["example"] }
+    >;
+    const matcher: Validator<testingShape> = matches.partial(
+      Object.entries(x).reduce(
+        (
+          acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
+          [key, value]
+        ) => {
+          acc[key] = value.matcher;
+          return acc;
+        },
+        {}
+      )
+    );
+    const example: testingShape = Object.entries(x).reduce(
+      (
+        acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+        [key, value]
+      ) => {
+        acc[key] = value.example;
+        return acc;
+      },
+      {}
+    );
+    const type: string = `shape of ${JSON.stringify(
+      Object.entries(x).reduce(
+        (acc: { [key in keyof typeof x]: string }, [key, value]) => {
+          acc[key] = value.type;
+          return acc;
+        },
+        {}
+      )
+    )}`;
+
+    return matchPairOf(matcher, example, type);
+  });
+export const matcherPairs = fc.oneof<ReturnType<typeof matchPairOf>>(
   matcherPairsSimple,
   matcherShape,
   matcherTuple,
-  matcherArrayOf
+  matcherArrayOf,
+  matcherShapePartial
 );
 
 export const testSetupInformation = <A>(
