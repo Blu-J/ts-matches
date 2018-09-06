@@ -5,3 +5,4 @@ node_modules/
 junit.xml
 .npmrc
 package-lock.json
+yarn.lock
