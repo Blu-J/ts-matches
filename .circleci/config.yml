@@ -33,6 +33,10 @@ jobs:
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
 
+      - run: yarn install coveralls
+
+      - run: yarn jest --coverage --coverageReporters=text-lcov | yarn coveralls
+
       - store_test_results:
           path: reports
 
