@@ -1,4 +1,5 @@
 # Typescript Matches
+[![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 
 ## Why
 
@@ -76,3 +77,6 @@ So to use this, there is the exported default which is a function for the patter
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
+
+## Deploying
+Use the `npm version minor | major` and push the tags up, circle ci should do the publish on the master based on tags
