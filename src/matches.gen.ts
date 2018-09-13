@@ -62,13 +62,6 @@ const matcherArrayOf = matcherPairsSimple.chain(pair =>
       )
     )
 );
-const fillArray = <A>(length: number, fill: (i: number) => A) => {
-  const answer: A[] = [];
-  while (answer.length < length) {
-    answer.push(fill(answer.length));
-  }
-  return answer;
-};
 const matcherTuple = fc
   .array(matcherPairsSimple)
   .filter(x => x.length > 0)
