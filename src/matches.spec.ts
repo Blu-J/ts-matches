@@ -26,6 +26,16 @@ describe("matches", () => {
         .defaultTo(right);
       expect(validator).toEqual(right);
     });
+    test("testing falls through", () => {
+      const testValue = { a: "c" };
+      const left = { left: true };
+      const right = { right: true };
+      const testMatch = matches.shape({ a: matches.literal("d") });
+      const validator = matches(testValue)
+        .when(testMatch, () => left)
+        .defaultToLazy(() => right);
+      expect(validator).toEqual(right);
+    });
   });
   describe("properties", () => {
     test("a matched case will always be the equal to matcher or less than", () => {

@@ -33,7 +33,7 @@ jobs:
           environment:
             JEST_JUNIT_OUTPUT: "reports/junit/js-test-results.xml"
 
-      - run: yarn add coveralls
+      - run: yarn add coveralls --dev
       - run:
           name: Add in coverall configuration
           command: 'echo "repo_token: $REPO_TOKEN" > ~/repo/.coveralls.yml'
