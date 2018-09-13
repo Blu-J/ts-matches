@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for matches.gen.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> matches.gen.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">95.06% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>77/81</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>4/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.59% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>35/37</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.94% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>75/79</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4488x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">380x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">380x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">434x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">467x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">438x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">383x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">400x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">373x</span>
+<span class="cline-any cline-yes">365x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">403x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">219x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">219x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1054x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">205x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">190x</span>
+<span class="cline-any cline-yes">1033x</span>
+<span class="cline-any cline-yes">1033x</span>
+<span class="cline-any cline-yes">1033x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">203x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">203x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">203x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-yes">1022x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">203x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">233x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">233x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">233x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-yes">1118x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">233x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">866x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">200x</span>
+<span class="cline-any cline-yes">200x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">44x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">200x</span>
+<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">184x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">866x</span>
+<span class="cline-any cline-yes">866x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">184x</span>
+<span class="cline-any cline-yes">184x</span>
+<span class="cline-any cline-yes">28x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">156x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">156x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">764x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as fc from "fast-check";
+import matches, { Validator, ChainMatches } from "./matches";
+&nbsp;
+export const matchPairOf = &lt;A&gt;(
+  matcher: Validator&lt;A&gt;,
+  example: A,
+  type: string
+) =&gt; ({
+  matcher,
+  type,
+  example
+});
+const trueFloat = fc
+  .tuple(fc.oneof(fc.constant(0), fc.float()), fc.integer())
+  .map(([x, y]) =&gt; x + y);
+const matcherNumber = trueFloat.map(x =&gt;
+  matchPairOf(matches.number, x, "number")
+);
+const matcherNat = fc
+  .nat()
+  .map(x =&gt; matchPairOf(matches.natural, x, "natural number"));
+const matcherObject = fc
+  .object()
+  .map(x =&gt; matchPairOf(matches.object, x, "object"));
+const matcherConstant = fc
+  .oneof&lt;boolean | string | number&gt;(fc.boolean(), fc.integer(), fc.string())
+  .map(x =&gt;
+    matchPairOf(matches.literal(x), x, `literal of ${JSON.stringify(x)}`)
+  );
+const matcherFunction = fc
+  .constant(<span class="fstat-no" title="function not covered" >() </span>=&gt; {})
+  .map(x =&gt; matchPairOf(matches.isFunction, x, "function"));
+const matcherBoolean = fc
+  .boolean()
+  .map(x =&gt; matchPairOf(matches.boolean, x, "boolean"));
+const matcherArray = fc
+  .array(fc.anything())
+  .map(x =&gt; matchPairOf(matches.array, x, "array"));
+const matcherAny = fc.anything().map(x =&gt; matchPairOf(matches.any, x, "any"));
+const matcherString = fc
+  .string()
+  .map(x =&gt; matchPairOf(matches.string, x, "string"));
+const matcherPairsSimple = fc.oneof&lt;ReturnType&lt;typeof matchPairOf&gt;&gt;(
+  matcherNumber,
+  matcherFunction,
+  matcherObject,
+  matcherConstant,
+  matcherBoolean,
+  matcherArray,
+  matcherAny,
+  matcherString,
+  matcherNat
+);
+const matcherArrayOf = matcherPairsSimple.chain(pair =&gt;
+  fc
+    .array(fc.constant(pair))
+    .map(pairs =&gt;
+      matchPairOf(
+        matches.arrayOf(pair.matcher),
+        pairs.map(x =&gt; x.example),
+        `arrayOf ${pair.type}`
+      )
+    )
+);
+const fillArray = <span class="fstat-no" title="function not covered" >&lt;A&gt;(l</span>ength: number, fill: (i: number) =&gt; A) =&gt; {
+  const answer: A[] = <span class="cstat-no" title="statement not covered" >[];</span>
+<span class="cstat-no" title="statement not covered" >  while (answer.length &lt; length) {</span>
+<span class="cstat-no" title="statement not covered" >    answer.push(fill(answer.length));</span>
+  }
+<span class="cstat-no" title="statement not covered" >  return answer;</span>
+};
+const matcherTuple = fc
+  .array(matcherPairsSimple)
+  .filter(x =&gt; x.length &gt; 0)
+  .map(xs =&gt; {
+    return matchPairOf(
+      matches.tuple(xs.map(tupleValue =&gt; tupleValue.matcher) as any),
+      xs.map(x =&gt; x.example),
+      `tuple ${JSON.stringify(xs.map(x =&gt; x.type))}`
+    );
+  });
+const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x =&gt; {
+  type testingShape = { [key in keyof typeof x]: (typeof x)[key]["example"] };
+  const matcher: Validator&lt;testingShape&gt; = matches.shape(
+    Object.entries(x).reduce(
+      (
+        acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
+        [key, value]
+      ) =&gt; {
+        acc[key] = value.matcher;
+        return acc;
+      },
+      {}
+    )
+  );
+  const example: testingShape = Object.entries(x).reduce(
+    (
+      acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+      [key, value]
+    ) =&gt; {
+      acc[key] = value.example;
+      return acc;
+    },
+    {}
+  );
+  const type: string = `shape of ${JSON.stringify(
+    Object.entries(x).reduce(
+      (acc: { [key in keyof typeof x]: string }, [key, value]) =&gt; {
+        acc[key] = value.type;
+        return acc;
+      },
+      {}
+    )
+  )}`;
+&nbsp;
+  return matchPairOf(matcher, example, type);
+});
+const matcherShapePartial = fc
+  .dictionary(fc.string(), matcherPairsSimple)
+  .map(x =&gt; {
+    type testingShape = Partial&lt;
+      { [key in keyof typeof x]: (typeof x)[key]["example"] }
+    &gt;;
+    const matcher: Validator&lt;testingShape&gt; = matches.partial(
+      Object.entries(x).reduce(
+        (
+          acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
+          [key, value]
+        ) =&gt; {
+          acc[key] = value.matcher;
+          return acc;
+        },
+        {}
+      )
+    );
+    const example: testingShape = Object.entries(x).reduce(
+      (
+        acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+        [key, value]
+      ) =&gt; {
+        acc[key] = value.example;
+        return acc;
+      },
+      {}
+    );
+    const type: string = `shape of ${JSON.stringify(
+      Object.entries(x).reduce(
+        (acc: { [key in keyof typeof x]: string }, [key, value]) =&gt; {
+          acc[key] = value.type;
+          return acc;
+        },
+        {}
+      )
+    )}`;
+&nbsp;
+    return matchPairOf(matcher, example, type);
+  });
+export const matcherPairs = fc.oneof&lt;ReturnType&lt;typeof matchPairOf&gt;&gt;(
+  matcherPairsSimple,
+  matcherShape,
+  matcherTuple,
+  matcherArrayOf,
+  matcherShapePartial
+);
+&nbsp;
+export const testSetupInformation = &lt;A&gt;(
+  matchPair: ReturnType&lt;typeof matchPairOf&gt;
+) =&gt; ({
+  ...matchPair,
+  matchValue: {}
+});
+export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets =&gt; {
+  const defaultValue = {};
+  const defaultTest = {
+    defaultValue,
+    setupInformation: [],
+    runMatch: (x: unknown) =&gt; matches(x).defaultTo(defaultValue),
+    randomExample: {
+      value: defaultValue,
+      index: -1
+    }
+  };
+  if (!matcherPairsSets.length) {
+    return fc.constant(defaultTest);
+  }
+  const setupInformation = matcherPairsSets.reduce(
+    (acc: ReturnType&lt;typeof testSetupInformation&gt;[], value) =&gt; {
+      acc.push(testSetupInformation(value));
+      return acc;
+    },
+    []
+  );
+  return fc.nat(matcherPairsSets.length).map(randomExampleIndex =&gt; {
+    if (randomExampleIndex === matcherPairsSets.length) {
+      return defaultTest;
+    }
+    return {
+      defaultValue,
+      setupInformation,
+      runMatch: (x: unknown) =&gt;
+        setupInformation
+          .reduce(
+            (acc: ChainMatches&lt;unknown&gt;, { matcher, matchValue }) =&gt;
+              acc.when(matcher, () =&gt; matchValue),
+            matches(x)
+          )
+          .defaultTo(defaultValue),
+      randomExample: {
+        value: setupInformation[randomExampleIndex].example,
+        index: randomExampleIndex
+      }
+    };
+  });
+});
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Sep 13 2018 08:50:31 GMT-0600 (MDT)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>
