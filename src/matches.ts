@@ -271,6 +271,7 @@ export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ): Validator<Partial<A>> => {
   const validatePartial: ValidatorFn<Partial<A>> = value => {
+    console.log(Object.prototype.toString.call(value));
     if (!isObject(value)) {
       return left(`notAnObject(${JSON.stringify(value)})`);
     }
@@ -295,7 +296,7 @@ export const isPartial = <A extends {}>(
  */
 export const partial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
-): Validator<Partial<A>> => every(object, isPartial(testShape));
+): Validator<Partial<A>> => isPartial(testShape);
 /**
  * Good for duck typing an object
  * @param testShape Shape of validators, to ensure we match the shape
@@ -324,18 +325,9 @@ export const isShape = <A extends {}>(
   return toValidator(validateShape);
 };
 
-export function refinementMatchEither<A, B extends A>(
-  toValidEither: Validator<A>,
-  typeCheck: (a: A) => Validator<B>
-) {
-  const validateRefinementEither: ValidatorFn<B> = (value: unknown) =>
-    toValidEither(value).chain(valueA => typeCheck(valueA)(valueA));
-  return toValidator(validateRefinementEither);
-}
-
 export const shape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
-): Validator<A> => every(object, isShape(testShape));
+): Validator<A> => isShape(testShape);
 
 export function tuple<A>(tupleShape: [Validator<A>]): Validator<[A]>;
 

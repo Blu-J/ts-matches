@@ -26,7 +26,17 @@ describe("matches", () => {
         .defaultTo(right);
       expect(validator).toEqual(right);
     });
-    test("testing falls through", () => {
+    test("testing catches lazy", () => {
+      const testValue = { a: "c" };
+      const left = { left: true };
+      const right = { right: true };
+      const testMatch = matches.shape({ a: matches.literal("c") });
+      const validator = matches(testValue)
+        .when(testMatch, () => left)
+        .defaultToLazy(() => right);
+      expect(validator).toEqual(left);
+    });
+    test("testing falls through lazy", () => {
       const testValue = { a: "c" };
       const left = { left: true };
       const right = { right: true };
@@ -103,14 +113,14 @@ describe("matches", () => {
     const testValue = { a: "c" };
     const validator = matches.shape({ a: matches.literal("b") });
     expect(validator(testValue).value).toEqual(
-      'fail every(validationErrors(@a -> failed literal["b"]("c")))'
+      'validationErrors(@a -> failed literal["b"]("c"))'
     );
   });
 
   test("should be able to test shape with failure", () => {
     const testValue = {};
     const validator = matches.shape({ a: matches.literal("b") });
-    expect(validator(testValue).value).toEqual("fail every(missing(a))");
+    expect(validator(testValue).value).toEqual("missing(a)");
   });
 
   test("should be able to test partial shape", () => {
@@ -290,5 +300,13 @@ describe("matches", () => {
       "isEven"
     );
     expect(isEven(testValue).value).toEqual(testValue);
+  });
+
+  test("should throw on invalid unsafe match throw", () => {
+    expect(() => matches.partial({}).unsafeCast(5)).toThrowError();
+  });
+
+  test("should guard without a name", () => {
+    expect(matches.guard(x => Number(x) > 3).unsafeCast(6)).toBe(6);
   });
 });
