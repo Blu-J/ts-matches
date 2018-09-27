@@ -28,7 +28,8 @@
     "stryker-jest-runner": "^1.2.1",
     "stryker-typescript": "^0.14.0",
     "ts-jest": "^23.1.4",
-    "typescript": "^3.0.3"
+    "typescript": "^3.0.3",
+    "stryker-html-reporter": "^0.16.2"
   },
   "husky": {
     "hooks": {
@@ -51,7 +52,6 @@
     ]
   },
   "dependencies": {
-    "fp-ts": "^1.8.0",
-    "stryker-html-reporter": "^0.16.2"
+    "fp-ts": "^1.8.0"
   }
 }
