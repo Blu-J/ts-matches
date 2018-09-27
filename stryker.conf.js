@@ -6,6 +6,7 @@ module.exports = function(config) {
     testRunner: "jest",
     coverageAnalysis: "off",
     mutate: ["src/**/*.ts?(x)", "!src/**/*@(.test|.spec|Spec|.gen).ts?(x)"],
-    tsconfigFile: "tsconfig.json"
+    tsconfigFile: "tsconfig.json",
+    timeoutFactor: 5
   });
 };
