@@ -271,7 +271,6 @@ export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ): Validator<Partial<A>> => {
   const validatePartial: ValidatorFn<Partial<A>> = value => {
-    console.log(Object.prototype.toString.call(value));
     if (!isObject(value)) {
       return left(`notAnObject(${JSON.stringify(value)})`);
     }

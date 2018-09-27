@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html><head><title>matches.ts
+ - Stryker report</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="strykerResources/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="strykerResources/highlightjs/styles/default.css">
+<link rel="stylesheet" href="strykerResources/stryker.css"></head>
+<body><img class="stryker-image" alt="Stryker" src="strykerResources/stryker-80x80.png">
+<div class="container-fluid"><div class="row"><div class="col-lg-12"><h1 class="display-4">matches.ts
+ 
+<small class="text-muted">- Stryker report</small></h1></div></div>
+<ol class="breadcrumb"><li class="breadcrumb-item"><a href="index.html">All files</a></li>
+<li class="breadcrumb-item active">matches.ts</li></ol>
+<div class="row"><div class="col-lg-12"><div class="row"><div class="col-sm-11"><table class="table table-sm table-hover table-bordered table-no-top"><thead><tr><th style="width: 20%"><div><span>File / Directory</span></div></th>
+<th colspan="2"><div><span>Mutation score</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># Killed</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># Survived</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># Timeout</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># No coverage</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># Runtime errors</span></div></th>
+<th class="rotate text-center" style="width: 50px"><div><span># Transpile errors</span></div></th>
+<th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total detected</span></div></th>
+<th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total undetected</span></div></th>
+<th class="rotate rotate-width-70 text-center" style="width: 70px"><div><span>Total mutants</span></div></th></tr></thead>
+<tbody><tr><td>matches.ts</td>
+<td><div class="progress"><div class="progress-bar bg-success" role="progressbar" aria-valuenow="82.79" aria-valuemin="0" aria-valuemax="100" style="width: 82.79%;">82.79
+%</div></div></td>
+<th class="text-center text-success" style="width: 10%">82.79</th>
+<td class="text-center">30</td>
+<td class="text-center">21</td>
+<td class="text-center">71</td>
+<td class="text-center">0</td>
+<td class="text-center">55</td>
+<td class="text-center">0</td>
+<th class="text-center">101</th>
+<th class="text-center">21</th>
+<th class="text-center">177</th></tr>
+</tbody></table></div></div>
+<div class="row"><div class="col-lg-7"><div class="row legend"><form class="col-md-12" novalidate="novalidate">
+<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input stryker-display" checked value="2" type="checkbox">
+Survived
+ 
+(21)</label></div>
+<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input stryker-display" value="1" type="checkbox">
+Killed
+ 
+(30)</label></div>
+<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input stryker-display" value="3" type="checkbox">
+TimedOut
+ 
+(71)</label></div>
+<div class="form-check form-check-inline"><label class="form-check-label"><input class="form-check-input stryker-display" value="4" type="checkbox">
+RuntimeError
+ 
+(55)</label></div>
+
+<a href="#" class="stryker-collapse-expand-all">Expand all</a></form></div>
+<pre><code class="lang-javascript"><span class="bg-null">import { Either, left, right } from &quot;fp-ts/lib/Either&quot;;
+
+const isObject = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="0"><span class="badge badge-secondary">0</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="0">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="0"><span class="bg-null">(x: unknown): x is object =&gt;
+  Object.prototype.toString.call(x) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="1"><span class="badge badge-warning">1</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="1">!==</span><span class="stryker-original-code" data-mutant="1"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="2"><span class="badge badge-warning">2</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="2">&quot;&quot;</span><span class="stryker-original-code" data-mutant="2"><span class="bg-warning-light">&quot;[object Object]&quot;</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="3"><span class="badge badge-warning">3</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="3">&amp;&amp;</span><span class="stryker-original-code" data-mutant="3"><span class="bg-warning-light">||</span></span><span class="bg-null">
+  Object.prototype.toString.call(x) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="4"><span class="badge badge-warning">4</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="4">!==</span><span class="stryker-original-code" data-mutant="4"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="5"><span class="badge badge-warning">5</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="5">&quot;&quot;</span><span class="stryker-original-code" data-mutant="5"><span class="bg-warning-light">&quot;[object Array]&quot;</span></span></span><span class="bg-null">;
+const isFunctionTest = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="6"><span class="badge badge-secondary">6</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="6">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="6"><span class="bg-null">(x: unknown): x is Function =&gt; typeof x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="7"><span class="badge badge-warning">7</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="7">!==</span><span class="stryker-original-code" data-mutant="7"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="8"><span class="badge badge-secondary">8</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="8">&quot;&quot;</span><span class="stryker-original-code" data-mutant="8"><span class="bg-null">&quot;function&quot;</span></span></span><span class="bg-null">;
+const isNumber = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="9"><span class="badge badge-secondary">9</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="9">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="9"><span class="bg-null">(x: unknown): x is number =&gt; typeof x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="10"><span class="badge badge-warning">10</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="10">!==</span><span class="stryker-original-code" data-mutant="10"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="11"><span class="badge badge-secondary">11</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="11">&quot;&quot;</span><span class="stryker-original-code" data-mutant="11"><span class="bg-null">&quot;number&quot;</span></span></span><span class="bg-null">;
+
+export type ValidatorFn&lt;A&gt; = (value: unknown) =&gt; Either&lt;string, A&gt;;
+export interface Validator&lt;A&gt; {
+  (value: unknown): Either&lt;string, A&gt;;
+  unsafeCast(value: unknown): A;
+  /**
+   * We want to refine to a new type given an original type, like isEven, or casting to a more
+   * specific type
+   */
+  refine&lt;B&gt;(
+    refinementTest: (value: A | B) =&gt; value is B,
+    named?: string
+  ): Validator&lt;B&gt;;
+  refine(refinementTest: (value: A) =&gt; boolean, named?: string): Validator&lt;A&gt;;
+}
+
+export function unsafeMatchThrow&lt;A&gt;(validatorFn: ValidatorFn&lt;A&gt;) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="12"><span class="badge badge-secondary">12</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="12">{}</span><span class="stryker-original-code" data-mutant="12"><span class="bg-null">{
+  const unsafeMatch = (value: unknown): A =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="13"><span class="badge badge-warning">13</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="13">{}</span><span class="stryker-original-code" data-mutant="13"><span class="bg-warning-light">{
+    const matched = validatorFn(value);
+    return matched.fold&lt;A&gt;(
+      error =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="14"><span class="badge badge-warning">14</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="14">{}</span><span class="stryker-original-code" data-mutant="14"><span class="bg-warning-light">{
+        throw new Error(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="15"><span class="badge badge-danger">15</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="15">&quot;&quot;</span><span class="stryker-original-code" data-mutant="15"><span class="bg-danger-light">`Failed to enforce type: ${error}`</span></span><span class="bg-warning-light">);
+      }</span></span><span class="bg-warning-light">,
+      </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="16"><span class="badge badge-warning">16</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="16">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="16"><span class="bg-warning-light">x =&gt; x</span></span><span class="bg-warning-light">
+    );
+  }</span></span><span class="bg-null">;
+  return unsafeMatch;
+}</span></span><span class="bg-null">
+
+/**
+ * Ensure that we can extend the validator with a more specific validator
+ */
+export function refinementMatch&lt;A, B extends A&gt;(
+  toValidEither: ValidatorFn&lt;A&gt;,
+  typeCheck: (a: A | B) =&gt; a is B,
+  failureName?: string
+): Validator&lt;B&gt;;
+export function refinementMatch&lt;A&gt;(
+  toValidEither: ValidatorFn&lt;A&gt;,
+  typeCheck: (a: A) =&gt; boolean,
+  failureName?: string
+): Validator&lt;A&gt;;
+export function refinementMatch&lt;A&gt;(
+  toValidEither: ValidatorFn&lt;A&gt;,
+  typeCheck: (a: A) =&gt; boolean,
+  failureName = typeCheck.name
+) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="17"><span class="badge badge-warning">17</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="17">{}</span><span class="stryker-original-code" data-mutant="17"><span class="bg-warning-light">{
+  const validateRefinement: ValidatorFn&lt;A&gt; = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="18"><span class="badge badge-warning">18</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="18">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="18"><span class="bg-warning-light">(value: unknown) =&gt;
+    toValidEither(value).chain(
+      </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="19"><span class="badge badge-warning">19</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="19">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="19"><span class="bg-warning-light">valueA =&gt;
+        </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ConditionalExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="20"><span class="badge badge-success">20</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="20">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ConditionalExpression" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="21"><span class="badge badge-danger">21</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="21">true</span><span class="stryker-original-code" data-mutant="20"><span class="stryker-original-code" data-mutant="21"><span class="bg-danger-light">typeCheck(valueA)</span></span></span><span class="bg-warning-light">
+          ? right(valueA)
+          : left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="22"><span class="badge badge-warning">22</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="22">&quot;&quot;</span><span class="stryker-original-code" data-mutant="22"><span class="bg-warning-light">`failed ${failureName}(${JSON.stringify(valueA)})`</span></span><span class="bg-warning-light">)</span></span><span class="bg-warning-light">
+    )</span></span><span class="bg-warning-light">;
+  return toValidator(validateRefinement);
+}</span></span><span class="bg-null">
+
+function toValidator&lt;A&gt;(
+  validate: (value: unknown) =&gt; Either&lt;string, A&gt;
+): Validator&lt;A&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="23"><span class="badge badge-warning">23</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="23">{}</span><span class="stryker-original-code" data-mutant="23"><span class="bg-warning-light">{
+  return Object.assign(validate, {
+    unsafeCast: unsafeMatchThrow(validate),
+    refine(typeCheck: (value: A) =&gt; boolean, failureName = typeCheck.name) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="24"><span class="badge badge-warning">24</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="24">{}</span><span class="stryker-original-code" data-mutant="24"><span class="bg-warning-light">{
+      return refinementMatch(validate, typeCheck, failureName);
+    }</span></span><span class="bg-warning-light">
+  });
+}</span></span><span class="bg-null">
+
+function shapeMatch&lt;A extends {}&gt;(
+  testShape: { [key in keyof A]: Validator&lt;A[key]&gt; },
+  value: Partial&lt;A&gt;
+) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="25"><span class="badge badge-warning">25</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="25">{}</span><span class="stryker-original-code" data-mutant="25"><span class="bg-warning-light">{
+  return Object.entries(testShape).reduce&lt;{
+    validated: (keyof A)[];
+    missing: (keyof A)[];
+    validationErrors: [keyof A, string][];
+  }&gt;(
+    (acc, entry) =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="26"><span class="badge badge-warning">26</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="26">{}</span><span class="stryker-original-code" data-mutant="26"><span class="bg-warning-light">{
+      const key = entry[0] as keyof A;
+      const validator = testShape[key];
+      if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="27"><span class="badge badge-warning">27</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="27">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="28"><span class="badge badge-warning">28</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="28">false</span><span class="stryker-original-code" data-mutant="27"><span class="stryker-original-code" data-mutant="28"><span class="bg-warning-light">key in value</span></span></span><span class="bg-warning-light">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="29"><span class="badge badge-success">29</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="29">{}</span><span class="stryker-original-code" data-mutant="29"><span class="bg-warning-light">{
+        // tslint:disable-next-line:no-any
+        validator(value[key] as any).fold(
+          error =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="30"><span class="badge badge-success">30</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="30">{}</span><span class="stryker-original-code" data-mutant="30"><span class="bg-warning-light">{
+            acc.validationErrors.push(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="31"><span class="badge badge-secondary">31</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="31">[]</span><span class="stryker-original-code" data-mutant="31"><span class="bg-warning-light">[key, error]</span></span><span class="bg-warning-light">);
+          }</span></span><span class="bg-warning-light">,
+          () =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="32"><span class="badge badge-warning">32</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="32">{}</span><span class="stryker-original-code" data-mutant="32"><span class="bg-warning-light">{
+            acc.validated.push(key);
+          }</span></span><span class="bg-warning-light">
+        );
+      }</span></span><span class="bg-warning-light"> else </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="33"><span class="badge badge-warning">33</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="33">{}</span><span class="stryker-original-code" data-mutant="33"><span class="bg-warning-light">{
+        acc.missing.push(key);
+      }</span></span><span class="bg-warning-light">
+      return acc;
+    }</span></span><span class="bg-warning-light">,
+    { validated: </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="34"><span class="badge badge-secondary">34</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="34">[&#039;Stryker was here&#039;]</span><span class="stryker-original-code" data-mutant="34"><span class="bg-warning-light">[]</span></span><span class="bg-warning-light">, missing: </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="35"><span class="badge badge-secondary">35</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="35">[&#039;Stryker was here&#039;]</span><span class="stryker-original-code" data-mutant="35"><span class="bg-warning-light">[]</span></span><span class="bg-warning-light">, validationErrors: </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="36"><span class="badge badge-secondary">36</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="36">[&#039;Stryker was here&#039;]</span><span class="stryker-original-code" data-mutant="36"><span class="bg-warning-light">[]</span></span><span class="bg-warning-light"> }
+  );
+}</span></span><span class="bg-null">
+
+/**
+ * Create a custom type guard
+ * @param test A function that will determine runtime if the value matches
+ * @param testName A name for that function, useful when it fails
+ */
+export function guard&lt;A&gt;(
+  test: (value: unknown | A) =&gt; value is A,
+  testName?: string
+): Validator&lt;A&gt;;
+/**
+ * Create a custom validation for new types, or even for any kind of refinements
+ * to validations (like an even function)
+ * @param test A function that will determine runtime if the value matches
+ * @param testName A name for that function, useful when it fails
+ */
+export function guard(
+  test: (value: unknown) =&gt; boolean,
+  testName?: string
+): Validator&lt;unknown&gt;;
+
+export function guard(
+  fnTest: (value: unknown) =&gt; boolean,
+  testName: string = fnTest.name </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="37"><span class="badge badge-warning">37</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="37">&amp;&amp;</span><span class="stryker-original-code" data-mutant="37"><span class="bg-warning-light">||</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="38"><span class="badge badge-warning">38</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="38">&quot;&quot;</span><span class="stryker-original-code" data-mutant="38"><span class="bg-warning-light">&quot;test&quot;</span></span><span class="bg-null">
+): Validator&lt;unknown&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="39"><span class="badge badge-secondary">39</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="39">{}</span><span class="stryker-original-code" data-mutant="39"><span class="bg-null">{
+  const isValidEither: ValidatorFn&lt;unknown&gt; = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="40"><span class="badge badge-secondary">40</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="40">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="40"><span class="bg-null">(value: unknown) =&gt;
+    </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ConditionalExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="41"><span class="badge badge-success">41</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="41">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ConditionalExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="42"><span class="badge badge-success">42</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="42">true</span><span class="stryker-original-code" data-mutant="41"><span class="stryker-original-code" data-mutant="42"><span class="bg-success-light">fnTest(value)</span></span></span><span class="bg-null">
+      ? right(value)
+      : left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="43"><span class="badge badge-success">43</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="43">&quot;&quot;</span><span class="stryker-original-code" data-mutant="43"><span class="bg-success-light">`failed ${testName}(${JSON.stringify(value)})`</span></span><span class="bg-null">)</span></span><span class="bg-null">;
+
+  return toValidator(isValidEither);
+}</span></span><span class="bg-null">
+
+export const any = guard(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="44"><span class="badge badge-secondary">44</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="44">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="44"><span class="bg-null">() =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="45"><span class="badge badge-warning">45</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="45">false</span><span class="stryker-original-code" data-mutant="45"><span class="bg-warning-light">true</span></span></span><span class="bg-null">, </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="46"><span class="badge badge-danger">46</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="46">&quot;&quot;</span><span class="stryker-original-code" data-mutant="46"><span class="bg-danger-light">&quot;any&quot;</span></span><span class="bg-null">);
+
+export function literal&lt;A extends string | number | boolean&gt;(
+  isEqualToValue: A
+) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="47"><span class="badge badge-secondary">47</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="47">{}</span><span class="stryker-original-code" data-mutant="47"><span class="bg-null">{
+  return guard&lt;A&gt;(
+    </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="48"><span class="badge badge-secondary">48</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="48">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="48"><span class="bg-null">(a): a is A =&gt; a </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="49"><span class="badge badge-warning">49</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="49">!==</span><span class="stryker-original-code" data-mutant="49"><span class="bg-warning-light">===</span></span><span class="bg-null"> isEqualToValue</span></span><span class="bg-null">,
+    </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="50"><span class="badge badge-warning">50</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="50">&quot;&quot;</span><span class="stryker-original-code" data-mutant="50"><span class="bg-warning-light">`literal[${JSON.stringify(isEqualToValue)}]`</span></span><span class="bg-null">
+  );
+}</span></span><span class="bg-null">
+
+export const regex = guard&lt;RegExp&gt;(
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="51"><span class="badge badge-secondary">51</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="51">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="51"><span class="bg-null">(x): x is RegExp =&gt; x instanceof RegExp</span></span><span class="bg-null">,
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="52"><span class="badge badge-success">52</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="52">&quot;&quot;</span><span class="stryker-original-code" data-mutant="52"><span class="bg-success-light">&quot;regex&quot;</span></span><span class="bg-null">
+);
+
+export const number = guard(isNumber);
+
+export const natural = number.refine(
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="53"><span class="badge badge-secondary">53</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="53">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="53"><span class="bg-null">(x: number) =&gt; x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="54"><span class="badge badge-warning">54</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="54">&lt;</span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="55"><span class="badge badge-warning">55</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="55">&gt;</span><span class="stryker-original-code" data-mutant="54"><span class="stryker-original-code" data-mutant="55"><span class="bg-warning-light">&gt;=</span></span></span><span class="bg-null"> 0 </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="56"><span class="badge badge-danger">56</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="56">||</span><span class="stryker-original-code" data-mutant="56"><span class="bg-danger-light">&amp;&amp;</span></span><span class="bg-null"> x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="57"><span class="badge badge-warning">57</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="57">!==</span><span class="stryker-original-code" data-mutant="57"><span class="bg-warning-light">===</span></span><span class="bg-null"> Math.floor(x)</span></span><span class="bg-null">
+);
+
+// tslint:disable-next-line:no-any Need this for casting any function into shape
+export const isFunction = guard&lt;(...args: any[]) =&gt; any&gt;(
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="58"><span class="badge badge-secondary">58</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="58">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="58"><span class="bg-null">(x): x is ((...args: unknown[]) =&gt; unknown) =&gt; isFunctionTest(x)</span></span><span class="bg-null">,
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="59"><span class="badge badge-success">59</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="59">&quot;&quot;</span><span class="stryker-original-code" data-mutant="59"><span class="bg-success-light">&quot;isFunction&quot;</span></span><span class="bg-null">
+);
+
+export const boolean = guard&lt;boolean&gt;(
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="60"><span class="badge badge-secondary">60</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="60">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="60"><span class="bg-null">(x): x is boolean =&gt; x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="61"><span class="badge badge-warning">61</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="61">!==</span><span class="stryker-original-code" data-mutant="61"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="62"><span class="badge badge-warning">62</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="62">false</span><span class="stryker-original-code" data-mutant="62"><span class="bg-warning-light">true</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="63"><span class="badge badge-warning">63</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="63">&amp;&amp;</span><span class="stryker-original-code" data-mutant="63"><span class="bg-warning-light">||</span></span><span class="bg-null"> x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="64"><span class="badge badge-warning">64</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="64">!==</span><span class="stryker-original-code" data-mutant="64"><span class="bg-warning-light">===</span></span><span class="bg-null"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="65"><span class="badge badge-warning">65</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="65">true</span><span class="stryker-original-code" data-mutant="65"><span class="bg-warning-light">false</span></span></span><span class="bg-null">,
+  </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="66"><span class="badge badge-warning">66</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="66">&quot;&quot;</span><span class="stryker-original-code" data-mutant="66"><span class="bg-warning-light">&quot;boolean&quot;</span></span><span class="bg-null">
+);
+
+export const object = guard&lt;object&gt;(isObject);
+
+export const isArray = guard&lt;ArrayLike&lt;unknown&gt;&gt;(Array.isArray);
+
+const isString = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="67"><span class="badge badge-warning">67</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="67">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="67"><span class="bg-warning-light">(x: unknown): x is string =&gt; typeof x </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="68"><span class="badge badge-warning">68</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="68">!==</span><span class="stryker-original-code" data-mutant="68"><span class="bg-warning-light">===</span></span><span class="bg-warning-light"> </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="69"><span class="badge badge-warning">69</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="69">&quot;&quot;</span><span class="stryker-original-code" data-mutant="69"><span class="bg-warning-light">&quot;string&quot;</span></span></span><span class="bg-null">;
+export const string = guard&lt;string&gt;(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="70"><span class="badge badge-warning">70</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="70">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="70"><span class="bg-warning-light">(x): x is string =&gt; isString(x)</span></span><span class="bg-null">, </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="71"><span class="badge badge-warning">71</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="71">&quot;&quot;</span><span class="stryker-original-code" data-mutant="71"><span class="bg-warning-light">&quot;string&quot;</span></span><span class="bg-null">);
+
+/**
+ * Union is a good tool to make sure that the validated value
+ * is in the union of all the validators passed in. Basically an `or`
+ * operator for validators.
+ */
+export function some&lt;A, B, C, D&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;,
+  toValidEitherC: Validator&lt;C&gt;,
+  toValidEitherD: Validator&lt;D&gt;
+): Validator&lt;A | B | C | D&gt;;
+
+export function some&lt;A, B, C&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;,
+  toValidEitherC: Validator&lt;C&gt;
+): Validator&lt;A | B | C&gt;;
+
+export function some&lt;A, B&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;
+): Validator&lt;A | B&gt;;
+
+export function some&lt;A&gt;(...args: Validator&lt;A&gt;[]): Validator&lt;A&gt;;
+
+export function some(...args: Validator&lt;unknown&gt;[]): Validator&lt;unknown&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="72"><span class="badge badge-warning">72</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="72">{}</span><span class="stryker-original-code" data-mutant="72"><span class="bg-warning-light">{
+  const validateUnion: ValidatorFn&lt;unknown&gt; = value =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="73"><span class="badge badge-warning">73</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="73">{}</span><span class="stryker-original-code" data-mutant="73"><span class="bg-warning-light">{
+    const errors: string[] = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="74"><span class="badge badge-warning">74</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="74">[&#039;Stryker was here&#039;]</span><span class="stryker-original-code" data-mutant="74"><span class="bg-warning-light">[]</span></span><span class="bg-warning-light">;
+    if (
+      </span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="75"><span class="badge badge-warning">75</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="75">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="76"><span class="badge badge-warning">76</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="76">false</span><span class="stryker-original-code" data-mutant="75"><span class="stryker-original-code" data-mutant="76"><span class="bg-warning-light">args.some(fnTest =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="77"><span class="badge badge-warning">77</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="77">{}</span><span class="stryker-original-code" data-mutant="77"><span class="bg-warning-light">{
+        const result = fnTest(value);
+        if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="78"><span class="badge badge-warning">78</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="78">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="79"><span class="badge badge-warning">79</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="79">false</span><span class="stryker-original-code" data-mutant="78"><span class="stryker-original-code" data-mutant="79"><span class="bg-warning-light">result.isRight()</span></span></span><span class="bg-warning-light">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="80"><span class="badge badge-warning">80</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="80">{}</span><span class="stryker-original-code" data-mutant="80"><span class="bg-warning-light">{
+          return </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="81"><span class="badge badge-warning">81</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="81">false</span><span class="stryker-original-code" data-mutant="81"><span class="bg-warning-light">true</span></span><span class="bg-warning-light">;
+        }</span></span><span class="bg-warning-light">
+        if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="82"><span class="badge badge-secondary">82</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="82">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="83"><span class="badge badge-warning">83</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="83">true</span><span class="stryker-original-code" data-mutant="82"><span class="stryker-original-code" data-mutant="83"><span class="bg-warning-light">result.isLeft()</span></span></span><span class="bg-warning-light">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="84"><span class="badge badge-warning">84</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="84">{}</span><span class="stryker-original-code" data-mutant="84"><span class="bg-warning-light">{
+          errors.push(result.value);
+        }</span></span><span class="bg-warning-light">
+        return </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="85"><span class="badge badge-warning">85</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="85">true</span><span class="stryker-original-code" data-mutant="85"><span class="bg-warning-light">false</span></span><span class="bg-warning-light">;
+      }</span></span><span class="bg-warning-light">)</span></span></span><span class="bg-warning-light">
+    ) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="86"><span class="badge badge-warning">86</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="86">{}</span><span class="stryker-original-code" data-mutant="86"><span class="bg-warning-light">{
+      return right(value);
+    }</span></span><span class="bg-warning-light">
+    return left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="87"><span class="badge badge-warning">87</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="87">&quot;&quot;</span><span class="stryker-original-code" data-mutant="87"><span class="bg-warning-light">`fail some(${errors.join(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="88"><span class="badge badge-success">88</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="88">&quot;&quot;</span><span class="stryker-original-code" data-mutant="88"><span class="bg-warning-light">&quot;, &quot;</span></span><span class="bg-warning-light">)})`</span></span><span class="bg-warning-light">);
+  }</span></span><span class="bg-warning-light">;
+  return toValidator(validateUnion);
+}</span></span><span class="bg-null">
+
+/**
+ * Intersection is a good tool to make sure that the validated value
+ * is in the intersection of all the validators passed in. Basically an `and`
+ * operator for validators
+ */
+export function every&lt;A, B, C, D&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;,
+  toValidEitherC: Validator&lt;C&gt;,
+  toValidEitherD: Validator&lt;D&gt;
+): Validator&lt;A &amp; B &amp; C &amp; D&gt;;
+export function every&lt;A, B, C&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;,
+  toValidEitherC: Validator&lt;C&gt;
+): Validator&lt;A &amp; B &amp; C&gt;;
+export function every&lt;A, B&gt;(
+  toValidEitherA: Validator&lt;A&gt;,
+  toValidEitherB: Validator&lt;B&gt;
+): Validator&lt;A &amp; B&gt;;
+
+export function every&lt;A&gt;(...args: Validator&lt;A&gt;[]): Validator&lt;A&gt;;
+
+export function every(...args: Validator&lt;unknown&gt;[]): Validator&lt;unknown&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="89"><span class="badge badge-secondary">89</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="89">{}</span><span class="stryker-original-code" data-mutant="89"><span class="bg-null">{
+  const validateIntersection: ValidatorFn&lt;unknown&gt; = value =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="90"><span class="badge badge-secondary">90</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="90">{}</span><span class="stryker-original-code" data-mutant="90"><span class="bg-null">{
+    const errors: string[] = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="91"><span class="badge badge-success">91</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="91">[&#039;Stryker was here&#039;]</span><span class="stryker-original-code" data-mutant="91"><span class="bg-success-light">[]</span></span><span class="bg-null">;
+    if (
+      </span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="92"><span class="badge badge-warning">92</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="92">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="93"><span class="badge badge-warning">93</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="93">false</span><span class="stryker-original-code" data-mutant="92"><span class="stryker-original-code" data-mutant="93"><span class="bg-warning-light">args.every(fnTest =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="94"><span class="badge badge-secondary">94</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="94">{}</span><span class="stryker-original-code" data-mutant="94"><span class="bg-warning-light">{
+        const result = fnTest(value);
+        if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="95"><span class="badge badge-secondary">95</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="95">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="96"><span class="badge badge-warning">96</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="96">false</span><span class="stryker-original-code" data-mutant="95"><span class="stryker-original-code" data-mutant="96"><span class="bg-warning-light">result.isRight()</span></span></span><span class="bg-warning-light">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="97"><span class="badge badge-warning">97</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="97">{}</span><span class="stryker-original-code" data-mutant="97"><span class="bg-warning-light">{
+          return </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="98"><span class="badge badge-warning">98</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="98">false</span><span class="stryker-original-code" data-mutant="98"><span class="bg-warning-light">true</span></span><span class="bg-warning-light">;
+        }</span></span><span class="bg-warning-light">
+        if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="99"><span class="badge badge-danger">99</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="99">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="100"><span class="badge badge-secondary">100</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="100">false</span><span class="stryker-original-code" data-mutant="99"><span class="stryker-original-code" data-mutant="100"><span class="bg-danger-light">result.isLeft()</span></span></span><span class="bg-warning-light">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="101"><span class="badge badge-success">101</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="101">{}</span><span class="stryker-original-code" data-mutant="101"><span class="bg-warning-light">{
+          errors.push(result.value);
+        }</span></span><span class="bg-warning-light">
+        return </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BooleanSubstitution" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="102"><span class="badge badge-success">102</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="102">true</span><span class="stryker-original-code" data-mutant="102"><span class="bg-warning-light">false</span></span><span class="bg-warning-light">;
+      }</span></span><span class="bg-warning-light">)</span></span></span><span class="bg-null">
+    ) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="103"><span class="badge badge-warning">103</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="103">{}</span><span class="stryker-original-code" data-mutant="103"><span class="bg-warning-light">{
+      return right(value);
+    }</span></span><span class="bg-null">
+    return left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="104"><span class="badge badge-success">104</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="104">&quot;&quot;</span><span class="stryker-original-code" data-mutant="104"><span class="bg-success-light">`fail every(${errors.join(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="105"><span class="badge badge-danger">105</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="105">&quot;&quot;</span><span class="stryker-original-code" data-mutant="105"><span class="bg-danger-light">&quot;, &quot;</span></span><span class="bg-success-light">)})`</span></span><span class="bg-null">);
+  }</span></span><span class="bg-null">;
+  return toValidator(validateIntersection);
+}</span></span><span class="bg-null">
+export const isPartial = &lt;A extends {}&gt;(
+  testShape: { [key in keyof A]: Validator&lt;A[key]&gt; }
+): Validator&lt;Partial&lt;A&gt;&gt; =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="106"><span class="badge badge-secondary">106</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="106">{}</span><span class="stryker-original-code" data-mutant="106"><span class="bg-null">{
+  const validatePartial: ValidatorFn&lt;Partial&lt;A&gt;&gt; = value =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="107"><span class="badge badge-secondary">107</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="107">{}</span><span class="stryker-original-code" data-mutant="107"><span class="bg-null">{
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="108"><span class="badge badge-secondary">108</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="108">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="PrefixUnaryExpression" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="109"><span class="badge badge-secondary">109</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="109">isObject(value)</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="110"><span class="badge badge-secondary">110</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="110">false</span><span class="stryker-original-code" data-mutant="108"><span class="stryker-original-code" data-mutant="109"><span class="stryker-original-code" data-mutant="110"><span class="bg-null">!isObject(value)</span></span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="111"><span class="badge badge-secondary">111</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="111">{}</span><span class="stryker-original-code" data-mutant="111"><span class="bg-null">{
+      return left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="112"><span class="badge badge-warning">112</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="112">&quot;&quot;</span><span class="stryker-original-code" data-mutant="112"><span class="bg-warning-light">`notAnObject(${JSON.stringify(value)})`</span></span><span class="bg-null">);
+    }</span></span><span class="bg-null">
+    const shapeMatched = shapeMatch(testShape, value);
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="113"><span class="badge badge-secondary">113</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="113">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="114"><span class="badge badge-secondary">114</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="114">true</span><span class="stryker-original-code" data-mutant="113"><span class="stryker-original-code" data-mutant="114"><span class="bg-null">shapeMatched.validated.length </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="115"><span class="badge badge-danger">115</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="115">&lt;=</span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="116"><span class="badge badge-danger">116</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="116">&gt;=</span><span class="stryker-original-code" data-mutant="115"><span class="stryker-original-code" data-mutant="116"><span class="bg-danger-light">&gt;</span></span></span><span class="bg-null"> 0</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="117"><span class="badge badge-danger">117</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="117">{}</span><span class="stryker-original-code" data-mutant="117"><span class="bg-danger-light">{
+      return right(value);
+    }</span></span><span class="bg-null">
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="118"><span class="badge badge-secondary">118</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="118">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="119"><span class="badge badge-danger">119</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="119">true</span><span class="stryker-original-code" data-mutant="118"><span class="stryker-original-code" data-mutant="119"><span class="bg-danger-light">shapeMatched.validationErrors.length </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="120"><span class="badge badge-success">120</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="120">!==</span><span class="stryker-original-code" data-mutant="120"><span class="bg-danger-light">===</span></span><span class="bg-danger-light"> 0</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="121"><span class="badge badge-warning">121</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="121">{}</span><span class="stryker-original-code" data-mutant="121"><span class="bg-warning-light">{
+      return right(value);
+    }</span></span><span class="bg-null">
+    return left(
+      </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="122"><span class="badge badge-danger">122</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="122">&quot;&quot;</span><span class="stryker-original-code" data-mutant="122"><span class="bg-danger-light">`fail partial(${shapeMatched.validationErrors.map(
+        </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="123"><span class="badge badge-danger">123</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="123">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="123"><span class="bg-danger-light">([key, error]) =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="124"><span class="badge badge-danger">124</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="124">&quot;&quot;</span><span class="stryker-original-code" data-mutant="124"><span class="bg-danger-light">`@${key} -&gt; ${error}`</span></span></span><span class="bg-danger-light">
+      )})`</span></span><span class="bg-null">
+    );
+  }</span></span><span class="bg-null">;
+  return toValidator(validatePartial);
+}</span></span><span class="bg-null">;
+/**
+ * Good for duck typing an object, with optional values
+ * @param testShape Shape of validators, to ensure we match the shape
+ */
+export const partial = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="125"><span class="badge badge-warning">125</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="125">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="125"><span class="bg-warning-light">&lt;A extends {}&gt;(
+  testShape: { [key in keyof A]: Validator&lt;A[key]&gt; }
+): Validator&lt;Partial&lt;A&gt;&gt; =&gt; isPartial(testShape)</span></span><span class="bg-null">;
+/**
+ * Good for duck typing an object
+ * @param testShape Shape of validators, to ensure we match the shape
+ */
+
+export const isShape = &lt;A extends {}&gt;(
+  testShape: { [key in keyof A]: Validator&lt;A[key]&gt; }
+) =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="126"><span class="badge badge-secondary">126</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="126">{}</span><span class="stryker-original-code" data-mutant="126"><span class="bg-null">{
+  const validateShape: ValidatorFn&lt;A&gt; = value =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="127"><span class="badge badge-secondary">127</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="127">{}</span><span class="stryker-original-code" data-mutant="127"><span class="bg-null">{
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="128"><span class="badge badge-secondary">128</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="128">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="129"><span class="badge badge-secondary">129</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="129">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="PrefixUnaryExpression" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="130"><span class="badge badge-secondary">130</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="130">isObject(value)</span><span class="stryker-original-code" data-mutant="128"><span class="stryker-original-code" data-mutant="129"><span class="stryker-original-code" data-mutant="130"><span class="bg-null">!isObject(value)</span></span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="131"><span class="badge badge-secondary">131</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="131">{}</span><span class="stryker-original-code" data-mutant="131"><span class="bg-null">{
+      return left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="132"><span class="badge badge-danger">132</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="132">&quot;&quot;</span><span class="stryker-original-code" data-mutant="132"><span class="bg-danger-light">`notAnObject(${JSON.stringify(value)})`</span></span><span class="bg-null">);
+    }</span></span><span class="bg-null">
+    const shapeMatched = shapeMatch(testShape, value);
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="133"><span class="badge badge-success">133</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="133">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="134"><span class="badge badge-success">134</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="134">false</span><span class="stryker-original-code" data-mutant="133"><span class="stryker-original-code" data-mutant="134"><span class="bg-success-light">shapeMatched.validationErrors.length </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="135"><span class="badge badge-success">135</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="135">&lt;=</span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="136"><span class="badge badge-warning">136</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="136">&gt;=</span><span class="stryker-original-code" data-mutant="135"><span class="stryker-original-code" data-mutant="136"><span class="bg-warning-light">&gt;</span></span></span><span class="bg-success-light"> 0</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="137"><span class="badge badge-success">137</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="137">{}</span><span class="stryker-original-code" data-mutant="137"><span class="bg-success-light">{
+      return left(
+        </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="138"><span class="badge badge-success">138</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="138">&quot;&quot;</span><span class="stryker-original-code" data-mutant="138"><span class="bg-success-light">`validationErrors(${shapeMatched.validationErrors
+          .map(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="139"><span class="badge badge-success">139</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="139">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="139"><span class="bg-success-light">([key, error]) =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="140"><span class="badge badge-success">140</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="140">&quot;&quot;</span><span class="stryker-original-code" data-mutant="140"><span class="bg-success-light">`@${key} -&gt; ${error}`</span></span></span><span class="bg-success-light">)
+          .join(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="141"><span class="badge badge-success">141</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="141">&quot;&quot;</span><span class="stryker-original-code" data-mutant="141"><span class="bg-success-light">&quot;, &quot;</span></span><span class="bg-success-light">)})`</span></span><span class="bg-success-light">
+      );
+    }</span></span><span class="bg-null">
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="142"><span class="badge badge-success">142</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="142">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="143"><span class="badge badge-warning">143</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="143">false</span><span class="stryker-original-code" data-mutant="142"><span class="stryker-original-code" data-mutant="143"><span class="bg-warning-light">shapeMatched.missing.length </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="144"><span class="badge badge-warning">144</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="144">&lt;=</span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="145"><span class="badge badge-warning">145</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="145">&gt;=</span><span class="stryker-original-code" data-mutant="144"><span class="stryker-original-code" data-mutant="145"><span class="bg-warning-light">&gt;</span></span></span><span class="bg-warning-light"> 0</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="146"><span class="badge badge-success">146</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="146">{}</span><span class="stryker-original-code" data-mutant="146"><span class="bg-success-light">{
+      return left(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="147"><span class="badge badge-success">147</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="147">&quot;&quot;</span><span class="stryker-original-code" data-mutant="147"><span class="bg-success-light">`missing(${shapeMatched.missing.join(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="148"><span class="badge badge-danger">148</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="148">&quot;&quot;</span><span class="stryker-original-code" data-mutant="148"><span class="bg-danger-light">&quot;, &quot;</span></span><span class="bg-success-light">)})`</span></span><span class="bg-success-light">);
+    }</span></span><span class="bg-null">
+    return right(value as A);
+  }</span></span><span class="bg-null">;
+  return toValidator(validateShape);
+}</span></span><span class="bg-null">;
+
+export const shape = </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="149"><span class="badge badge-success">149</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="149">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="149"><span class="bg-success-light">&lt;A extends {}&gt;(
+  testShape: { [key in keyof A]: Validator&lt;A[key]&gt; }
+): Validator&lt;A&gt; =&gt; isShape(testShape)</span></span><span class="bg-null">;
+
+export function tuple&lt;A&gt;(tupleShape: [Validator&lt;A&gt;]): Validator&lt;[A]&gt;;
+
+export function tuple&lt;A, B&gt;(
+  tupleShape: [Validator&lt;A&gt;, Validator&lt;B&gt;]
+): Validator&lt;[A, B]&gt;;
+
+export function tuple&lt;A, B, C&gt;(
+  tupleShape: [Validator&lt;A&gt;, Validator&lt;B&gt;, Validator&lt;C&gt;]
+): Validator&lt;[A, B, C]&gt;;
+
+export function tuple(tupleShape: ArrayLike&lt;Validator&lt;unknown&gt;&gt;) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="150"><span class="badge badge-secondary">150</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="150">{}</span><span class="stryker-original-code" data-mutant="150"><span class="bg-null">{
+  return every(
+    isArray,
+    isShape({ ...tupleShape, length: literal(tupleShape.length) })
+  );
+}</span></span><span class="bg-null">
+
+/**
+ * We would like to validate that all of the array is of the same type
+ * @param validator What is the validator for the values in the array
+ */
+export function arrayOf&lt;A&gt;(validator: Validator&lt;A&gt;): Validator&lt;A[]&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="151"><span class="badge badge-secondary">151</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="151">{}</span><span class="stryker-original-code" data-mutant="151"><span class="bg-null">{
+  return toValidator(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="152"><span class="badge badge-secondary">152</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="152">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="152"><span class="bg-null">value =&gt;
+    isArray(value)
+      .map(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="153"><span class="badge badge-secondary">153</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="153">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="153"><span class="bg-null">x =&gt; Array.from(x)</span></span><span class="bg-null">)
+      .chain(currentArray =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="154"><span class="badge badge-secondary">154</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="154">{}</span><span class="stryker-original-code" data-mutant="154"><span class="bg-null">{
+        const lefts = Array.from(currentArray)
+          .map(validator)
+          .map(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="155"><span class="badge badge-secondary">155</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="155">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="155"><span class="bg-null">(x, i): [Either&lt;string, A&gt;, number] =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrayLiteral" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="156"><span class="badge badge-secondary">156</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="156">[]</span><span class="stryker-original-code" data-mutant="156"><span class="bg-null">[x, i]</span></span></span><span class="bg-null">)
+          .filter(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="157"><span class="badge badge-danger">157</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="157">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="157"><span class="bg-danger-light">([x]) =&gt; x.isLeft()</span></span><span class="bg-null">);
+        if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="158"><span class="badge badge-danger">158</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="158">false</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="159"><span class="badge badge-warning">159</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="159">true</span><span class="stryker-original-code" data-mutant="158"><span class="stryker-original-code" data-mutant="159"><span class="bg-danger-light">lefts.length </span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="160"><span class="badge badge-success">160</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="160">&lt;=</span><a href="#" class="stryker-mutant-button" tabindex="0" title="BinaryExpression" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="161"><span class="badge badge-success">161</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="161">&gt;=</span><span class="stryker-original-code" data-mutant="160"><span class="stryker-original-code" data-mutant="161"><span class="bg-danger-light">&gt;</span></span></span><span class="bg-danger-light"> 0</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="162"><span class="badge badge-danger">162</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="162">{}</span><span class="stryker-original-code" data-mutant="162"><span class="bg-danger-light">{
+          return left(
+            </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: TimedOut" data-mutant-status-annotation="warning" data-mutant-status="3" data-mutant="163"><span class="badge badge-warning">163</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="163">&quot;&quot;</span><span class="stryker-original-code" data-mutant="163"><span class="bg-danger-light">`validationErrors(${lefts
+              .map(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="ArrowFunction" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="164"><span class="badge badge-danger">164</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="164">() =&gt; undefined</span><span class="stryker-original-code" data-mutant="164"><span class="bg-danger-light">([left, index]) =&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="165"><span class="badge badge-danger">165</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="165">&quot;&quot;</span><span class="stryker-original-code" data-mutant="165"><span class="bg-danger-light">`@${index} -&gt; ${left.value}`</span></span></span><span class="bg-danger-light">)
+              .join(</span><a href="#" class="stryker-mutant-button" tabindex="0" title="StringLiteral" data-content="status: Survived" data-mutant-status-annotation="danger" data-mutant-status="2" data-mutant="166"><span class="badge badge-danger">166</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="166">&quot;&quot;</span><span class="stryker-original-code" data-mutant="166"><span class="bg-danger-light">&quot;, &quot;</span></span><span class="bg-danger-light">)}`</span></span><span class="bg-danger-light">
+          );
+        }</span></span><span class="bg-null">
+        return right(value as A[]);
+      }</span></span><span class="bg-null">)</span></span><span class="bg-null">
+  );
+}</span></span><span class="bg-null">
+export interface ChainMatches&lt;OutcomeType&gt; {
+  when&lt;B&gt;(
+    test: Validator&lt;B&gt;,
+    thenFn: (b: B) =&gt; OutcomeType
+  ): ChainMatches&lt;OutcomeType&gt;;
+  defaultTo(value: OutcomeType): OutcomeType;
+  defaultToLazy(getValue: () =&gt; OutcomeType): OutcomeType;
+}
+
+class Matched&lt;OutcomeType&gt; implements ChainMatches&lt;OutcomeType&gt; {
+  constructor(private value: OutcomeType) {}
+  when&lt;B&gt;(
+    fnTest: Validator&lt;B&gt;,
+    thenFn: (b: B) =&gt; OutcomeType
+  ): ChainMatches&lt;OutcomeType&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="167"><span class="badge badge-secondary">167</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="167">{}</span><span class="stryker-original-code" data-mutant="167"><span class="bg-null">{
+    return this as ChainMatches&lt;OutcomeType&gt;;
+  }</span></span><span class="bg-null">
+  defaultTo(defaultValue: OutcomeType) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="168"><span class="badge badge-secondary">168</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="168">{}</span><span class="stryker-original-code" data-mutant="168"><span class="bg-null">{
+    return this.value;
+  }</span></span><span class="bg-null">
+  defaultToLazy(getValue: () =&gt; OutcomeType): OutcomeType </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="169"><span class="badge badge-secondary">169</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="169">{}</span><span class="stryker-original-code" data-mutant="169"><span class="bg-null">{
+    return this.value;
+  }</span></span><span class="bg-null">
+}
+
+// tslint:disable-next-line:max-classes-per-file
+class MatchMore&lt;OutcomeType&gt; implements ChainMatches&lt;OutcomeType&gt; {
+  constructor(private a: unknown) {}
+
+  when&lt;B&gt;(
+    toValidEither: Validator&lt;B&gt;,
+    thenFn: (b: B) =&gt; OutcomeType
+  ): ChainMatches&lt;OutcomeType&gt; </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="170"><span class="badge badge-secondary">170</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="170">{}</span><span class="stryker-original-code" data-mutant="170"><span class="bg-null">{
+    const testedValue = toValidEither(this.a);
+    if (</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="171"><span class="badge badge-secondary">171</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="171">true</span><a href="#" class="stryker-mutant-button" tabindex="0" title="IfStatement" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="172"><span class="badge badge-secondary">172</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="172">false</span><span class="stryker-original-code" data-mutant="171"><span class="stryker-original-code" data-mutant="172"><span class="bg-null">testedValue.isRight()</span></span></span><span class="bg-null">) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="173"><span class="badge badge-success">173</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="173">{}</span><span class="stryker-original-code" data-mutant="173"><span class="bg-success-light">{
+      return new Matched&lt;OutcomeType&gt;(
+        thenFn(testedValue.value)
+      ) as ChainMatches&lt;OutcomeType&gt;;
+    }</span></span><span class="bg-null">
+    return this as ChainMatches&lt;OutcomeType&gt;;
+  }</span></span><span class="bg-null">
+
+  defaultTo(value: OutcomeType) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="174"><span class="badge badge-secondary">174</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="174">{}</span><span class="stryker-original-code" data-mutant="174"><span class="bg-null">{
+    return value;
+  }</span></span><span class="bg-null">
+
+  defaultToLazy(getValue: () =&gt; OutcomeType): OutcomeType </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: RuntimeError" data-mutant-status-annotation="secondary" data-mutant-status="4" data-mutant="175"><span class="badge badge-secondary">175</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="175">{}</span><span class="stryker-original-code" data-mutant="175"><span class="bg-null">{
+    return getValue();
+  }</span></span><span class="bg-null">
+}
+
+/**
+ * Want to be able to bring in the declarative nature that a functional programming
+ * language feature of the pattern matching and the switch statement. With the destructors
+ * the only thing left was to find the correct structure then move move forward.
+ * Using a structure in chainable fashion allows for a syntax that works with typescript
+ * while looking similar to matches statements in other languages
+ *
+ * Use: matches(&#039;a value&#039;).when(matches.isNumber, (aNumber) =&gt; aNumber + 4).defaultTo(&#039;fallback value&#039;)
+ */
+
+export const matches = Object.assign(
+  function matchesFn&lt;Result&gt;(value: unknown) </span><a href="#" class="stryker-mutant-button" tabindex="0" title="Block" data-content="status: Killed" data-mutant-status-annotation="success" data-mutant-status="1" data-mutant="176"><span class="badge badge-success">176</span></a><span class="badge badge-info stryker-mutant-replacement" hidden="hidden" data-mutant="176">{}</span><span class="stryker-original-code" data-mutant="176"><span class="bg-success-light">{
+    return new MatchMore&lt;Result&gt;(value);
+  }</span></span><span class="bg-null">,
+  {
+    array: isArray,
+    arrayOf,
+    some,
+    tuple,
+    regex,
+    number,
+    natural,
+    isFunction,
+    object,
+    string,
+    shape,
+    partial,
+    literal,
+    every,
+    guard,
+    any,
+    boolean
+  }
+);
+export default matches;</span>
+</code></pre></div>
+<div class="col-lg-5"><table class="table table-sm table-hover mutant-table"><thead><tr><th>#</th>
+<th>Mutator</th>
+<th>State</th>
+<th>Location</th>
+<th>Original</th>
+<th>Replacement</th></tr></thead>
+<tbody><tr><th>0</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>2
+:
+17</td>
+<td><code>( :  ...   ]"</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>1</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>3
+:
+36</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>2</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>3
+:
+40</td>
+<td><code>"[   ...   ]"</code></td>
+<td><code>""</code></td></tr>
+<tr><th>3</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>3
+:
+58</td>
+<td><code>||</code></td>
+<td><code>&&</code></td></tr>
+<tr><th>4</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>4
+:
+36</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>5</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>4
+:
+40</td>
+<td><code>"[   ...   ]"</code></td>
+<td><code>""</code></td></tr>
+<tr><th>6</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>5
+:
+23</td>
+<td><code>( :  ...    "</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>7</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>5
+:
+63</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>8</th>
+<td>StringLiteral</td>
+<td>RuntimeError</td>
+<td>5
+:
+67</td>
+<td><code>"        "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>9</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>6
+:
+17</td>
+<td><code>( :  ...    "</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>10</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>6
+:
+55</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>11</th>
+<td>StringLiteral</td>
+<td>RuntimeError</td>
+<td>6
+:
+59</td>
+<td><code>"      "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>12</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>23
+:
+65</td>
+<td><code>{
+   ...  ;
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>13</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>24
+:
+45</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>14</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>27
+:
+15</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>15</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>28
+:
+24</td>
+<td><code>`    ...   }`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>16</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>30
+:
+6</td>
+<td><code>=></code></td>
+<td><code>() =></code></td></tr>
+<tr><th>17</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>53
+:
+2</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>18</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>54
+:
+45</td>
+<td><code>(    ...    )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>19</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>56
+:
+6</td>
+<td><code>=>
+  ...)})`)</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>20</th>
+<td>ConditionalExpression</td>
+<td>Killed</td>
+<td>57
+:
+8</td>
+<td><code>(      )</code></td>
+<td><code></code></td></tr>
+<tr><th>21</th>
+<td>ConditionalExpression</td>
+<td>Survived</td>
+<td>57
+:
+8</td>
+<td><code>(      )</code></td>
+<td><code></code></td></tr>
+<tr><th>22</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>59
+:
+17</td>
+<td><code>`    ... )})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>23</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>66
+:
+16</td>
+<td><code>{
+   ...});
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>24</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>69
+:
+75</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>25</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>78
+:
+2</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>26</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>84
+:
+20</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>27</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>87
+:
+10</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>28</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>87
+:
+10</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>29</th>
+<td>Block</td>
+<td>Killed</td>
+<td>87
+:
+24</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>30</th>
+<td>Block</td>
+<td>Killed</td>
+<td>90
+:
+19</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>31</th>
+<td>ArrayLiteral</td>
+<td>RuntimeError</td>
+<td>91
+:
+38</td>
+<td><code>[   ,      ]</code></td>
+<td><code>[]</code></td></tr>
+<tr><th>32</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>93
+:
+16</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>33</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>97
+:
+13</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>34</th>
+<td>ArrayLiteral</td>
+<td>RuntimeError</td>
+<td>102
+:
+17</td>
+<td><code>[]</code></td>
+<td><code>['   ...   ']</code></td></tr>
+<tr><th>35</th>
+<td>ArrayLiteral</td>
+<td>RuntimeError</td>
+<td>102
+:
+30</td>
+<td><code>[]</code></td>
+<td><code>['   ...   ']</code></td></tr>
+<tr><th>36</th>
+<td>ArrayLiteral</td>
+<td>RuntimeError</td>
+<td>102
+:
+52</td>
+<td><code>[]</code></td>
+<td><code>['   ...   ']</code></td></tr>
+<tr><th>37</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>128
+:
+33</td>
+<td><code>||</code></td>
+<td><code>&&</code></td></tr>
+<tr><th>38</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>128
+:
+36</td>
+<td><code>"    "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>39</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>129
+:
+22</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>40</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>130
+:
+46</td>
+<td><code>(    ...)})`)</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>41</th>
+<td>ConditionalExpression</td>
+<td>Killed</td>
+<td>131
+:
+4</td>
+<td><code>(     )</code></td>
+<td><code></code></td></tr>
+<tr><th>42</th>
+<td>ConditionalExpression</td>
+<td>Killed</td>
+<td>131
+:
+4</td>
+<td><code>(     )</code></td>
+<td><code></code></td></tr>
+<tr><th>43</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>133
+:
+13</td>
+<td><code>`    ... )})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>44</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>138
+:
+25</td>
+<td><code>() =></code></td>
+<td><code>() =></code></td></tr>
+<tr><th>45</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>138
+:
+31</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>46</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>138
+:
+37</td>
+<td><code>"   "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>47</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>142
+:
+2</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>48</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>144
+:
+4</td>
+<td><code>( ): ...  ===</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>49</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>144
+:
+21</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>50</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>145
+:
+4</td>
+<td><code>`    ... )}]`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>51</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>150
+:
+2</td>
+<td><code>( ): ...   =></code></td>
+<td><code>() =></code></td></tr>
+<tr><th>52</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>151
+:
+2</td>
+<td><code>"     "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>53</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>157
+:
+2</td>
+<td><code>( :  ...  ( )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>54</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>157
+:
+19</td>
+<td><code>>=</code></td>
+<td><code><</code></td></tr>
+<tr><th>55</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>157
+:
+19</td>
+<td><code>>=</code></td>
+<td><code>></code></td></tr>
+<tr><th>56</th>
+<td>BinaryExpression</td>
+<td>Survived</td>
+<td>157
+:
+24</td>
+<td><code>&&</code></td>
+<td><code>||</code></td></tr>
+<tr><th>57</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>157
+:
+29</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>58</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>162
+:
+2</td>
+<td><code>( ): ...  ( )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>59</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>163
+:
+2</td>
+<td><code>"          "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>60</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>167
+:
+2</td>
+<td><code>( ): ...  ===</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>61</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>167
+:
+25</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>62</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>167
+:
+29</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>63</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>167
+:
+34</td>
+<td><code>||</code></td>
+<td><code>&&</code></td></tr>
+<tr><th>64</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>167
+:
+39</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>65</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>167
+:
+43</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>66</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>168
+:
+2</td>
+<td><code>"       "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>67</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>175
+:
+17</td>
+<td><code>( :  ...    "</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>68</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>175
+:
+55</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>69</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>175
+:
+59</td>
+<td><code>"      "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>70</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>176
+:
+36</td>
+<td><code>( ): ...  ( )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>71</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>176
+:
+69</td>
+<td><code>"      "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>72</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>203
+:
+72</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>73</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>204
+:
+55</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>74</th>
+<td>ArrayLiteral</td>
+<td>TimedOut</td>
+<td>205
+:
+29</td>
+<td><code>[]</code></td>
+<td><code>['   ...   ']</code></td></tr>
+<tr><th>75</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>207
+:
+6</td>
+<td><code>.    ...   })</code></td>
+<td><code></code></td></tr>
+<tr><th>76</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>207
+:
+6</td>
+<td><code>.    ...   })</code></td>
+<td><code></code></td></tr>
+<tr><th>77</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>207
+:
+26</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>78</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>209
+:
+12</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>79</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>209
+:
+12</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>80</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>209
+:
+30</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>81</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>210
+:
+17</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>82</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>212
+:
+12</td>
+<td><code>.      ()</code></td>
+<td><code></code></td></tr>
+<tr><th>83</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>212
+:
+12</td>
+<td><code>.      ()</code></td>
+<td><code></code></td></tr>
+<tr><th>84</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>212
+:
+29</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>85</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>215
+:
+15</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>86</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>217
+:
+6</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>87</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>220
+:
+16</td>
+<td><code>`    ...")})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>88</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>220
+:
+41</td>
+<td><code>", "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>89</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>248
+:
+73</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>90</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>249
+:
+62</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>91</th>
+<td>ArrayLiteral</td>
+<td>Killed</td>
+<td>250
+:
+29</td>
+<td><code>[]</code></td>
+<td><code>['   ...   ']</code></td></tr>
+<tr><th>92</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>252
+:
+6</td>
+<td><code>.    ...   })</code></td>
+<td><code></code></td></tr>
+<tr><th>93</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>252
+:
+6</td>
+<td><code>.    ...   })</code></td>
+<td><code></code></td></tr>
+<tr><th>94</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>252
+:
+27</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>95</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>254
+:
+12</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>96</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>254
+:
+12</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>97</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>254
+:
+30</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>98</th>
+<td>BooleanSubstitution</td>
+<td>TimedOut</td>
+<td>255
+:
+17</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>99</th>
+<td>IfStatement</td>
+<td>Survived</td>
+<td>257
+:
+12</td>
+<td><code>.      ()</code></td>
+<td><code></code></td></tr>
+<tr><th>100</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>257
+:
+12</td>
+<td><code>.      ()</code></td>
+<td><code></code></td></tr>
+<tr><th>101</th>
+<td>Block</td>
+<td>Killed</td>
+<td>257
+:
+29</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>102</th>
+<td>BooleanSubstitution</td>
+<td>Killed</td>
+<td>260
+:
+15</td>
+<td><code></code></td>
+<td><code></code></td></tr>
+<tr><th>103</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>262
+:
+6</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>104</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>265
+:
+16</td>
+<td><code>`    ...")})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>105</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>265
+:
+42</td>
+<td><code>", "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>106</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>271
+:
+28</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>107</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>272
+:
+60</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>108</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>273
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code></code></td></tr>
+<tr><th>109</th>
+<td>PrefixUnaryExpression</td>
+<td>RuntimeError</td>
+<td>273
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code>(     )</code></td></tr>
+<tr><th>110</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>273
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code></code></td></tr>
+<tr><th>111</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>273
+:
+26</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>112</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>274
+:
+18</td>
+<td><code>`    ... )})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>113</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>277
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>114</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>277
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>115</th>
+<td>BinaryExpression</td>
+<td>Survived</td>
+<td>277
+:
+38</td>
+<td><code>></code></td>
+<td><code><=</code></td></tr>
+<tr><th>116</th>
+<td>BinaryExpression</td>
+<td>Survived</td>
+<td>277
+:
+38</td>
+<td><code>></code></td>
+<td><code>>=</code></td></tr>
+<tr><th>117</th>
+<td>Block</td>
+<td>Survived</td>
+<td>277
+:
+43</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>118</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>280
+:
+8</td>
+<td><code>.    ...  ===</code></td>
+<td><code></code></td></tr>
+<tr><th>119</th>
+<td>IfStatement</td>
+<td>Survived</td>
+<td>280
+:
+8</td>
+<td><code>.    ...  ===</code></td>
+<td><code></code></td></tr>
+<tr><th>120</th>
+<td>BinaryExpression</td>
+<td>Killed</td>
+<td>280
+:
+45</td>
+<td><code>===</code></td>
+<td><code>!==</code></td></tr>
+<tr><th>121</th>
+<td>Block</td>
+<td>TimedOut</td>
+<td>280
+:
+52</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>122</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>284
+:
+6</td>
+<td><code>`    ... )})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>123</th>
+<td>ArrowFunction</td>
+<td>Survived</td>
+<td>285
+:
+8</td>
+<td><code>([   ...   }`</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>124</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>285
+:
+26</td>
+<td><code>`@${ ...   }`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>125</th>
+<td>ArrowFunction</td>
+<td>TimedOut</td>
+<td>295
+:
+23</td>
+<td><code><    ...    )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>126</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>305
+:
+5</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>127</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>306
+:
+49</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>128</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>307
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code></code></td></tr>
+<tr><th>129</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>307
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code></code></td></tr>
+<tr><th>130</th>
+<td>PrefixUnaryExpression</td>
+<td>RuntimeError</td>
+<td>307
+:
+8</td>
+<td><code>!    ...    )</code></td>
+<td><code>(     )</code></td></tr>
+<tr><th>131</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>307
+:
+26</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>132</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>308
+:
+18</td>
+<td><code>`    ... )})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>133</th>
+<td>IfStatement</td>
+<td>Killed</td>
+<td>311
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>134</th>
+<td>IfStatement</td>
+<td>Killed</td>
+<td>311
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>135</th>
+<td>BinaryExpression</td>
+<td>Killed</td>
+<td>311
+:
+45</td>
+<td><code>></code></td>
+<td><code><=</code></td></tr>
+<tr><th>136</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>311
+:
+45</td>
+<td><code>></code></td>
+<td><code>>=</code></td></tr>
+<tr><th>137</th>
+<td>Block</td>
+<td>Killed</td>
+<td>311
+:
+50</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>138</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>313
+:
+8</td>
+<td><code>`    ...")})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>139</th>
+<td>ArrowFunction</td>
+<td>Killed</td>
+<td>314
+:
+15</td>
+<td><code>([   ...   }`</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>140</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>314
+:
+33</td>
+<td><code>`@${ ...   }`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>141</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>315
+:
+16</td>
+<td><code>", "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>142</th>
+<td>IfStatement</td>
+<td>Killed</td>
+<td>318
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>143</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>318
+:
+8</td>
+<td><code>.    ...    ></code></td>
+<td><code></code></td></tr>
+<tr><th>144</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>318
+:
+36</td>
+<td><code>></code></td>
+<td><code><=</code></td></tr>
+<tr><th>145</th>
+<td>BinaryExpression</td>
+<td>TimedOut</td>
+<td>318
+:
+36</td>
+<td><code>></code></td>
+<td><code>>=</code></td></tr>
+<tr><th>146</th>
+<td>Block</td>
+<td>Killed</td>
+<td>318
+:
+41</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>147</th>
+<td>StringLiteral</td>
+<td>Killed</td>
+<td>319
+:
+18</td>
+<td><code>`    ...")})`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>148</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>319
+:
+55</td>
+<td><code>", "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>149</th>
+<td>ArrowFunction</td>
+<td>Killed</td>
+<td>326
+:
+21</td>
+<td><code><    ...    )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>150</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>340
+:
+65</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>151</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>351
+:
+68</td>
+<td><code>{
+   ... );
+}</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>152</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>352
+:
+21</td>
+<td><code>=>
+  ...   })</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>153</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>354
+:
+11</td>
+<td><code>=>   ...  ( )</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>154</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>355
+:
+29</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>155</th>
+<td>ArrowFunction</td>
+<td>RuntimeError</td>
+<td>358
+:
+15</td>
+<td><code>( ,  ... ,  ]</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>156</th>
+<td>ArrayLiteral</td>
+<td>RuntimeError</td>
+<td>358
+:
+54</td>
+<td><code>[ ,  ]</code></td>
+<td><code>[]</code></td></tr>
+<tr><th>157</th>
+<td>ArrowFunction</td>
+<td>Survived</td>
+<td>359
+:
+18</td>
+<td><code>([ ])...   ()</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>158</th>
+<td>IfStatement</td>
+<td>Survived</td>
+<td>360
+:
+12</td>
+<td><code>.       ></code></td>
+<td><code></code></td></tr>
+<tr><th>159</th>
+<td>IfStatement</td>
+<td>TimedOut</td>
+<td>360
+:
+12</td>
+<td><code>.       ></code></td>
+<td><code></code></td></tr>
+<tr><th>160</th>
+<td>BinaryExpression</td>
+<td>Killed</td>
+<td>360
+:
+25</td>
+<td><code>></code></td>
+<td><code><=</code></td></tr>
+<tr><th>161</th>
+<td>BinaryExpression</td>
+<td>Killed</td>
+<td>360
+:
+25</td>
+<td><code>></code></td>
+<td><code>>=</code></td></tr>
+<tr><th>162</th>
+<td>Block</td>
+<td>Survived</td>
+<td>360
+:
+30</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>163</th>
+<td>StringLiteral</td>
+<td>TimedOut</td>
+<td>362
+:
+12</td>
+<td><code>`    ... ")}`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>164</th>
+<td>ArrowFunction</td>
+<td>Survived</td>
+<td>363
+:
+19</td>
+<td><code>([   ...   }`</code></td>
+<td><code>() =></code></td></tr>
+<tr><th>165</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>363
+:
+38</td>
+<td><code>`@${ ...   }`</code></td>
+<td><code>""</code></td></tr>
+<tr><th>166</th>
+<td>StringLiteral</td>
+<td>Survived</td>
+<td>364
+:
+20</td>
+<td><code>", "</code></td>
+<td><code>""</code></td></tr>
+<tr><th>167</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>385
+:
+31</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>168</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>388
+:
+39</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>169</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>391
+:
+58</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>170</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>403
+:
+31</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>171</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>405
+:
+8</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>172</th>
+<td>IfStatement</td>
+<td>RuntimeError</td>
+<td>405
+:
+8</td>
+<td><code>.       ()</code></td>
+<td><code></code></td></tr>
+<tr><th>173</th>
+<td>Block</td>
+<td>Killed</td>
+<td>405
+:
+31</td>
+<td><code>{
+   ...    }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>174</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>413
+:
+32</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>175</th>
+<td>Block</td>
+<td>RuntimeError</td>
+<td>417
+:
+58</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr>
+<tr><th>176</th>
+<td>Block</td>
+<td>Killed</td>
+<td>433
+:
+45</td>
+<td><code>{
+   ...;
+  }</code></td>
+<td><code>{}</code></td></tr></tbody></table></div></div></div></div>
+<footer>Generated with stryker-html-reporter generator. Visit the 
+<a href="https://stryker-mutator.io" target="_blank">Stryker website</a></footer></div>
+<script src="strykerResources/popper.js/dist/umd/popper.min.js" defer="defer"></script>
+<script src="strykerResources/jquery/dist/jquery.slim.min.js" defer="defer"></script>
+<script src="strykerResources/bootstrap/js/bootstrap.min.js" defer="defer"></script>
+<script src="strykerResources/stryker.js" defer="defer"></script></body></html>

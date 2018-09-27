@@ -6,3 +6,4 @@ junit.xml
 .npmrc
 yarn.lock
 coverage
+.stryker-tmp

@@ -1,8 +1,7 @@
 module.exports = function(wallaby) {
   return {
-    files: ["./src/**/*.ts", "!./src/**/*.spec.ts"],
-
-    tests: ["./src/**/*.spec.ts"],
+    files: ["./src/**/*.ts"],
+    tests: ["./tests/**/*.spec.ts"],
     transform: {
       "^.+\\.tsx?$": "ts-jest"
     },
