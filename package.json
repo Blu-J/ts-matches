@@ -18,7 +18,7 @@
   "devDependencies": {
     "@types/jest": "^23.3.1",
     "fast-check": "^1.5.0",
-    "husky": "^0.14.3",
+    "husky": "^1.0.1",
     "jest": "^23.5.0",
     "jest-junit": "^5.1.0",
     "prettier": "^1.14.2",
