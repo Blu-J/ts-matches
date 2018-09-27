@@ -6,7 +6,8 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "target": "es2017",
-    "declaration": true
+    "declaration": true,
+    "noImplicitAny": true
   },
   "include": ["src/**/*"]
 }

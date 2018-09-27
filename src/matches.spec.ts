@@ -51,10 +51,8 @@ describe("matches", () => {
     test("a matched case will always be the equal to matcher or less than", () => {
       fc.assert(
         fc.property(gens.testSetup, testSetup => {
-          const indexOfMatchedValue = (value: unknown) =>
-            testSetup.setupInformation
-              .map(x => x.matchValue)
-              .indexOf(value as any);
+          const indexOfMatchedValue = (value: any) =>
+            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.value)
           );
@@ -281,14 +279,20 @@ describe("matches", () => {
 
   test("should intersection several matchers", () => {
     const testValue = 4;
-    const isEven = matches.guard(x => isNumber(x) && x % 2 === 0, "isEven");
+    const isEven = matches.guard(
+      (x: unknown) => isNumber(x) && x % 2 === 0,
+      "isEven"
+    );
     const validator = matches.every(matches.number, isEven);
     expect(validator(testValue).value).toEqual(testValue);
   });
 
   test("should be fallible union several matchers", () => {
     const testValue = 5;
-    const isEven = matches.guard(x => isNumber(x) && x % 2 === 0, "isEven");
+    const isEven = matches.guard(
+      (x: unknown) => isNumber(x) && x % 2 === 0,
+      "isEven"
+    );
     const validator = matches.every(matches.number, isEven);
     expect(validator(testValue).value).toEqual("fail every(failed isEven(5))");
   });

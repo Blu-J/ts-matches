@@ -75,30 +75,33 @@ const matcherTuple = fc
 const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
   type testingShape = { [key in keyof typeof x]: (typeof x)[key]["example"] };
   const matcher: Validator<testingShape> = matches.shape(
-    Object.entries(x).reduce(
+    Object.keys(x).reduce(
       (
         acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
-        [key, value]
+        key: keyof typeof x
       ) => {
+        const value = x[key];
         acc[key] = value.matcher;
         return acc;
       },
       {}
     )
   );
-  const example: testingShape = Object.entries(x).reduce(
+  const example: testingShape = Object.keys(x).reduce(
     (
       acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
-      [key, value]
+      key: keyof typeof x
     ) => {
+      const value = x[key];
       acc[key] = value.example;
       return acc;
     },
     {}
   );
   const type: string = `shape of ${JSON.stringify(
-    Object.entries(x).reduce(
-      (acc: { [key in keyof typeof x]: string }, [key, value]) => {
+    Object.keys(x).reduce(
+      (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
+        const value = x[key];
         acc[key] = value.type;
         return acc;
       },
@@ -115,30 +118,33 @@ const matcherShapePartial = fc
       { [key in keyof typeof x]: (typeof x)[key]["example"] }
     >;
     const matcher: Validator<testingShape> = matches.partial(
-      Object.entries(x).reduce(
+      Object.keys(x).reduce(
         (
           acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
-          [key, value]
+          key: keyof typeof x
         ) => {
+          const value = x[key];
           acc[key] = value.matcher;
           return acc;
         },
         {}
       )
     );
-    const example: testingShape = Object.entries(x).reduce(
+    const example: testingShape = Object.keys(x).reduce(
       (
         acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
-        [key, value]
+        key: keyof typeof x
       ) => {
+        const value = x[key];
         acc[key] = value.example;
         return acc;
       },
       {}
     );
     const type: string = `shape of ${JSON.stringify(
-      Object.entries(x).reduce(
-        (acc: { [key in keyof typeof x]: string }, [key, value]) => {
+      Object.keys(x).reduce(
+        (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
+          const value = x[key];
           acc[key] = value.type;
           return acc;
         },
@@ -166,7 +172,7 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
   const defaultValue = {};
   const defaultTest = {
     defaultValue,
-    setupInformation: [],
+    setupInformation: [] as [],
     runMatch: (x: unknown) => matches(x).defaultTo(defaultValue),
     randomExample: {
       value: defaultValue,
