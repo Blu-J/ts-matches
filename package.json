@@ -11,7 +11,7 @@
     "build": "tsc",
     "test": "jest",
     "prepublish": "npm run build",
-    "mutate": "stryker run"
+    "mutate": "rm -rf .stryker-tmp/; stryker run; rm -rf .stryker-tmp/"
   },
   "author": "Justin Miller",
   "license": "MIT",

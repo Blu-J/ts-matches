@@ -78,7 +78,6 @@ function shapeMatch<A extends {}>(
   value: Partial<A>
 ) {
   return Object.entries(testShape).reduce<{
-    validated: (keyof A)[];
     missing: (keyof A)[];
     validationErrors: [keyof A, string][];
   }>(
@@ -86,21 +85,16 @@ function shapeMatch<A extends {}>(
       const key = entry[0] as keyof A;
       const validator = testShape[key];
       if (key in value) {
-        // tslint:disable-next-line:no-any
-        validator(value[key] as any).fold(
-          error => {
-            acc.validationErrors.push([key, error]);
-          },
-          () => {
-            acc.validated.push(key);
-          }
-        );
+        const run = validator(value[key]);
+        if (run.isLeft()) {
+          acc.validationErrors.push([key, run.value]);
+        }
       } else {
         acc.missing.push(key);
       }
       return acc;
     },
-    { validated: [], missing: [], validationErrors: [] }
+    { missing: [], validationErrors: [] }
   );
 }
 
@@ -136,7 +130,7 @@ export function guard(
   return toValidator(isValidEither);
 }
 
-export const any = guard(() => true, "any");
+export const any = guard(() => true);
 
 export function literal<A extends string | number | boolean>(
   isEqualToValue: A
@@ -204,18 +198,13 @@ export function some<A>(...args: Validator<A>[]): Validator<A>;
 export function some(...args: Validator<unknown>[]): Validator<unknown> {
   const validateUnion: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
-    if (
-      args.some(fnTest => {
-        const result = fnTest(value);
-        if (result.isRight()) {
-          return true;
-        }
-        if (result.isLeft()) {
-          errors.push(result.value);
-        }
-        return false;
-      })
-    ) {
+    args.forEach(fnTest => {
+      const result = fnTest(value);
+      if (result.isLeft()) {
+        errors.push(result.value);
+      }
+    });
+    if (errors.length < args.length) {
       return right(value);
     }
     return left(`fail some(${errors.join(", ")})`);
@@ -249,18 +238,13 @@ export function every<A>(...args: Validator<A>[]): Validator<A>;
 export function every(...args: Validator<unknown>[]): Validator<unknown> {
   const validateIntersection: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
-    if (
-      args.every(fnTest => {
-        const result = fnTest(value);
-        if (result.isRight()) {
-          return true;
-        }
-        if (result.isLeft()) {
-          errors.push(result.value);
-        }
-        return false;
-      })
-    ) {
+    args.forEach(fnTest => {
+      const result = fnTest(value);
+      if (result.isLeft()) {
+        errors.push(result.value);
+      }
+    });
+    if (errors.length === 0) {
       return right(value);
     }
     return left(`fail every(${errors.join(", ")})`);
@@ -275,9 +259,6 @@ export const isPartial = <A extends {}>(
       return left(`notAnObject(${JSON.stringify(value)})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
-    if (shapeMatched.validated.length > 0) {
-      return right(value);
-    }
     if (shapeMatched.validationErrors.length === 0) {
       return right(value);
     }
