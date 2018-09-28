@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "prepublish": "npm run build",
+    "prepublish": "yarn test && yarn build",
     "mutate": "rm -rf .stryker-tmp/; stryker run; rm -rf .stryker-tmp/"
   },
   "author": "Justin Miller",
@@ -21,19 +21,19 @@
     "husky": "^1.0.1",
     "jest": "^23.5.0",
     "jest-junit": "^5.1.0",
-    "prettier": "^1.14.2",
+    "prettier": "^1.14.3",
     "stryker": "^0.29.2",
     "stryker-api": "^0.21.1",
+    "stryker-html-reporter": "^0.16.2",
     "stryker-javascript-mutator": "^0.10.0",
     "stryker-jest-runner": "^1.2.1",
     "stryker-typescript": "^0.14.0",
     "ts-jest": "^23.1.4",
-    "typescript": "^3.0.3",
-    "stryker-html-reporter": "^0.16.2"
+    "typescript": "^3.0.3"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn prettier --write \"src\\**\\*.(t|j)s(|x)\"",
+      "pre-commit": "yarn prettier --write \"./src/**/*.ts\"",
       "pre-push": "yarn test"
     }
   },
