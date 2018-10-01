@@ -3269,8 +3269,8 @@ stryker-api@^0.21.1:
     tslib "~1.9.3"
 
 stryker-html-reporter@^0.16.2:
-  version "0.16.2"
-  resolved "https://registry.yarnpkg.com/stryker-html-reporter/-/stryker-html-reporter-0.16.2.tgz#43174db10d01ca35f07b28acb3e105536609944b"
+  version "0.16.3"
+  resolved "https://registry.yarnpkg.com/stryker-html-reporter/-/stryker-html-reporter-0.16.3.tgz#403077136279a38a47dc63011248b8c8e80a429c"
   dependencies:
     file-url "~2.0.0"
     lodash "~4.17.10"
