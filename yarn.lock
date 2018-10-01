@@ -3279,8 +3279,8 @@ stryker-html-reporter@^0.16.2:
     typed-html "~0.6.0"
 
 stryker-javascript-mutator@^0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/stryker-javascript-mutator/-/stryker-javascript-mutator-0.10.0.tgz#68c5df13f6b58af3a06b50d31408544f4b539f9e"
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/stryker-javascript-mutator/-/stryker-javascript-mutator-0.10.1.tgz#48952d88d5af4f002f5d154aa5d38a3423ace80d"
   dependencies:
     babel-core "~6.26.0"
     babel-generator "~6.26.0"
