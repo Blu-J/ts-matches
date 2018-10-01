@@ -61,7 +61,7 @@ const matcherObject = fc
 
 fc.boolean(), fc.integer(), fc.string();
 const matcherConstant = fc
-  .oneof<{ example: boolean | string; counterExample: any }>(
+  .oneof<{ example: boolean | string | number; counterExample: any }>(
     fc.record({
       example: fc.boolean(),
       counterExample: fc.oneof<any>(
@@ -70,12 +70,20 @@ const matcherConstant = fc
         trueFloat
       )
     }),
-
     fc.record({
       example: fc.string(),
       counterExample: fc.oneof<any>(
         fc.constantFrom(null, undefined),
-        fc.string()
+        trueFloat,
+        fc.boolean()
+      )
+    }),
+    fc.record({
+      example: trueFloat,
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined),
+        fc.string(),
+        fc.boolean()
       )
     })
   )
