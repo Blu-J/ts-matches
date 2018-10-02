@@ -3304,8 +3304,8 @@ stryker-typescript@^0.14.0:
     tslib "~1.9.3"
 
 stryker@^0.29.2:
-  version "0.29.3"
-  resolved "https://registry.yarnpkg.com/stryker/-/stryker-0.29.3.tgz#5b455c3f5db956df66be1d2503d6cfbee568e91d"
+  version "0.29.4"
+  resolved "https://registry.yarnpkg.com/stryker/-/stryker-0.29.4.tgz#45bd014e560ce3e6344e78dafb28aa0942fab1f3"
   dependencies:
     chalk "~2.4.1"
     commander "~2.18.0"
