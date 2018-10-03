@@ -3296,8 +3296,8 @@ stryker-jest-runner@^1.2.1:
     semver "~5.5.0"
 
 stryker-typescript@^0.14.0:
-  version "0.14.1"
-  resolved "https://registry.yarnpkg.com/stryker-typescript/-/stryker-typescript-0.14.1.tgz#32027ed0b975c3c7114a80ea21f1a173245e71de"
+  version "0.14.2"
+  resolved "https://registry.yarnpkg.com/stryker-typescript/-/stryker-typescript-0.14.2.tgz#d2a383c25ffdfd60002d5dc91c86b443a0539c78"
   dependencies:
     lodash.flatmap "~4.5.0"
     semver "~5.5.0"
