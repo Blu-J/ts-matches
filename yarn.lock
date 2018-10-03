@@ -3263,8 +3263,8 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
 
 stryker-api@^0.21.1:
-  version "0.21.1"
-  resolved "https://registry.yarnpkg.com/stryker-api/-/stryker-api-0.21.1.tgz#769c75f2dd198d548173c0d74264e4933402ace6"
+  version "0.21.2"
+  resolved "https://registry.yarnpkg.com/stryker-api/-/stryker-api-0.21.2.tgz#67b0c32682644ff93b07aaa988c802af7d56a5fd"
   dependencies:
     tslib "~1.9.3"
 
