@@ -1007,11 +1007,11 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
 
 fast-check@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.5.0.tgz#8e6998e19c7d5c628a70c2fd23e361ad78fd7876"
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.6.0.tgz#6d652ce9e79d1828f53db3477ca790ff7cfae196"
   dependencies:
-    lorem-ipsum "^1.0.4"
-    pure-rand "^1.2.0"
+    lorem-ipsum "~1.0.6"
+    pure-rand "^1.3.2"
 
 fast-deep-equal@^1.0.0:
   version "1.1.0"
@@ -2185,7 +2185,7 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
-lorem-ipsum@^1.0.4:
+lorem-ipsum@~1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/lorem-ipsum/-/lorem-ipsum-1.0.6.tgz#69e9ab02bbb0991915d71b5559fe016d526f013f"
   dependencies:
@@ -2765,9 +2765,9 @@ punycode@^2.1.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
 
-pure-rand@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/pure-rand/-/pure-rand-1.2.0.tgz#d13e51b4b83131b735545f2a08cba33caef72dc4"
+pure-rand@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/pure-rand/-/pure-rand-1.3.2.tgz#3f93241e98f15fea828067e5254caee543ee0466"
 
 qs@~6.5.2:
   version "6.5.2"
