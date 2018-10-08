@@ -25,7 +25,7 @@
     "stryker": "^0.29.2",
     "stryker-api": "^0.21.1",
     "stryker-html-reporter": "^0.16.2",
-    "stryker-javascript-mutator": "^0.10.0",
+    "stryker-javascript-mutator": "^0.11.0",
     "stryker-jest-runner": "^1.2.1",
     "stryker-typescript": "^0.15.0",
     "ts-jest": "^23.1.4",
