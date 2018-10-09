@@ -161,8 +161,8 @@
     to-fast-properties "^2.0.0"
 
 "@types/jest@^23.3.1":
-  version "23.3.3"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.3.tgz#246ebcc52771d2327bb8e37aa971b412d9dc4237"
+  version "23.3.4"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.4.tgz#cc43ae176a91dcb1504839b0b9d6659386cf0af5"
 
 abab@^2.0.0:
   version "2.0.0"
