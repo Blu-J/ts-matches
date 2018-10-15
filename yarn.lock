@@ -3077,6 +3077,10 @@ semver-compare@^1.0.0:
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.5.1.tgz#7dfdd8814bdb7cabc7be0fb1d734cfb66c940477"
 
+semver@~5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.6.0.tgz#7e74256fbaa49c75aa7c7a205cc22799cac80004"
+
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
@@ -3360,11 +3364,11 @@ stryker-jest-runner@^1.2.1:
     semver "~5.5.0"
 
 stryker-typescript@^0.15.0:
-  version "0.15.0"
-  resolved "https://registry.yarnpkg.com/stryker-typescript/-/stryker-typescript-0.15.0.tgz#e25dc086f00e9de4120498d417b5f05992078da1"
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/stryker-typescript/-/stryker-typescript-0.15.2.tgz#eaa0089a70ac0e66a4b18bf629f53b5790faa01d"
   dependencies:
     lodash.flatmap "~4.5.0"
-    semver "~5.5.0"
+    semver "~5.6.0"
     tslib "~1.9.3"
 
 stryker@^0.29.2:
