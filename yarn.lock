@@ -160,6 +160,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@stryker-mutator/util@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@stryker-mutator/util/-/util-0.0.1.tgz#2c27ed376da70558978058e6af8b2259e0350cb4"
+
 "@types/jest@^23.3.1":
   version "23.3.5"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.5.tgz#870a1434208b60603745bfd214fc3fc675142364"
@@ -3333,9 +3337,10 @@ stryker-api@^0.21.1:
     tslib "~1.9.3"
 
 stryker-html-reporter@^0.16.2:
-  version "0.16.4"
-  resolved "https://registry.yarnpkg.com/stryker-html-reporter/-/stryker-html-reporter-0.16.4.tgz#88278659ed7822db0015a9d612d6aa9c0504d8c1"
+  version "0.16.5"
+  resolved "https://registry.yarnpkg.com/stryker-html-reporter/-/stryker-html-reporter-0.16.5.tgz#62aca6493d18ca5930ddcd47c83a0fe4f04f4508"
   dependencies:
+    "@stryker-mutator/util" "^0.0.1"
     file-url "~2.0.0"
     lodash "~4.17.10"
     mkdirp "~0.5.1"
