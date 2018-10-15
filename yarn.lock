@@ -3077,6 +3077,10 @@ semver-compare@^1.0.0:
   version "5.5.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.5.1.tgz#7dfdd8814bdb7cabc7be0fb1d734cfb66c940477"
 
+semver@~5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/semver/-/semver-5.6.0.tgz#7e74256fbaa49c75aa7c7a205cc22799cac80004"
+
 set-blocking@^2.0.0, set-blocking@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/set-blocking/-/set-blocking-2.0.0.tgz#045f9782d011ae9a6803ddd382b24392b3d890f7"
@@ -3354,10 +3358,10 @@ stryker-javascript-mutator@^0.11.0:
     tslib "~1.9.3"
 
 stryker-jest-runner@^1.2.1:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/stryker-jest-runner/-/stryker-jest-runner-1.2.2.tgz#f7bce7083e61ac4414359851e01c849e8bbe4ba6"
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/stryker-jest-runner/-/stryker-jest-runner-1.2.4.tgz#fe9c5524d452cd1b3e9d74ca746d0f52da193d03"
   dependencies:
-    semver "~5.5.0"
+    semver "~5.6.0"
 
 stryker-typescript@^0.15.0:
   version "0.15.0"
