@@ -1137,8 +1137,8 @@ form-data@~2.3.2:
     mime-types "^2.1.12"
 
 fp-ts@^1.8.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-1.9.0.tgz#52acf85692025b34285ff4014f39af72d1107e0b"
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-1.10.0.tgz#f249f07a167f4c13a96baf01794f7e0753de4225"
 
 fragment-cache@^0.2.1:
   version "0.2.1"
