@@ -3319,8 +3319,8 @@ stryker-javascript-mutator@^0.11.0:
     tslib "~1.9.3"
 
 stryker-jest-runner@^1.2.1:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/stryker-jest-runner/-/stryker-jest-runner-1.2.4.tgz#fe9c5524d452cd1b3e9d74ca746d0f52da193d03"
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/stryker-jest-runner/-/stryker-jest-runner-1.2.5.tgz#08f011870fd07900374c575d495cd536241b7ab9"
   dependencies:
     semver "~5.6.0"
 
