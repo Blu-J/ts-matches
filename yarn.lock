@@ -121,8 +121,8 @@
   resolved "https://registry.yarnpkg.com/@stryker-mutator/util/-/util-0.0.1.tgz#2c27ed376da70558978058e6af8b2259e0350cb4"
 
 "@types/jest@^23.3.1":
-  version "23.3.7"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.7.tgz#77f9a4332ccf8db680a31818ade3ee454c831a79"
+  version "23.3.8"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-23.3.8.tgz#56b07c0c3d7c8a6c47abb4f785cab648c6eafd01"
 
 abab@^2.0.0:
   version "2.0.0"
