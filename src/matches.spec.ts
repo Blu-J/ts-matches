@@ -100,11 +100,14 @@ describe("matches", () => {
           fc.anything(),
           ({ matcher }, example) => {
             const matchedValue = matcher(example);
-            if (matchedValue.isLeft()) {
-              expect(typeof matchedValue.value).toBe("string");
-            } else {
-              expect(matchedValue.value).toBe(example);
-            }
+            matchedValue.fold({
+              left: value => {
+                expect(typeof value).toBe("string");
+              },
+              right: value => {
+                expect(value).toBe(example);
+              }
+            });
           }
         )
       );
