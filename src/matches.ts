@@ -30,10 +30,10 @@ export class Validator<A> {
     );
   }
 
-  private map<B>(fn: (apply: A) => B): Validator<B> {
+  map<B>(fn: (apply: A) => B): Validator<B> {
     return Validator.of((value: unknown) => this.apply(value).map(fn));
   }
-  private chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
+  chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
     return Validator.of((value: unknown) => this.apply(value).chain(fn));
   }
 
