@@ -139,8 +139,8 @@ describe("matches", () => {
   test("should be able to test shape with failure", () => {
     const testValue = { a: "c" };
     const validator = matches.shape({ a: matches.literal("b") });
-    expect(validator(testValue).value).toEqual(
-      'validationErrors(@a -> failed literal["b"]("c"))'
+    expect(validator(testValue).value).toMatchInlineSnapshot(
+      `"validationErrors(@a -> failed literal[b](c))"`
     );
   });
 
@@ -174,7 +174,7 @@ describe("matches", () => {
       b: matches.literal("c")
     });
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail partial(@a -> failed literal[\\"c\\"](\\"a\\"),@b -> failed literal[\\"c\\"](\\"b\\"))"`
+      `"fail partial(@a -> failed literal[c](a),@b -> failed literal[c](b))"`
     );
   });
 
@@ -188,7 +188,7 @@ describe("matches", () => {
     const testValue = "a";
     const validator = matches.literal("b");
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed literal[\\"b\\"](\\"a\\")"`
+      `"failed literal[b](a)"`
     );
   });
 
@@ -202,7 +202,7 @@ describe("matches", () => {
     const testValue = "a";
     const validator = matches.number;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed isNumber(\\"a\\")"`
+      `"failed isNumber(a)"`
     );
   });
 
@@ -230,7 +230,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.regex;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed regex(\\"test\\")"`
+      `"failed regex(test)"`
     );
   });
 
@@ -244,7 +244,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.isFunction;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed isFunction(\\"test\\")"`
+      `"failed isFunction(test)"`
     );
   });
 
@@ -272,7 +272,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.boolean;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed boolean(\\"test\\")"`
+      `"failed boolean(test)"`
     );
   });
 
@@ -304,7 +304,7 @@ describe("matches", () => {
     const testValue = ["bad", 5];
     const validator = matches.tuple([matches.number, matches.string]);
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail every(validationErrors(@0 -> failed isNumber(\\"bad\\"), @1 -> failed string(5)))"`
+      `"fail every(validationErrors(@0 -> failed isNumber(bad), @1 -> failed string(5)))"`
     );
   });
 

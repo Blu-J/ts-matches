@@ -3,10 +3,10 @@ import { Left, Right, Either } from "./either";
 export { Left, Right, Either };
 
 const isObject = (x: unknown): x is object =>
-  Object.prototype.toString.call(x) === "[object Object]" ||
-  Object.prototype.toString.call(x) === "[object Array]";
+  typeof x === "object" && x !== null;
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
+
 
 export type ValidatorFn<A> = (value: unknown) => Either<string, A>;
 export interface Validator<A> {
@@ -60,7 +60,7 @@ export function refinementMatch<A>(
       valueA =>
         typeCheck(valueA)
           ? Right.of(valueA)
-          : Left.of(`failed ${failureName}(${JSON.stringify(valueA)})`)
+          : Left.of(`failed ${failureName}(${(valueA)})`)
     );
   return toValidator(validateRefinement);
 }
@@ -131,7 +131,7 @@ export function guard(
   const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
     fnTest(value)
       ? Right.of(value)
-      : Left.of(`failed ${testName}(${JSON.stringify(value)})`);
+      : Left.of(`failed ${testName}(${(value)})`);
 
   return toValidator(isValidEither);
 }
@@ -143,7 +143,7 @@ export function literal<A extends string | number | boolean | null | undefined>(
 ) {
   return guard<A>(
     (a): a is A => a === isEqualToValue,
-    `literal[${JSON.stringify(isEqualToValue)}]`
+    `literal[${(isEqualToValue)}]`
   );
 }
 
@@ -272,7 +272,7 @@ export const isPartial = <A extends {}>(
 ): Validator<Partial<A>> => {
   const validatePartial: ValidatorFn<Partial<A>> = value => {
     if (!isObject(value)) {
-      return Left.of(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${(value)})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length === 0) {
@@ -303,7 +303,7 @@ export const isShape = <A extends {}>(
 ) => {
   const validateShape: ValidatorFn<A> = value => {
     if (!isObject(value)) {
-      return Left.of(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${(value)})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length > 0) {
