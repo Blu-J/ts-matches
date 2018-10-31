@@ -1,4 +1,4 @@
-import { Either, left, right } from "fp-ts/lib/Either";
+import { Left, Right, Either } from "./either";
 
 const isObject = (x: unknown): x is object =>
   Object.prototype.toString.call(x) === "[object Object]" ||
@@ -20,16 +20,17 @@ export interface Validator<A> {
   ): Validator<B>;
   refine(refinementTest: (value: A) => boolean, named?: string): Validator<A>;
 }
-
+const identity = <X>(x: X) => x;
+const noop = () => void 0;
 export function unsafeMatchThrow<A>(validatorFn: ValidatorFn<A>) {
   const unsafeMatch = (value: unknown): A => {
     const matched = validatorFn(value);
-    return matched.fold<A>(
-      error => {
+    return matched.fold<A>({
+      left: error => {
         throw new Error(`Failed to enforce type: ${error}`);
       },
-      x => x
-    );
+      right: identity
+    });
   };
   return unsafeMatch;
 }
@@ -56,8 +57,8 @@ export function refinementMatch<A>(
     toValidEither(value).chain(
       valueA =>
         typeCheck(valueA)
-          ? right(valueA)
-          : left(`failed ${failureName}(${JSON.stringify(valueA)})`)
+          ? Right.of(valueA)
+          : Left.of(`failed ${failureName}(${JSON.stringify(valueA)})`)
     );
   return toValidator(validateRefinement);
 }
@@ -86,9 +87,12 @@ function shapeMatch<A extends {}>(
       const validator = testShape[key];
       if (key in value) {
         const run = validator(value[key]);
-        if (run.isLeft()) {
-          acc.validationErrors.push([key, run.value]);
-        }
+        run.fold({
+          left: value => {
+            acc.validationErrors.push([key, value]);
+          },
+          right: noop
+        });
       } else {
         acc.missing.push(key);
       }
@@ -124,8 +128,8 @@ export function guard(
 ): Validator<unknown> {
   const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
     fnTest(value)
-      ? right(value)
-      : left(`failed ${testName}(${JSON.stringify(value)})`);
+      ? Right.of(value)
+      : Left.of(`failed ${testName}(${JSON.stringify(value)})`);
 
   return toValidator(isValidEither);
 }
@@ -200,14 +204,17 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
     const errors: string[] = [];
     args.forEach(fnTest => {
       const result = fnTest(value);
-      if (result.isLeft()) {
-        errors.push(result.value);
-      }
+      result.fold({
+        left: value => {
+          errors.push(value);
+        },
+        right: noop
+      });
     });
     if (errors.length < args.length) {
-      return right(value);
+      return Right.of(value);
     }
-    return left(`fail some(${errors.join(", ")})`);
+    return Left.of(`fail some(${errors.join(", ")})`);
   };
   return toValidator(validateUnion);
 }
@@ -240,14 +247,17 @@ export function every(...args: Validator<unknown>[]): Validator<unknown> {
     const errors: string[] = [];
     args.forEach(fnTest => {
       const result = fnTest(value);
-      if (result.isLeft()) {
-        errors.push(result.value);
-      }
+      result.fold({
+        left: value => {
+          errors.push(value);
+        },
+        right: noop
+      });
     });
     if (errors.length === 0) {
-      return right(value);
+      return Right.of(value);
     }
-    return left(`fail every(${errors.join(", ")})`);
+    return Left.of(`fail every(${errors.join(", ")})`);
   };
   return toValidator(validateIntersection);
 }
@@ -256,13 +266,13 @@ export const isPartial = <A extends {}>(
 ): Validator<Partial<A>> => {
   const validatePartial: ValidatorFn<Partial<A>> = value => {
     if (!isObject(value)) {
-      return left(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${JSON.stringify(value)})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length === 0) {
-      return right(value);
+      return Right.of(value);
     }
-    return left(
+    return Left.of(
       `fail partial(${shapeMatched.validationErrors.map(
         ([key, error]) => `@${key} -> ${error}`
       )})`
@@ -287,20 +297,20 @@ export const isShape = <A extends {}>(
 ) => {
   const validateShape: ValidatorFn<A> = value => {
     if (!isObject(value)) {
-      return left(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${JSON.stringify(value)})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length > 0) {
-      return left(
+      return Left.of(
         `validationErrors(${shapeMatched.validationErrors
           .map(([key, error]) => `@${key} -> ${error}`)
           .join(", ")})`
       );
     }
     if (shapeMatched.missing.length > 0) {
-      return left(`missing(${shapeMatched.missing.join(", ")})`);
+      return Left.of(`missing(${shapeMatched.missing.join(", ")})`);
     }
-    return right(value as A);
+    return Right.of(value as A);
   };
   return toValidator(validateShape);
 };
@@ -335,18 +345,27 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
     isArray(value)
       .map(x => Array.from(x))
       .chain(currentArray => {
-        const lefts = Array.from(currentArray)
+        const lefts: [string, number][] = Array.from(currentArray)
           .map(validator)
-          .map((x, i): [Either<string, A>, number] => [x, i])
-          .filter(([x]) => x.isLeft());
+          .reduce(
+            (acc, either, i) =>
+              either.fold({
+                left: error => {
+                  acc.push([error, i]);
+                  return acc;
+                },
+                right: () => acc
+              }),
+            [] as [string, number][]
+          );
         if (lefts.length > 0) {
-          return left(
+          return Left.of(
             `validationErrors(${lefts
-              .map(([left, index]) => `@${index} -> ${left.value}`)
+              .map(([left, index]) => `@${index} -> ${left}`)
               .join(", ")}`
           );
         }
-        return right(value as A[]);
+        return Right.of(value as A[]);
       })
   );
 }
@@ -384,12 +403,10 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
     thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
     const testedValue = toValidEither(this.a);
-    if (testedValue.isRight()) {
-      return new Matched<OutcomeType>(
-        thenFn(testedValue.value)
-      ) as ChainMatches<OutcomeType>;
-    }
-    return this as ChainMatches<OutcomeType>;
+    return testedValue.fold<ChainMatches<OutcomeType>>({
+      left: () => this,
+      right: value => new Matched<OutcomeType>(thenFn(value))
+    });
   }
 
   defaultTo(value: OutcomeType) {
