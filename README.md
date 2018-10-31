@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 
-## Why
+## Examples
 
 This is useful on a boundary layer, like fetching a value. In that case we have no idea what the shape is, so we should do a check on that.
 
@@ -53,7 +53,7 @@ const currentValue = matches(testValue)
   .defaultTo(0);
 ```
 
-## How
+## API
 
 Given that the default export is `matches`
 Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
