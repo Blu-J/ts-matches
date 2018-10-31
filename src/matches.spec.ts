@@ -1,4 +1,4 @@
-import matches from "./matches";
+import matches, { Some, Right, None, Left } from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
 
@@ -99,7 +99,7 @@ describe("matches", () => {
           gens.matcherPairs,
           fc.anything(),
           ({ matcher }, example) => {
-            const matchedValue = matcher(example);
+            const matchedValue = matcher.apply(example);
             matchedValue.fold({
               left: value => {
                 expect(typeof value).toBe("string");
@@ -133,13 +133,13 @@ describe("matches", () => {
   test("should be able to test shape", () => {
     const testValue = { a: "c" };
     const validator = matches.shape({ a: matches.literal("c") });
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test shape with failure", () => {
     const testValue = { a: "c" };
     const validator = matches.shape({ a: matches.literal("b") });
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"@a literal[b](c)"`
     );
   });
@@ -147,7 +147,7 @@ describe("matches", () => {
   test("should be able to test shape with failure: not object", () => {
     const testValue = 5;
     const validator = matches.shape({ a: matches.literal("b") });
-    expect(validator(testValue).value).toEqual(
+    expect(validator.apply(testValue).value).toEqual(
       `notAnObject(${JSON.stringify(testValue)})`
     );
   });
@@ -158,13 +158,15 @@ describe("matches", () => {
       a: matches.literal("b"),
       b: matches.literal("b")
     });
-    expect(validator(testValue).value).toMatchInlineSnapshot(`"missing(a, b)"`);
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
+      `"missing(a, b)"`
+    );
   });
 
   test("should be able to test partial shape", () => {
     const testValue = {};
     const validator = matches.partial({ a: matches.literal("c") });
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test partial shape failure", () => {
@@ -173,7 +175,7 @@ describe("matches", () => {
       a: matches.literal("c"),
       b: matches.literal("c")
     });
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"(@a literal[c](a), @b literal[c](b))"`
     );
   });
@@ -181,13 +183,13 @@ describe("matches", () => {
   test("should be able to test literal", () => {
     const testValue = "a";
     const validator = matches.literal("a");
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test literal with failure", () => {
     const testValue = "a";
     const validator = matches.literal("b");
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"literal[b](a)"`
     );
   });
@@ -195,13 +197,13 @@ describe("matches", () => {
   test("should be able to test number", () => {
     const testValue = 4;
     const validator = matches.number;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test number with failure", () => {
     const testValue = "a";
     const validator = matches.number;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"isNumber(a)"`
     );
   });
@@ -209,13 +211,13 @@ describe("matches", () => {
   test("should be able to test string", () => {
     const testValue = "a";
     const validator = matches.string;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test string with failure", () => {
     const testValue = 5;
     const validator = matches.string;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"string(5)"`
     );
   });
@@ -223,13 +225,13 @@ describe("matches", () => {
   test("should be able to test regex", () => {
     const testValue = /test/;
     const validator = matches.regex;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test regex with failure", () => {
     const testValue = "test";
     const validator = matches.regex;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"regex(test)"`
     );
   });
@@ -237,13 +239,13 @@ describe("matches", () => {
   test("should be able to test isFunction", () => {
     const testValue = () => ({});
     const validator = matches.isFunction;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test isFunction with failure", () => {
     const testValue = "test";
     const validator = matches.isFunction;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"isFunction(test)"`
     );
   });
@@ -251,19 +253,19 @@ describe("matches", () => {
   test("should be able to test boolean", () => {
     const testValue = true;
     const validator = matches.boolean;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test boolean false", () => {
     const testValue = false;
     const validator = matches.boolean;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test boolean with failure", () => {
     const testValue = 0;
     const validator = matches.boolean;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"boolean(0)"`
     );
   });
@@ -271,7 +273,7 @@ describe("matches", () => {
   test("should be able to test boolean falsy with failure", () => {
     const testValue = "test";
     const validator = matches.boolean;
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"boolean(test)"`
     );
   });
@@ -279,31 +281,31 @@ describe("matches", () => {
   test("should be able to test any", () => {
     const testValue = 0;
     const validator = matches.any;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test object", () => {
     const testValue = {};
     const validator = matches.object;
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test object with failure", () => {
     const testValue = 5;
     const validator = matches.object;
-    expect(validator(testValue).value).toEqual("isObject(5)");
+    expect(validator.apply(testValue).value).toEqual("isObject(5)");
   });
 
   test("should be able to test tuple(number, string)", () => {
     const testValue = [4, "test"];
     const validator = matches.tuple([matches.number, matches.string]);
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be able to test tuple(number, string) with failure", () => {
     const testValue = ["bad", 5];
     const validator = matches.tuple([matches.number, matches.string]);
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"(@0 isNumber(bad), @1 string(5))"`
     );
   });
@@ -331,13 +333,13 @@ describe("matches", () => {
   test("should union several matchers", () => {
     const testValue = 4;
     const validator = matches.some(matches.number, matches.string);
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be fallible union several matchers", () => {
     const testValue = false;
     const validator = matches.some(matches.number, matches.string);
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"some(isNumber(false), string(false))"`
     );
   });
@@ -349,7 +351,7 @@ describe("matches", () => {
       "isEven"
     );
     const validator = matches.every(matches.number, isEven);
-    expect(validator(testValue).value).toEqual(testValue);
+    expect(validator.apply(testValue).value).toEqual(testValue);
   });
 
   test("should be fallible union several matchers", () => {
@@ -360,7 +362,7 @@ describe("matches", () => {
     );
     const isGt6 = matches.guard((x: unknown) => isNumber(x) && x > 6, "isGt6");
     const validator = matches.every(matches.number, isEven, isGt6);
-    expect(validator(testValue).value).toMatchInlineSnapshot(
+    expect(validator.apply(testValue).value).toMatchInlineSnapshot(
       `"every(isEven(5), isGt6(5))"`
     );
   });
@@ -368,12 +370,12 @@ describe("matches", () => {
   test("should have array of test", () => {
     const testValue = [5, 5, 5];
     const arrayOf = matches.arrayOf(matches.literal(5));
-    expect(arrayOf(testValue).value).toEqual(testValue);
+    expect(arrayOf.apply(testValue).value).toEqual(testValue);
   });
   test("should have array of test fail", () => {
     const testValue = [5, 3, 2, 5, 5];
     const arrayOf = matches.arrayOf(matches.literal(5));
-    expect(arrayOf(testValue).value).toMatchInlineSnapshot(
+    expect(arrayOf.apply(testValue).value).toMatchInlineSnapshot(
       `"(@1 literal[5](3), @2 literal[5](2))"`
     );
   });
@@ -384,7 +386,7 @@ describe("matches", () => {
       (num: number) => num % 2 === 0,
       "isEven"
     );
-    expect(isEven(testValue).value).toEqual(testValue);
+    expect(isEven.apply(testValue).value).toEqual(testValue);
   });
 
   test("should refinement matchers fail", () => {
@@ -393,7 +395,9 @@ describe("matches", () => {
       (num: number) => num % 2 === 0,
       "isEven"
     );
-    expect(isEven(testValue).toString()).toMatchInlineSnapshot(`"right(4)"`);
+    expect(isEven.apply(testValue).toString()).toMatchInlineSnapshot(
+      `"right(4)"`
+    );
   });
 
   test("should throw on invalid unsafe match throw", () => {
@@ -408,8 +412,82 @@ describe("matches", () => {
   test("should guard without a name failure", () => {
     expect(
       matches
-        .guard(x => Number(x) > 3)(2)
+        .guard(x => Number(x) > 3)
+        .apply(2)
         .toString()
-    ).toMatchInlineSnapshot(`"left(\\"test(2)\\")"`);
+    ).toMatchInlineSnapshot(`"left(test(2))"`);
+  });
+
+  test("should be able to test is object for event", () => {
+    const event = new Event("test");
+    expect(matches.object.apply(event).value).toBe(event);
+  });
+
+  test("should fail on a circular object", () => {
+    const o: any = {};
+    o.o = o;
+    expect(matches.isFunction.apply(o).value).toMatchInlineSnapshot(
+      `"isFunction([object Object])"`
+    );
+  });
+
+  test("should be able to map validation", () => {
+    const testString = "test";
+    const event = new Event(testString);
+    const isEvent = matches.guard(
+      (x: unknown): x is Event => x instanceof Event,
+      "isEvent"
+    );
+    expect(isEvent.map(x => x.type).apply(event).value).toBe(testString);
+  });
+
+  describe("with a number.maybe matcher", () => {
+    const maybeNumber = matches.number.maybe();
+
+    test("a number in", () => {
+      const input = 4;
+      const expected = Right.of(Some.of(4));
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a null in", () => {
+      const input = null;
+      const expected = Right.of(None.of);
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a undefined in", () => {
+      const input = undefined;
+      const expected = Right.of(None.of);
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a object in", () => {
+      const input = {};
+      const expected = Left.of("isNumber([object Object])");
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+  });
+
+  describe("with a number.defaultTo matcher", () => {
+    const maybeNumber = matches.number.defaultTo(0);
+
+    test("a number in", () => {
+      const input = 4;
+      const expected = Right.of(4);
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a null in", () => {
+      const input = null;
+      const expected = Right.of(0);
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a undefined in", () => {
+      const input = undefined;
+      const expected = Right.of(0);
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+    test("a object in", () => {
+      const input = {};
+      const expected = Left.of("isNumber([object Object])");
+      expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
   });
 });
