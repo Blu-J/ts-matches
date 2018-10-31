@@ -1,4 +1,5 @@
 # Typescript Matches
+
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 
@@ -54,7 +55,8 @@ const currentValue = matches(testValue)
 
 ## How
 
-So to use this, there is the exported default which is a function for the pattern matching which includes other validators on the object.
+There is the default matches, which is seen as above.
+Then there are extra properties on the matches, which are used like `matches.string`
 
 | Attribute  | Description                                                   |
 | ---------- | ------------------------------------------------------------- |
@@ -75,9 +77,11 @@ So to use this, there is the exported default which is a function for the patter
 | guard      | Custom function for testing                                   |
 | any        | is something                                                  |
 | boolean    | is a boolean                                                  |
+| nill       | is a null or undefined                                        |
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
 
 ## Deploying
+
 Use the `npm version minor | major` and push the tags up, circle ci should do the publish on the master based on tags
