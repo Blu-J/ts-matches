@@ -441,28 +441,53 @@ describe("matches", () => {
     expect(isEvent.map(x => x.type).apply(event).value).toBe(testString);
   });
 
-  describe('with a maybe number matcher', () => {
-    const maybeNumber = matches.maybe(matches.number);
+  describe('with a number.maybe matcher', () => {
+    const maybeNumber = matches.number.maybe();
 
     test("a number in", () => {
       const input = 4;
       const expected = Right.of(Some.of(4));
-      expect(''+maybeNumber.apply(input)).toBe(''+expected);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
     });
     test("a null in", () => {
       const input = null;
       const expected = Right.of(None.of);
-      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
     });
     test("a undefined in", () => {
       const input = undefined;
       const expected = Right.of(None.of);
-      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
     });
     test("a object in", () => {
       const input = {};
       const expected = Left.of('isNumber([object Object])');
-      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
+    });
+  })
+
+  describe('with a number.defaultTo matcher', () => {
+    const maybeNumber = matches.number.defaultTo(0);
+
+    test("a number in", () => {
+      const input = 4;
+      const expected = Right.of(4);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
+    });
+    test("a null in", () => {
+      const input = null;
+      const expected = Right.of(0);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
+    });
+    test("a undefined in", () => {
+      const input = undefined;
+      const expected = Right.of(0);
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
+    });
+    test("a object in", () => {
+      const input = {};
+      const expected = Left.of('isNumber([object Object])');
+      expect(maybeNumber.apply(input)).toMatch(''+expected);
     });
   })
 });
