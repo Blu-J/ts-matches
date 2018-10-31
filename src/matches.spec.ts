@@ -139,8 +139,8 @@ describe("matches", () => {
   test("should be able to test shape with failure", () => {
     const testValue = { a: "c" };
     const validator = matches.shape({ a: matches.literal("b") });
-    expect(validator(testValue).value).toEqual(
-      'validationErrors(@a -> failed literal["b"]("c"))'
+    expect(validator(testValue).value).toMatchInlineSnapshot(
+      `"@a literal[b](c)"`
     );
   });
 
@@ -174,7 +174,7 @@ describe("matches", () => {
       b: matches.literal("c")
     });
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail partial(@a -> failed literal[\\"c\\"](\\"a\\"),@b -> failed literal[\\"c\\"](\\"b\\"))"`
+      `"(@a literal[c](a), @b literal[c](b))"`
     );
   });
 
@@ -188,7 +188,7 @@ describe("matches", () => {
     const testValue = "a";
     const validator = matches.literal("b");
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed literal[\\"b\\"](\\"a\\")"`
+      `"literal[b](a)"`
     );
   });
 
@@ -202,7 +202,7 @@ describe("matches", () => {
     const testValue = "a";
     const validator = matches.number;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed isNumber(\\"a\\")"`
+      `"isNumber(a)"`
     );
   });
 
@@ -216,7 +216,7 @@ describe("matches", () => {
     const testValue = 5;
     const validator = matches.string;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed string(5)"`
+      `"string(5)"`
     );
   });
 
@@ -230,7 +230,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.regex;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed regex(\\"test\\")"`
+      `"regex(test)"`
     );
   });
 
@@ -244,7 +244,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.isFunction;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed isFunction(\\"test\\")"`
+      `"isFunction(test)"`
     );
   });
 
@@ -264,7 +264,7 @@ describe("matches", () => {
     const testValue = 0;
     const validator = matches.boolean;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed boolean(0)"`
+      `"boolean(0)"`
     );
   });
 
@@ -272,7 +272,7 @@ describe("matches", () => {
     const testValue = "test";
     const validator = matches.boolean;
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"failed boolean(\\"test\\")"`
+      `"boolean(test)"`
     );
   });
 
@@ -291,7 +291,7 @@ describe("matches", () => {
   test("should be able to test object with failure", () => {
     const testValue = 5;
     const validator = matches.object;
-    expect(validator(testValue).value).toEqual("failed isObject(5)");
+    expect(validator(testValue).value).toEqual("isObject(5)");
   });
 
   test("should be able to test tuple(number, string)", () => {
@@ -304,7 +304,7 @@ describe("matches", () => {
     const testValue = ["bad", 5];
     const validator = matches.tuple([matches.number, matches.string]);
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail every(validationErrors(@0 -> failed isNumber(\\"bad\\"), @1 -> failed string(5)))"`
+      `"(@0 isNumber(bad), @1 string(5))"`
     );
   });
 
@@ -338,7 +338,7 @@ describe("matches", () => {
     const testValue = false;
     const validator = matches.some(matches.number, matches.string);
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail some(failed isNumber(false), failed string(false))"`
+      `"some(isNumber(false), string(false))"`
     );
   });
 
@@ -361,7 +361,7 @@ describe("matches", () => {
     const isGt6 = matches.guard((x: unknown) => isNumber(x) && x > 6, "isGt6");
     const validator = matches.every(matches.number, isEven, isGt6);
     expect(validator(testValue).value).toMatchInlineSnapshot(
-      `"fail every(failed isEven(5), failed isGt6(5))"`
+      `"every(isEven(5), isGt6(5))"`
     );
   });
 
@@ -374,7 +374,7 @@ describe("matches", () => {
     const testValue = [5, 3, 2, 5, 5];
     const arrayOf = matches.arrayOf(matches.literal(5));
     expect(arrayOf(testValue).value).toMatchInlineSnapshot(
-      `"validationErrors(@1 -> failed literal[5](3), @2 -> failed literal[5](2)"`
+      `"(@1 literal[5](3), @2 literal[5](2))"`
     );
   });
 
@@ -399,9 +399,7 @@ describe("matches", () => {
   test("should throw on invalid unsafe match throw", () => {
     expect(() =>
       matches.partial({}).unsafeCast(5)
-    ).toThrowErrorMatchingInlineSnapshot(
-      `"Failed to enforce type: notAnObject(5)"`
-    );
+    ).toThrowErrorMatchingInlineSnapshot(`"Failed type: notAnObject(5)"`);
   });
 
   test("should guard without a name", () => {
@@ -412,6 +410,6 @@ describe("matches", () => {
       matches
         .guard(x => Number(x) > 3)(2)
         .toString()
-    ).toMatchInlineSnapshot(`"left(\\"failed test(2)\\")"`);
+    ).toMatchInlineSnapshot(`"left(\\"test(2)\\")"`);
   });
 });

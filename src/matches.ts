@@ -3,8 +3,7 @@ import { Left, Right, Either } from "./either";
 export { Left, Right, Either };
 
 const isObject = (x: unknown): x is object =>
-  Object.prototype.toString.call(x) === "[object Object]" ||
-  Object.prototype.toString.call(x) === "[object Array]";
+  typeof x === "object" && x !== null;
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
@@ -29,7 +28,7 @@ export function unsafeMatchThrow<A>(validatorFn: ValidatorFn<A>) {
     const matched = validatorFn(value);
     return matched.fold<A>({
       left: error => {
-        throw new Error(`Failed to enforce type: ${error}`);
+        throw new TypeError(`Failed type: ${error}`);
       },
       right: identity
     });
@@ -60,7 +59,7 @@ export function refinementMatch<A>(
       valueA =>
         typeCheck(valueA)
           ? Right.of(valueA)
-          : Left.of(`failed ${failureName}(${JSON.stringify(valueA)})`)
+          : Left.of(`${failureName}(${valueA})`)
     );
   return toValidator(validateRefinement);
 }
@@ -129,9 +128,7 @@ export function guard(
   testName: string = fnTest.name || "test"
 ): Validator<unknown> {
   const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
-    fnTest(value)
-      ? Right.of(value)
-      : Left.of(`failed ${testName}(${JSON.stringify(value)})`);
+    fnTest(value) ? Right.of(value) : Left.of(`${testName}(${value})`);
 
   return toValidator(isValidEither);
 }
@@ -143,7 +140,7 @@ export function literal<A extends string | number | boolean | null | undefined>(
 ) {
   return guard<A>(
     (a): a is A => a === isEqualToValue,
-    `literal[${JSON.stringify(isEqualToValue)}]`
+    `literal[${isEqualToValue}]`
   );
 }
 
@@ -220,7 +217,17 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
     if (errors.length < args.length) {
       return Right.of(value);
     }
-    return Left.of(`fail some(${errors.join(", ")})`);
+    const uniqueErrors = errors.reduce((acc: string[], value) => {
+      if (acc.indexOf(value) === -1) {
+        acc.push(value);
+      }
+      return acc;
+    }, []);
+
+    if (uniqueErrors.length === 1) {
+      return Left.of(uniqueErrors[0]);
+    }
+    return Left.of(`some(${uniqueErrors.join(", ")})`);
   };
   return toValidator(validateUnion);
 }
@@ -263,7 +270,17 @@ export function every(...args: Validator<unknown>[]): Validator<unknown> {
     if (errors.length === 0) {
       return Right.of(value);
     }
-    return Left.of(`fail every(${errors.join(", ")})`);
+    const uniqueErrors = errors.reduce((acc: string[], value) => {
+      if (acc.indexOf(value) === -1) {
+        acc.push(value);
+      }
+      return acc;
+    }, []);
+
+    if (uniqueErrors.length === 1) {
+      return Left.of(uniqueErrors[0]);
+    }
+    return Left.of(`every(${uniqueErrors.join(", ")})`);
   };
   return toValidator(validateIntersection);
 }
@@ -272,16 +289,21 @@ export const isPartial = <A extends {}>(
 ): Validator<Partial<A>> => {
   const validatePartial: ValidatorFn<Partial<A>> = value => {
     if (!isObject(value)) {
-      return Left.of(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${value})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length === 0) {
       return Right.of(value);
     }
+    const errors = shapeMatched.validationErrors.map(
+      ([key, error]) => `@${key} ${error}`
+    );
+    if (errors.length === 1) {
+      return Left.of(errors[0]);
+    }
     return Left.of(
-      `fail partial(${shapeMatched.validationErrors.map(
-        ([key, error]) => `@${key} -> ${error}`
-      )})`
+      `(${errors
+        .join(", ")})`
     );
   };
   return toValidator(validatePartial);
@@ -303,15 +325,17 @@ export const isShape = <A extends {}>(
 ) => {
   const validateShape: ValidatorFn<A> = value => {
     if (!isObject(value)) {
-      return Left.of(`notAnObject(${JSON.stringify(value)})`);
+      return Left.of(`notAnObject(${value})`);
     }
     const shapeMatched = shapeMatch(testShape, value);
-    if (shapeMatched.validationErrors.length > 0) {
-      return Left.of(
-        `validationErrors(${shapeMatched.validationErrors
-          .map(([key, error]) => `@${key} -> ${error}`)
-          .join(", ")})`
-      );
+    const errors = shapeMatched.validationErrors.map(
+      ([key, error]) => `@${key} ${error}`
+    );
+    if (errors.length === 1) {
+      return Left.of(`${errors[0]}`);
+    }
+    if (errors.length > 0) {
+      return Left.of(`(${errors.join(", ")})`);
     }
     if (shapeMatched.missing.length > 0) {
       return Left.of(`missing(${shapeMatched.missing.join(", ")})`);
@@ -364,12 +388,12 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
               }),
             [] as [string, number][]
           );
-        if (lefts.length > 0) {
-          return Left.of(
-            `validationErrors(${lefts
-              .map(([left, index]) => `@${index} -> ${left}`)
-              .join(", ")}`
-          );
+        const errors = lefts.map(([left, index]) => `@${index} ${left}`);
+        if (errors.length === 1) {
+          return Left.of(`(${errors[0]}`);
+        }
+        if (errors.length > 0) {
+          return Left.of(`(${errors.join(", ")})`);
         }
         return Right.of(value as A[]);
       })
