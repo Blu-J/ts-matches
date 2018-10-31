@@ -15,6 +15,12 @@ export const matchPairOf = <A>(
   example,
   counterExample
 });
+type MatchPair<A> = {
+  matcher: Validator<A>;
+  example: A;
+  type: string;
+  counterExample: any;
+};
 const trueFloat = fc
   .tuple(fc.oneof(fc.constant(0), fc.float()), fc.integer())
   .map(([x, y]) => x + y);
@@ -29,6 +35,14 @@ const matcherNumber = fc
   })
   .map(({ example, counterExample }) =>
     matchPairOf(matches.number, example, "number", counterExample)
+  );
+const matcherNill = fc
+  .record({
+    example: fc.constantFrom(null, undefined),
+    counterExample: fc.oneof<any>(fc.string(), fc.object(), fc.integer())
+  })
+  .map(({ example, counterExample }) =>
+    matchPairOf(matches.nill, example, "nill", counterExample)
   );
 const matcherNat = fc
   .record({
@@ -149,7 +163,7 @@ const matcherString = fc
     matchPairOf(matches.string, example, "string", counterExample)
   );
 
-const matcherPairsSimple = fc.oneof<ReturnType<typeof matchPairOf>>(
+const matcherPairsSimple = fc.oneof<MatchPair<any>>(
   matcherNumber,
   matcherFunction,
   matcherObject,
@@ -158,7 +172,8 @@ const matcherPairsSimple = fc.oneof<ReturnType<typeof matchPairOf>>(
   matcherArray,
   matcherAny,
   matcherString,
-  matcherNat
+  matcherNat,
+  matcherNill
 );
 const matcherArrayOf = matcherPairsSimple.chain(pair =>
   fc.array(fc.constant(pair)).map(pairs => {
