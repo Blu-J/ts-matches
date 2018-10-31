@@ -13,7 +13,8 @@ export class Validator<A> {
   static of<A>(apply: ((value: unknown) => Either<string, A>)) {
     return new Validator(apply);
   }
-  constructor(readonly apply: ValidatorFn<A> ) {}
+  public readonly _TYPE: A = null as any;
+  constructor(readonly apply: ValidatorFn<A>) {}
   unsafeCast(value: unknown): A {
     const matched = this.apply(value);
     return matched.fold<A>({
@@ -21,14 +22,39 @@ export class Validator<A> {
         throw new TypeError(`Failed type: ${error}`);
       },
       right: identity
-    })
+    });
+  }
+  castPromise(value: unknown): Promise<A> {
+    return new Promise((resolve, reject) =>
+      this.apply(value).fold<void>({ left: reject, right: resolve })
+    );
   }
 
-  map<B>(fn:(apply: A) => B): Validator<B> {
-    return Validator.of((value:unknown) => this.apply(value).map(fn));
+  private map<B>(fn: (apply: A) => B): Validator<B> {
+    return Validator.of((value: unknown) => this.apply(value).map(fn));
   }
-  chain<B>(fn:(apply: A) => Either<string, B>): Validator<B> {
-    return Validator.of((value:unknown) => this.apply(value).chain(fn));
+  private chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
+    return Validator.of((value: unknown) => this.apply(value).chain(fn));
+  }
+
+  /**
+   * When we want to make sure that we handle the null later on in a monoid fashion,
+   * and this ensures we deal with the value
+   */
+  maybe(): Validator<Maybe<A>> {
+    return maybe(this);
+  }
+  /**
+   * There are times that we would like to bring in a value that we know as null or undefined
+   * and want it to go to a default value
+   */
+  defaultTo(defaultValue: A): Validator<A> {
+    return maybe(this).map(maybeA =>
+      maybeA.fold({
+        some: identity,
+        none: () => defaultValue
+      })
+    );
   }
   /**
    * We want to refine to a new type given an original type, like isEven, or casting to a more
@@ -39,7 +65,10 @@ export class Validator<A> {
     named?: string
   ): Validator<B>;
   refine(typeCheck: (value: A) => boolean, failureName?: string): Validator<A>;
-  refine(typeCheck: (value: A) => boolean, failureName = typeCheck.name): Validator<A> {
+  refine(
+    typeCheck: (value: A) => boolean,
+    failureName = typeCheck.name
+  ): Validator<A> {
     return refinementMatch(this.apply, typeCheck, failureName);
   }
 }
@@ -318,10 +347,7 @@ export const isPartial = <A extends {}>(
     if (errors.length === 1) {
       return Left.of(errors[0]);
     }
-    return Left.of(
-      `(${errors
-        .join(", ")})`
-    );
+    return Left.of(`(${errors.join(", ")})`);
   };
   return toValidator(validatePartial);
 };
@@ -389,7 +415,8 @@ export function tuple(tupleShape: ArrayLike<Validator<unknown>>) {
  */
 export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
   return toValidator(value =>
-    isArray.apply(value)
+    isArray
+      .apply(value)
       .map(x => Array.from(x))
       .chain(currentArray => {
         const lefts: [string, number][] = Array.from(currentArray)
@@ -420,7 +447,7 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
 export function maybe<A>(validator: Validator<A>): Validator<Maybe<A>> {
   return Validator.of(function maybe(x: unknown) {
     if (x == null) {
-      return Right.of(None.ofFn())
+      return Right.of(None.ofFn());
     }
     return validator.apply(x).map(Some.of);
   });
@@ -507,7 +534,6 @@ export const matches = Object.assign(
     guard,
     any,
     boolean,
-    maybe,
     nill: isNill
   }
 );
