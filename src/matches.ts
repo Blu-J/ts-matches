@@ -1,5 +1,7 @@
 import { Left, Right, Either } from "./either";
 
+export { Left, Right, Either };
+
 const isObject = (x: unknown): x is object =>
   Object.prototype.toString.call(x) === "[object Object]" ||
   Object.prototype.toString.call(x) === "[object Array]";
