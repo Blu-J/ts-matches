@@ -3,7 +3,7 @@
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 
-## Why
+## Examples
 
 This is useful on a boundary layer, like fetching a value. In that case we have no idea what the shape is, so we should do a check on that.
 
@@ -53,10 +53,11 @@ const currentValue = matches(testValue)
   .defaultTo(0);
 ```
 
-## How
+## API
 
-There is the default matches, which is seen as above.
-Then there are extra properties on the matches, which are used like `matches.string`
+Given that the default export is `matches`
+Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
+on that function that return a `validator` or a function that creates a `validator`
 
 | Attribute  | Description                                                   |
 | ---------- | ------------------------------------------------------------- |
@@ -78,6 +79,24 @@ Then there are extra properties on the matches, which are used like `matches.str
 | any        | is something                                                  |
 | boolean    | is a boolean                                                  |
 | nill       | is a null or undefined                                        |
+
+
+`MatcherChain` api
+| Attribute     | Description                                                   |
+| ----------    | ------------------------------------------------------------- |
+| match         | Create a matching case, when match return value               |
+| defaultTo     | Fall through case, ensures all are caught                     |
+| defaultToLazy | Fall through case, ensures all are caught in lazy fashion     |
+
+`Validator` api 
+| Attribute   | Description                                                   |
+| ----------  | ------------------------------------------------------------- |
+| apply       | Use this to turn a value into an either                       |
+| usafeCast   | Use this to get the value or throw an error                   |
+| castPromise | Cast into a promise                                           |
+| maybe       | output type is now a mabye and deal with null                 |
+| defaultTo   | instead of creating a promise we fallback to a value          |
+| refine      | we want to add more tests to value                            |
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
