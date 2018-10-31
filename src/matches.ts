@@ -136,7 +136,7 @@ export function guard(
 
 export const any = guard(() => true);
 
-export function literal<A extends string | number | boolean>(
+export function literal<A extends string | number | boolean | null | undefined>(
   isEqualToValue: A
 ) {
   return guard<A>(
@@ -151,6 +151,10 @@ export const regex = guard<RegExp>(
 );
 
 export const number = guard(isNumber);
+
+export const isNill = guard(function isNill(x: unknown): x is null | undefined {
+  return x == null;
+});
 
 export const natural = number.refine(
   (x: number) => x >= 0 && x === Math.floor(x)
@@ -449,7 +453,8 @@ export const matches = Object.assign(
     every,
     guard,
     any,
-    boolean
+    boolean,
+    nill: isNill
   }
 );
 export default matches;
