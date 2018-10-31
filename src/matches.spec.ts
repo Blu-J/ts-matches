@@ -1,4 +1,4 @@
-import matches from "./matches";
+import matches, { Some, Right, None, Left } from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
 
@@ -415,29 +415,54 @@ describe("matches", () => {
         .guard(x => Number(x) > 3)
         .apply(2)
         .toString()
-    ).toMatchInlineSnapshot(`"left(\\"test(2)\\")"`);
+    ).toMatchInlineSnapshot(`"left(test(2))"`);
   });
 
-
   test("should be able to test is object for event", () => {
-    const event = new Event('test');
-    expect(
-      matches
-        .object
-        .apply(event)
-        .value
-    ).toBe(event);
+    const event = new Event("test");
+    expect(matches.object.apply(event).value).toBe(event);
+  });
+
+  test("should fail on a circular object", () => {
+    const o: any = {};
+    o.o = o;
+    expect(matches.isFunction.apply(o).value).toMatchInlineSnapshot(
+      `"isFunction([object Object])"`
+    );
   });
 
   test("should be able to map validation", () => {
-    const testString = 'test'
+    const testString = "test";
     const event = new Event(testString);
-    const isEvent = matches.guard((x: unknown): x is Event => x instanceof Event,"isEvent")
-    expect(
-      isEvent
-        .map(x => x.type)
-        .apply(event)
-        .value
-    ).toBe(testString);
+    const isEvent = matches.guard(
+      (x: unknown): x is Event => x instanceof Event,
+      "isEvent"
+    );
+    expect(isEvent.map(x => x.type).apply(event).value).toBe(testString);
   });
+
+  describe('with a maybe number matcher', () => {
+    const maybeNumber = matches.maybe(matches.number);
+
+    test("a number in", () => {
+      const input = 4;
+      const expected = Right.of(Some.of(4));
+      expect(''+maybeNumber.apply(input)).toBe(''+expected);
+    });
+    test("a null in", () => {
+      const input = null;
+      const expected = Right.of(None.of);
+      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+    });
+    test("a undefined in", () => {
+      const input = undefined;
+      const expected = Right.of(None.of);
+      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+    });
+    test("a object in", () => {
+      const input = {};
+      const expected = Left.of('isNumber([object Object])');
+      expect(''+maybeNumber.apply(input)).toEqual(''+expected);
+    });
+  })
 });

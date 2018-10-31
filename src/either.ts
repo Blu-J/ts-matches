@@ -3,10 +3,7 @@ export abstract class Either<L, R> {
   abstract readonly value: L | R;
 
   map<R2>(mapFn: (r: R) => R2): Either<L, R2> {
-    return this.fold({
-      left: l => this as any,
-      right: r => Right.of(mapFn(r))
-    });
+    return this.chain(x => Right.of(mapFn(x)));
   }
   chain<R2>(mapFn: (r: R) => Either<L, R2>): Either<L, R2> {
     return this.fold({
@@ -26,7 +23,7 @@ export class Right<L, R> extends Either<L, R> {
     return options.right(this.value);
   }
   toString() {
-    return `right(${JSON.stringify(this.value)})`;
+    return `right(${(this.value)})`;
   }
 }
 export class Left<L, R> extends Either<L, R> {
@@ -40,6 +37,6 @@ export class Left<L, R> extends Either<L, R> {
     return options.left(this.value);
   }
   toString() {
-    return `left(${JSON.stringify(this.value)})`;
+    return `left(${(this.value)})`;
   }
 }

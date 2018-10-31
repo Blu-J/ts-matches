@@ -1,6 +1,7 @@
 import { Left, Right, Either } from "./either";
+import { None, Some, Maybe } from "./maybe";
 
-export { Left, Right, Either };
+export { Left, Right, Either, None, Some, Maybe };
 
 const isObject = (x: unknown): x is object =>
   typeof x === "object" && x !== null;
@@ -415,6 +416,16 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
       })
   );
 }
+
+export function maybe<A>(validator: Validator<A>): Validator<Maybe<A>> {
+  return Validator.of(function maybe(x: unknown) {
+    if (x == null) {
+      return Right.of(None.ofFn())
+    }
+    return validator.apply(x).map(Some.of);
+  });
+}
+
 export interface ChainMatches<OutcomeType> {
   when<B>(
     test: Validator<B>,
@@ -496,6 +507,7 @@ export const matches = Object.assign(
     guard,
     any,
     boolean,
+    maybe,
     nill: isNill
   }
 );
