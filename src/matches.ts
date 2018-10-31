@@ -8,9 +8,27 @@ const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
 export type ValidatorFn<A> = (value: unknown) => Either<string, A>;
-export interface Validator<A> {
-  (value: unknown): Either<string, A>;
-  unsafeCast(value: unknown): A;
+export class Validator<A> {
+  static of<A>(apply: ((value: unknown) => Either<string, A>)) {
+    return new Validator(apply);
+  }
+  constructor(readonly apply: ValidatorFn<A> ) {}
+  unsafeCast(value: unknown): A {
+    const matched = this.apply(value);
+    return matched.fold<A>({
+      left: error => {
+        throw new TypeError(`Failed type: ${error}`);
+      },
+      right: identity
+    })
+  }
+
+  map<B>(fn:(apply: A) => B): Validator<B> {
+    return Validator.of((value:unknown) => this.apply(value).map(fn));
+  }
+  chain<B>(fn:(apply: A) => Either<string, B>): Validator<B> {
+    return Validator.of((value:unknown) => this.apply(value).chain(fn));
+  }
   /**
    * We want to refine to a new type given an original type, like isEven, or casting to a more
    * specific type
@@ -19,7 +37,10 @@ export interface Validator<A> {
     refinementTest: (value: A | B) => value is B,
     named?: string
   ): Validator<B>;
-  refine(refinementTest: (value: A) => boolean, named?: string): Validator<A>;
+  refine(typeCheck: (value: A) => boolean, failureName?: string): Validator<A>;
+  refine(typeCheck: (value: A) => boolean, failureName = typeCheck.name): Validator<A> {
+    return refinementMatch(this.apply, typeCheck, failureName);
+  }
 }
 const identity = <X>(x: X) => x;
 const noop = () => void 0;
@@ -67,12 +88,7 @@ export function refinementMatch<A>(
 function toValidator<A>(
   validate: (value: unknown) => Either<string, A>
 ): Validator<A> {
-  return Object.assign(validate, {
-    unsafeCast: unsafeMatchThrow(validate),
-    refine(typeCheck: (value: A) => boolean, failureName = typeCheck.name) {
-      return refinementMatch(validate, typeCheck, failureName);
-    }
-  });
+  return new Validator(validate);
 }
 
 function shapeMatch<A extends {}>(
@@ -87,7 +103,7 @@ function shapeMatch<A extends {}>(
       const key = entry[0] as keyof A;
       const validator = testShape[key];
       if (key in value) {
-        const run = validator(value[key]);
+        const run = validator.apply(value[key]);
         run.fold({
           left: value => {
             acc.validationErrors.push([key, value]);
@@ -206,7 +222,7 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
   const validateUnion: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
     args.forEach(fnTest => {
-      const result = fnTest(value);
+      const result = fnTest.apply(value);
       result.fold({
         left: value => {
           errors.push(value);
@@ -259,7 +275,7 @@ export function every(...args: Validator<unknown>[]): Validator<unknown> {
   const validateIntersection: ValidatorFn<unknown> = value => {
     const errors: string[] = [];
     args.forEach(fnTest => {
-      const result = fnTest(value);
+      const result = fnTest.apply(value);
       result.fold({
         left: value => {
           errors.push(value);
@@ -372,11 +388,11 @@ export function tuple(tupleShape: ArrayLike<Validator<unknown>>) {
  */
 export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
   return toValidator(value =>
-    isArray(value)
+    isArray.apply(value)
       .map(x => Array.from(x))
       .chain(currentArray => {
         const lefts: [string, number][] = Array.from(currentArray)
-          .map(validator)
+          .map(validator.apply)
           .reduce(
             (acc, either, i) =>
               either.fold({
@@ -432,7 +448,7 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
     toValidEither: Validator<B>,
     thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
-    const testedValue = toValidEither(this.a);
+    const testedValue = toValidEither.apply(this.a);
     return testedValue.fold<ChainMatches<OutcomeType>>({
       left: () => this,
       right: value => new Matched<OutcomeType>(thenFn(value))
