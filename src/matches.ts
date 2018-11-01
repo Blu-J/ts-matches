@@ -4,11 +4,12 @@ import { None, Some, Maybe } from "./maybe";
 export { Left, Right, Either, None, Some, Maybe };
 
 const isObject = (x: unknown): x is object =>
-  typeof x === "object" && x !== null;
+  typeof x === "object" && x != null;
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
 export type ValidatorFn<A> = (value: unknown) => Either<string, A>;
+export type MaybePartial<A> = { [key in keyof A]: Maybe<A[key]> };
 export class Validator<A> {
   static of<A>(apply: ((value: unknown) => Either<string, A>)) {
     return new Validator(apply);
@@ -35,6 +36,13 @@ export class Validator<A> {
   }
   chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
     return Validator.of((value: unknown) => this.apply(value).chain(fn));
+  }
+
+  test = (value: unknown): value is A => {
+    return this.apply(value).fold({
+      left: () => false,
+      right: () => true
+    });
   }
 
   /**
@@ -302,34 +310,11 @@ export function every<A, B>(
 export function every<A>(...args: Validator<A>[]): Validator<A>;
 
 export function every(...args: Validator<unknown>[]): Validator<unknown> {
-  const validateIntersection: ValidatorFn<unknown> = value => {
-    const errors: string[] = [];
-    args.forEach(fnTest => {
-      const result = fnTest.apply(value);
-      result.fold({
-        left: value => {
-          errors.push(value);
-        },
-        right: noop
-      });
-    });
-    if (errors.length === 0) {
-      return Right.of(value);
-    }
-    const uniqueErrors = errors.reduce((acc: string[], value) => {
-      if (acc.indexOf(value) === -1) {
-        acc.push(value);
-      }
-      return acc;
-    }, []);
-
-    if (uniqueErrors.length === 1) {
-      return Left.of(uniqueErrors[0]);
-    }
-    return Left.of(`every(${uniqueErrors.join(", ")})`);
-  };
-  return toValidator(validateIntersection);
+  return Validator.of((value: unknown) =>
+    args.reduce((acc, val) => acc.chain(val.apply), Right.of(value))
+  );
 }
+
 export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ): Validator<Partial<A>> => {
@@ -370,20 +355,22 @@ export const isShape = <A extends {}>(
     if (!isObject(value)) {
       return Left.of(`notAnObject(${value})`);
     }
-    const shapeMatched = shapeMatch(testShape, value);
-    const errors = shapeMatched.validationErrors.map(
-      ([key, error]) => `@${key} ${error}`
+    if (Object.keys(testShape).length === 0) {
+      return Right.of(value as A);
+    }
+    return (Object.keys(testShape) as Array<keyof A>).reduce(
+      (shapeEither, key) =>
+        shapeEither.chain(shape =>
+          testShape[key].apply((value as any)[key]).fold<Either<string, A>>({
+            left: l => Left.of(`@${key} ${l}`),
+            right: r => {
+              shape[key] = r;
+              return Right.of(shape);
+            }
+          })
+        ),
+      Right.of((Array.isArray(value) ? [...value] : { ...value }) as A)
     );
-    if (errors.length === 1) {
-      return Left.of(`${errors[0]}`);
-    }
-    if (errors.length > 0) {
-      return Left.of(`(${errors.join(", ")})`);
-    }
-    if (shapeMatched.missing.length > 0) {
-      return Left.of(`missing(${shapeMatched.missing.join(", ")})`);
-    }
-    return Right.of(value as A);
   };
   return toValidator(validateShape);
 };
@@ -418,29 +405,21 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
     isArray
       .apply(value)
       .map(x => Array.from(x))
-      .chain(currentArray => {
-        const lefts: [string, number][] = Array.from(currentArray)
-          .map(validator.apply)
-          .reduce(
-            (acc, either, i) =>
-              either.fold({
-                left: error => {
-                  acc.push([error, i]);
-                  return acc;
-                },
-                right: () => acc
-              }),
-            [] as [string, number][]
-          );
-        const errors = lefts.map(([left, index]) => `@${index} ${left}`);
-        if (errors.length === 1) {
-          return Left.of(`(${errors[0]}`);
-        }
-        if (errors.length > 0) {
-          return Left.of(`(${errors.join(", ")})`);
-        }
-        return Right.of(value as A[]);
-      })
+      .chain(currentArray =>
+        currentArray.reduce(
+          (accEither: Either<string, A[]>, value, i) =>
+            accEither.chain(acc =>
+              validator.apply(value).fold<Either<string, A[]>>({
+                left: l => Left.of(`@${i} ${l}`),
+                right: r => {
+                  acc[i] = r;
+                  return Right.of(acc);
+                }
+              })
+            ),
+          Right.of(new Array(currentArray.length))
+        )
+      )
   );
 }
 

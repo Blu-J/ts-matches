@@ -8,12 +8,21 @@ export abstract class Either<L, R> {
     });
   }
   map<R2>(mapFn: (r: R) => R2): Either<L, R2> {
-    return this.chain(x => Right.of(mapFn(x)));
+    return this.fold({
+      left: _ => this as any,
+      right: r => Right.of(mapFn(r))
+    });
+  }
+  chainLeft<L2>(mapFn: (r: L) => Either<L2, R>): Either<L2, R> {
+    return this.fold({
+      left: mapFn,
+      right: _ => this as any
+    });
   }
   chain<R2>(mapFn: (r: R) => Either<L, R2>): Either<L, R2> {
     return this.fold({
-      left: l => this as any,
-      right: r => mapFn(r)
+      left: _ => this as any,
+      right: mapFn
     });
   }
 }
