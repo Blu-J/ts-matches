@@ -1,7 +1,12 @@
 export abstract class Either<L, R> {
   abstract fold<Co>(options: { left(l: L): Co; right(r: R): Co }): Co;
   abstract readonly value: L | R;
-
+  defaultTo(fallback: R) {
+    return this.fold({
+      left: () => fallback,
+      right: x => x
+    });
+  }
   map<R2>(mapFn: (r: R) => R2): Either<L, R2> {
     return this.chain(x => Right.of(mapFn(x)));
   }
