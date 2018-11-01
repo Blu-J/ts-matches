@@ -34,9 +34,6 @@ export class Validator<A> {
   map<B>(fn: (apply: A) => B): Validator<B> {
     return Validator.of((value: unknown) => this.apply(value).map(fn));
   }
-  chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
-    return Validator.of((value: unknown) => this.apply(value).chain(fn));
-  }
 
   test = (value: unknown): value is A => {
     return this.apply(value).fold({
@@ -82,18 +79,6 @@ export class Validator<A> {
 }
 const identity = <X>(x: X) => x;
 const noop = () => void 0;
-export function unsafeMatchThrow<A>(validatorFn: ValidatorFn<A>) {
-  const unsafeMatch = (value: unknown): A => {
-    const matched = validatorFn(value);
-    return matched.fold<A>({
-      left: error => {
-        throw new TypeError(`Failed type: ${error}`);
-      },
-      right: identity
-    });
-  };
-  return unsafeMatch;
-}
 
 /**
  * Ensure that we can extend the validator with a more specific validator

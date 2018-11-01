@@ -111,7 +111,7 @@ describe("matches", () => {
           }
         )
       );
-    });    
+    });
     test("a matched value will not go to default", () => {
       fc.assert(
         fc.property(gens.testSetup, testSetup => {
@@ -405,6 +405,27 @@ describe("matches", () => {
       matches.partial({}).unsafeCast(5)
     ).toThrowErrorMatchingInlineSnapshot(`"Failed type: notAnObject(5)"`);
   });
+  test("should throw on invalid unsafe match throw", async () => {
+    try {
+      await matches.partial({}).castPromise(5);
+      expect("never").toBe("called");
+    } catch (e) {
+      expect(e).toMatchInlineSnapshot(`"notAnObject(5)"`);
+    }
+  });
+  test("should throw on invalid unsafe match throw", async () => {
+    expect(await matches.literal(5).castPromise(5)).toBe(5);
+  });
+  test("some should only return the unique", () => {
+    expect(
+      matches.some(matches.number, matches.literal("test"), matches.number).apply("hello").value
+    ).toBe("some(isNumber(hello), literal[test](hello))");
+  });
+  test("some should only return the unique", () => {
+    expect(
+      matches.some(matches.number, matches.number).apply("hello").value
+    ).toBe("isNumber(hello)");
+  });
 
   test("should guard without a name", () => {
     expect(matches.guard(x => Number(x) > 3).unsafeCast(6)).toBe(6);
@@ -488,6 +509,12 @@ describe("matches", () => {
       const input = {};
       const expected = Left.of("isNumber([object Object])");
       expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+  });
+
+  describe("Testing as a filter", () => {
+    it("should be able to utilize the test in a filter for typing", () => {
+      expect([0, "hi", 5, {}].filter(matches.number.test)).toEqual([0, 5]);
     });
   });
 });
