@@ -2,8 +2,17 @@ export abstract class Maybe<A> {
   abstract fold<Co>(options: { some(a: A): Co; none(): Co }): Co;
   abstract readonly value: A | null;
 
+  defaultTo(defaultValue: A): A {
+    return this.fold({
+      none: () => defaultValue,
+      some: x => x
+    });
+  }
   map<A2>(mapFn: (r: A) => A2): Maybe<A2> {
-    return this.chain(x => Some.of(mapFn(x)));
+    return this.fold({
+      none: () => this as any,
+      some: a => Some.of(mapFn(a))
+    });
   }
   chain<A2>(mapFn: (r: A) => Maybe<A2>): Maybe<A2> {
     return this.fold({

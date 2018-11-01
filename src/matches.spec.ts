@@ -105,7 +105,7 @@ describe("matches", () => {
                 expect(typeof value).toBe("string");
               },
               right: value => {
-                expect(value).toBe(example);
+                expect(value).toEqual(example);
               }
             });
           }
@@ -159,7 +159,7 @@ describe("matches", () => {
       b: matches.literal("b")
     });
     expect(validator.apply(testValue).value).toMatchInlineSnapshot(
-      `"missing(a, b)"`
+      `"@a literal[b](undefined)"`
     );
   });
 
@@ -306,7 +306,7 @@ describe("matches", () => {
     const testValue = ["bad", 5];
     const validator = matches.tuple([matches.number, matches.string]);
     expect(validator.apply(testValue).value).toMatchInlineSnapshot(
-      `"(@0 isNumber(bad), @1 string(5))"`
+      `"@0 isNumber(bad)"`
     );
   });
 
@@ -363,7 +363,7 @@ describe("matches", () => {
     const isGt6 = matches.guard((x: unknown) => isNumber(x) && x > 6, "isGt6");
     const validator = matches.every(matches.number, isEven, isGt6);
     expect(validator.apply(testValue).value).toMatchInlineSnapshot(
-      `"every(isEven(5), isGt6(5))"`
+      `"isEven(5)"`
     );
   });
 
@@ -376,7 +376,7 @@ describe("matches", () => {
     const testValue = [5, 3, 2, 5, 5];
     const arrayOf = matches.arrayOf(matches.literal(5));
     expect(arrayOf.apply(testValue).value).toMatchInlineSnapshot(
-      `"(@1 literal[5](3), @2 literal[5](2))"`
+      `"@1 literal[5](3)"`
     );
   });
 
@@ -404,6 +404,27 @@ describe("matches", () => {
     expect(() =>
       matches.partial({}).unsafeCast(5)
     ).toThrowErrorMatchingInlineSnapshot(`"Failed type: notAnObject(5)"`);
+  });
+  test("should throw on invalid unsafe match throw", async () => {
+    try {
+      await matches.partial({}).castPromise(5);
+      expect("never").toBe("called");
+    } catch (e) {
+      expect(e).toMatchInlineSnapshot(`"notAnObject(5)"`);
+    }
+  });
+  test("should throw on invalid unsafe match throw", async () => {
+    expect(await matches.literal(5).castPromise(5)).toBe(5);
+  });
+  test("some should only return the unique", () => {
+    expect(
+      matches.some(matches.number, matches.literal("test"), matches.number).apply("hello").value
+    ).toBe("some(isNumber(hello), literal[test](hello))");
+  });
+  test("some should only return the unique", () => {
+    expect(
+      matches.some(matches.number, matches.number).apply("hello").value
+    ).toBe("isNumber(hello)");
   });
 
   test("should guard without a name", () => {
@@ -488,6 +509,12 @@ describe("matches", () => {
       const input = {};
       const expected = Left.of("isNumber([object Object])");
       expect("" + maybeNumber.apply(input)).toBe("" + expected);
+    });
+  });
+
+  describe("Testing as a filter", () => {
+    it("should be able to utilize the test in a filter for typing", () => {
+      expect([0, "hi", 5, {}].filter(matches.number.test)).toEqual([0, 5]);
     });
   });
 });
