@@ -101,10 +101,10 @@ describe("matches", () => {
           ({ matcher }, example) => {
             const matchedValue = matcher.apply(example);
             matchedValue.fold({
-              left: value => {
+              left: (value: any) => {
                 expect(typeof value).toBe("string");
               },
-              right: value => {
+              right: (value: any) => {
                 expect(value).toEqual(example);
               }
             });
@@ -418,7 +418,9 @@ describe("matches", () => {
   });
   test("some should only return the unique", () => {
     expect(
-      matches.some(matches.number, matches.literal("test"), matches.number).apply("hello").value
+      matches
+        .some(matches.number, matches.literal("test"), matches.number)
+        .apply("hello").value
     ).toBe("some(isNumber(hello), literal[test](hello))");
   });
   test("some should only return the unique", () => {
