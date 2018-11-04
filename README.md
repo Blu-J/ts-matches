@@ -82,6 +82,7 @@ on that function that return a `validator` or a function that creates a `validat
 
 
 `MatcherChain` api
+
 | Attribute     | Description                                                   |
 | ----------    | ------------------------------------------------------------- |
 | match         | Create a matching case, when match return value               |
@@ -89,6 +90,7 @@ on that function that return a `validator` or a function that creates a `validat
 | defaultToLazy | Fall through case, ensures all are caught in lazy fashion     |
 
 `Validator` api 
+
 | Attribute   | Description                                                   |
 | ----------  | ------------------------------------------------------------- |
 | apply       | Use this to turn a value into an either                       |
