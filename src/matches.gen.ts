@@ -1,5 +1,6 @@
 import * as fc from "fast-check";
-import matches, { Validator, ChainMatches } from "./matches";
+import matches from "./matches";
+import { Validator, ChainMatches } from "./validators";
 
 export const noPossibleCounter = {
   noPossibleCounter: true
