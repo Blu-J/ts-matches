@@ -20,7 +20,8 @@ import {
   tuple,
   object,
   string,
-  boolean
+  boolean,
+  instanceOf
 } from "./validators";
 
 export { Left, Right, Either, None, Some, Maybe };
@@ -97,7 +98,8 @@ export const matches = Object.assign(
     guard,
     any,
     boolean,
-    nill: isNill
+    nill: isNill,
+    instanceOf
   }
 );
 export default matches;
