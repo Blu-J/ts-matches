@@ -218,6 +218,15 @@ export const isArray = guard<ArrayLike<unknown>>(Array.isArray);
 
 const isString = (x: unknown): x is string => typeof x === "string";
 export const string = guard<string>((x): x is string => isString(x), "string");
+export const instanceOf = <C>(classCreator: {
+  new (...args: any[]): C;
+}): Validator<C> =>
+  new Validator(
+    (value: unknown) =>
+      value instanceof classCreator
+        ? Right.of(value)
+        : Left.of(`is${classCreator.name}(${value})`)
+  );
 
 /**
  * Union is a good tool to make sure that the validated value
