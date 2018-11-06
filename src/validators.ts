@@ -34,6 +34,10 @@ export class Validator<A> {
     return Validator.of((value: unknown) => this.apply(value).map(fn));
   }
 
+  chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
+    return Validator.of((value: unknown) => this.apply(value).chain(fn));
+  }
+
   test = (value: unknown): value is A => {
     return this.apply(value).fold({
       left: () => false,
@@ -301,11 +305,8 @@ export function every(...args: Validator<unknown>[]): Validator<unknown> {
 
 export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
-): Validator<Partial<A>> => {
-  const validatePartial: ValidatorFn<Partial<A>> = value => {
-    if (!isObject(value)) {
-      return Left.of(`notAnObject(${value})`);
-    }
+): Validator<Partial<A>> =>
+  object.chain(value => {
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length === 0) {
       return Right.of(value);
@@ -317,9 +318,7 @@ export const isPartial = <A extends {}>(
       return Left.of(errors[0]);
     }
     return Left.of(`(${errors.join(", ")})`);
-  };
-  return toValidator(validatePartial);
-};
+  });
 /**
  * Good for duck typing an object, with optional values
  * @param testShape Shape of validators, to ensure we match the shape
@@ -334,15 +333,9 @@ export const partial = <A extends {}>(
 
 export const isShape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
-) => {
-  const validateShape: ValidatorFn<A> = value => {
-    if (!isObject(value)) {
-      return Left.of(`notAnObject(${value})`);
-    }
-    if (Object.keys(testShape).length === 0) {
-      return Right.of(value as A);
-    }
-    return (Object.keys(testShape) as Array<keyof A>).reduce(
+) =>
+  object.chain(value =>
+    (Object.keys(testShape) as Array<keyof A>).reduce(
       (shapeEither, key) =>
         shapeEither.chain(shape =>
           testShape[key].apply((value as any)[key]).fold<Either<string, A>>({
@@ -354,10 +347,8 @@ export const isShape = <A extends {}>(
           })
         ),
       Right.of((Array.isArray(value) ? [...value] : { ...value }) as A)
-    );
-  };
-  return toValidator(validateShape);
-};
+    )
+  );
 
 export const shape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
