@@ -148,7 +148,7 @@ describe("matches", () => {
     const testValue = 5;
     const validator = matches.shape({ a: matches.literal("b") });
     expect(validator.apply(testValue).value).toEqual(
-      `notAnObject(${JSON.stringify(testValue)})`
+      `isObject(${JSON.stringify(testValue)})`
     );
   });
 
@@ -403,14 +403,14 @@ describe("matches", () => {
   test("should throw on invalid unsafe match throw", () => {
     expect(() =>
       matches.partial({}).unsafeCast(5)
-    ).toThrowErrorMatchingInlineSnapshot(`"Failed type: notAnObject(5)"`);
+    ).toThrowErrorMatchingInlineSnapshot(`"Failed type: isObject(5)"`);
   });
   test("should throw on invalid unsafe match throw", async () => {
     try {
       await matches.partial({}).castPromise(5);
       expect("never").toBe("called");
     } catch (e) {
-      expect(e).toMatchInlineSnapshot(`"notAnObject(5)"`);
+      expect(e).toMatchInlineSnapshot(`"isObject(5)"`);
     }
   });
   test("should throw on invalid unsafe match throw", async () => {
