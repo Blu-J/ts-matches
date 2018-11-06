@@ -446,6 +446,31 @@ describe("matches", () => {
     expect(matches.object.apply(event).value).toBe(event);
   });
 
+  describe("testing is instance", () => {
+    class Fake {
+      constructor(readonly value: number) {}
+    }
+    it("should be able to validate it is a instance", () => {
+      const value = new Fake(3);
+      expect(matches.instanceOf(Fake).test(value)).toEqual(true);
+      expect(matches.instanceOf(Fake).apply(value).value)
+        .toMatchInlineSnapshot(`
+Fake {
+  "value": 3,
+}
+`);
+    });
+    it("should be able to validate it is not a instance", () => {
+      const value = {
+        value: 4
+      };
+      expect(matches.instanceOf(Fake).test(value)).toEqual(false);
+      expect(matches.instanceOf(Fake).apply(value).value).toMatchInlineSnapshot(
+        `"isFake([object Object])"`
+      );
+    });
+  });
+
   test("should fail on a circular object", () => {
     const o: any = {};
     o.o = o;
