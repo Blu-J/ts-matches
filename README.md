@@ -1,5 +1,8 @@
 # Typescript Matches
 
+[Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
+Uses [Monad](https://en.wikipedia.org/wiki/Monad_(functional_programming))
+
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 
