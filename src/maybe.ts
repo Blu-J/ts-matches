@@ -1,3 +1,5 @@
+type nil = void | undefined | null;
+
 export abstract class Maybe<A> {
   abstract fold<Co>(options: { some(a: A): Co; none(): Co }): Co;
   abstract readonly value: A | null;
@@ -8,7 +10,7 @@ export abstract class Maybe<A> {
       some: x => x
     });
   }
-  map<A2>(mapFn: (r: A) => A2): Maybe<A2> {
+  map<A2>(mapFn: (r: A) => nil | A2): Maybe<A2> {
     return this.fold({
       none: () => this as any,
       some: a => Some.of(mapFn(a))
@@ -23,8 +25,8 @@ export abstract class Maybe<A> {
 }
 export class None extends Maybe<any> {
   readonly value = null;
-  static of = new None();
-  static ofFn() {
+  static of: Maybe<any> = new None();
+  static ofFn<A>(): Maybe<A> {
     return None.of;
   }
   fold<Co>(options: { some(a: any): Co; none(): Co }): Co {
@@ -35,7 +37,7 @@ export class None extends Maybe<any> {
   }
 }
 export class Some<A> extends Maybe<A> {
-  static of<A>(value: A | null | undefined) {
+  static of<A>(value: A | nil): Maybe<A> {
     if (value == null) {
       return None.of;
     }
