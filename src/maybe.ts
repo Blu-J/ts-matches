@@ -1,55 +1,8 @@
-type nil = void | undefined | null;
+import { MonadUnion } from "./monad";
 
-export abstract class Maybe<A> {
-  abstract fold<Co>(options: { some(a: A): Co; none(): Co }): Co;
-  abstract readonly value: A | null;
-
-  defaultTo(defaultValue: A): A {
-    return this.fold({
-      none: () => defaultValue,
-      some: x => x
-    });
-  }
-  map<A2>(mapFn: (r: A) => nil | A2): Maybe<A2> {
-    return this.fold({
-      none: () => this as any,
-      some: a => Some.of(mapFn(a))
-    });
-  }
-  chain<A2>(mapFn: (r: A) => Maybe<A2>): Maybe<A2> {
-    return this.fold({
-      none: () => this as any,
-      some: a => mapFn(a)
-    });
-  }
-}
-export class None extends Maybe<any> {
-  readonly value = null;
-  static of: Maybe<any> = new None();
-  static ofFn<A>(): Maybe<A> {
-    return None.of;
-  }
-  fold<Co>(options: { some(a: any): Co; none(): Co }): Co {
-    return options.none();
-  }
-  toString() {
-    return `none`;
-  }
-}
-export class Some<A> extends Maybe<A> {
-  static of<A>(value: A | nil): Maybe<A> {
-    if (value == null) {
-      return None.of;
-    }
-    return new Some(value);
-  }
-  constructor(readonly value: A) {
-    super();
-  }
-  fold<Co>(options: { some(a: A): Co; none(): Co }): Co {
-    return options.some(this.value);
-  }
-  toString() {
-    return `some(${this.value})`;
-  }
+type nill = null | void | undefined;
+export class Maybe<A> extends MonadUnion<{ none: ""; some: A }, "some"> {
+  static none: Maybe<any> = MonadUnion.of("some", "none", "");
+  static some = <A>(value: A | nill): Maybe<A> =>
+    value == null ? Maybe.none : MonadUnion.of("some", "some", value);
 }

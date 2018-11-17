@@ -1,5 +1,5 @@
-import { Left, Right, Either } from "./either";
-import { None, Some, Maybe } from "./maybe";
+import { Either } from "./either";
+import { Maybe } from "./maybe";
 import {
   ChainMatches,
   Validator,
@@ -24,7 +24,7 @@ import {
   instanceOf
 } from "./validators";
 
-export { Left, Right, Either, None, Some, Maybe };
+export { Either, Maybe };
 
 class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private value: OutcomeType) {}

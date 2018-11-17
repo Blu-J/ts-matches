@@ -1,6 +1,6 @@
-import { Either, Right, Left } from "./either";
+import { Either } from "./either";
 
-import { Maybe, None, Some } from "./maybe";
+import { Maybe } from "./maybe";
 
 const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;
@@ -105,8 +105,8 @@ export function refinementMatch<A>(
     toValidEither(value).chain(
       valueA =>
         typeCheck(valueA)
-          ? Right.of(valueA)
-          : Left.of(`${failureName}(${valueA})`)
+          ? Either.right(valueA)
+          : Either.left(`${failureName}(${valueA})`)
     );
   return toValidator(validateRefinement);
 }
@@ -170,7 +170,7 @@ export function guard(
   testName: string = fnTest.name || "test"
 ): Validator<unknown> {
   const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
-    fnTest(value) ? Right.of(value) : Left.of(`${testName}(${value})`);
+    fnTest(value) ? Either.right(value) : Either.left(`${testName}(${value})`);
 
   return toValidator(isValidEither);
 }
@@ -185,11 +185,6 @@ export function literal<A extends string | number | boolean | null | undefined>(
     `literal[${isEqualToValue}]`
   );
 }
-
-export const regex = guard<RegExp>(
-  (x): x is RegExp => x instanceof RegExp,
-  "regex"
-);
 
 export const number = guard(isNumber);
 
@@ -224,10 +219,11 @@ export const instanceOf = <C>(classCreator: {
   new Validator(
     (value: unknown) =>
       value instanceof classCreator
-        ? Right.of(value)
-        : Left.of(`is${classCreator.name}(${value})`)
+        ? Either.right(value)
+        : Either.left(`is${classCreator.name}(${value})`)
   );
 
+export const regex = instanceOf(RegExp);
 /**
  * Union is a good tool to make sure that the validated value
  * is in the union of all the validators passed in. Basically an `or`
@@ -266,7 +262,7 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
       });
     });
     if (errors.length < args.length) {
-      return Right.of(value);
+      return Either.right(value);
     }
     const uniqueErrors = errors.reduce((acc: string[], value) => {
       if (acc.indexOf(value) === -1) {
@@ -276,9 +272,9 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
     }, []);
 
     if (uniqueErrors.length === 1) {
-      return Left.of(uniqueErrors[0]);
+      return Either.left(uniqueErrors[0]);
     }
-    return Left.of(`some(${uniqueErrors.join(", ")})`);
+    return Either.left(`some(${uniqueErrors.join(", ")})`);
   };
   return toValidator(validateUnion);
 }
@@ -308,7 +304,7 @@ export function every<A>(...args: Validator<A>[]): Validator<A>;
 
 export function every(...args: Validator<unknown>[]): Validator<unknown> {
   return Validator.of((value: unknown) =>
-    args.reduce((acc, val) => acc.chain(val.apply), Right.of(value))
+    args.reduce((acc, val) => acc.chain(val.apply), Either.right(value))
   );
 }
 
@@ -318,15 +314,15 @@ export const isPartial = <A extends {}>(
   object.chain(value => {
     const shapeMatched = shapeMatch(testShape, value);
     if (shapeMatched.validationErrors.length === 0) {
-      return Right.of(value);
+      return Either.right(value);
     }
     const errors = shapeMatched.validationErrors.map(
       ([key, error]) => `@${key} ${error}`
     );
     if (errors.length === 1) {
-      return Left.of(errors[0]);
+      return Either.left(errors[0]);
     }
-    return Left.of(`(${errors.join(", ")})`);
+    return Either.left(`(${errors.join(", ")})`);
   });
 /**
  * Good for duck typing an object, with optional values
@@ -348,14 +344,14 @@ export const isShape = <A extends {}>(
       (shapeEither, key) =>
         shapeEither.chain(shape =>
           testShape[key].apply((value as any)[key]).fold<Either<string, A>>({
-            left: l => Left.of(`@${key} ${l}`),
+            left: l => Either.left(`@${key} ${l}`),
             right: r => {
               shape[key] = r;
-              return Right.of(shape);
+              return Either.right(shape);
             }
           })
         ),
-      Right.of((Array.isArray(value) ? [...value] : { ...value }) as A)
+      Either.right((Array.isArray(value) ? [...value] : { ...value }) as A)
     )
   );
 
@@ -391,17 +387,17 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
       .map(x => Array.from(x))
       .chain(currentArray =>
         currentArray.reduce(
-          (accEither: Either<string, A[]>, value, i) =>
+          (accEither: Either<string, A[]>, value: any, i: number) =>
             accEither.chain(acc =>
               validator.apply(value).fold<Either<string, A[]>>({
-                left: l => Left.of(`@${i} ${l}`),
+                left: l => Either.left(`@${i} ${l}`),
                 right: r => {
                   acc[i] = r;
-                  return Right.of(acc);
+                  return Either.right(acc);
                 }
               })
             ),
-          Right.of(new Array(currentArray.length))
+          Either.right(new Array(currentArray.length))
         )
       )
   );
@@ -410,9 +406,9 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
 export function maybe<A>(validator: Validator<A>): Validator<Maybe<A>> {
   return Validator.of(function maybe(x: unknown) {
     if (x == null) {
-      return Right.of(None.ofFn());
+      return Either.right(Maybe.none);
     }
-    return validator.apply(x).map(Some.of);
+    return validator.apply(x).map(Maybe.some);
   });
 }
 
