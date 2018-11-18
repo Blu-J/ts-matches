@@ -1,6 +1,6 @@
 import { Either, Right, Left } from "./either";
 
-import { Maybe, None, Some } from "./maybe";
+import { Maybe, Some, None } from "./maybe";
 
 const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;
@@ -102,11 +102,10 @@ export function refinementMatch<A>(
   failureName = typeCheck.name
 ) {
   const validateRefinement: ValidatorFn<A> = (value: unknown) =>
-    toValidEither(value).chain(
-      valueA =>
-        typeCheck(valueA)
-          ? Right.of(valueA)
-          : Left.of(`${failureName}(${valueA})`)
+    toValidEither(value).chain(valueA =>
+      typeCheck(valueA)
+        ? Right.of(valueA)
+        : Left.of(`${failureName}(${valueA})`)
     );
   return toValidator(validateRefinement);
 }
@@ -186,11 +185,6 @@ export function literal<A extends string | number | boolean | null | undefined>(
   );
 }
 
-export const regex = guard<RegExp>(
-  (x): x is RegExp => x instanceof RegExp,
-  "regex"
-);
-
 export const number = guard(isNumber);
 
 export const isNill = guard(function isNill(x: unknown): x is null | undefined {
@@ -221,13 +215,13 @@ export const string = guard<string>((x): x is string => isString(x), "string");
 export const instanceOf = <C>(classCreator: {
   new (...args: any[]): C;
 }): Validator<C> =>
-  new Validator(
-    (value: unknown) =>
-      value instanceof classCreator
-        ? Right.of(value)
-        : Left.of(`is${classCreator.name}(${value})`)
+  new Validator((value: unknown) =>
+    value instanceof classCreator
+      ? Right.of(value)
+      : Left.of(`is${classCreator.name}(${value})`)
   );
 
+export const regex = instanceOf(RegExp);
 /**
  * Union is a good tool to make sure that the validated value
  * is in the union of all the validators passed in. Basically an `or`
@@ -391,7 +385,7 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
       .map(x => Array.from(x))
       .chain(currentArray =>
         currentArray.reduce(
-          (accEither: Either<string, A[]>, value, i) =>
+          (accEither: Either<string, A[]>, value: any, i: number) =>
             accEither.chain(acc =>
               validator.apply(value).fold<Either<string, A[]>>({
                 left: l => Left.of(`@${i} ${l}`),
@@ -410,7 +404,7 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
 export function maybe<A>(validator: Validator<A>): Validator<Maybe<A>> {
   return Validator.of(function maybe(x: unknown) {
     if (x == null) {
-      return Right.of(None.ofFn());
+      return Right.of(None.of);
     }
     return validator.apply(x).map(Some.of);
   });
