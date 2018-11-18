@@ -22,160 +22,242 @@ type MatchPair<A> = {
   type: string;
   counterExample: any;
 };
-const trueFloat = fc
-  .tuple(fc.oneof(fc.constant(0), fc.float()), fc.integer())
-  .map(([x, y]) => x + y);
-const matcherNumber = fc
-  .record({
-    example: trueFloat,
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.string(),
-      fc.object()
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.number, example, "number", counterExample)
-  );
-const matcherNill = fc
-  .record({
-    example: fc.constantFrom(null, undefined),
-    counterExample: fc.oneof<any>(fc.string(), fc.object(), fc.integer())
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.nill, example, "nill", counterExample)
-  );
-const matcherNat = fc
-  .record({
-    example: fc.nat(),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.string(),
-      fc.object(),
-      fc
-        .nat()
-        .filter(x => x !== 0)
-        .map(x => -x)
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.natural, example, "natural number", counterExample)
-  );
-const matcherObject = fc
-  .record({
-    example: fc.object(),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.string(),
-      trueFloat
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.object, example, "object", counterExample)
-  );
-
-fc.boolean(), fc.integer(), fc.string();
-const matcherConstant = fc
-  .oneof<{ example: boolean | string | number; counterExample: any }>(
-    fc.record({
-      example: fc.boolean(),
+const matcherPairsSimple = (() => {
+  const trueFloat = fc
+    .tuple(fc.oneof(fc.constant(0), fc.float()), fc.integer())
+    .map(([x, y]) => x + y);
+  const matcherNumber = fc
+    .record({
+      example: trueFloat,
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined),
+        fc.string(),
+        fc.object()
+      )
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.number, example, "number", counterExample)
+    );
+  const matcherNill = fc
+    .record({
+      example: fc.constantFrom(null, undefined),
+      counterExample: fc.oneof<any>(fc.string(), fc.object(), fc.integer())
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.nill, example, "nill", counterExample)
+    );
+  const matcherNat = fc
+    .record({
+      example: fc.nat(),
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined),
+        fc.string(),
+        fc.object(),
+        fc
+          .nat()
+          .filter(x => x !== 0)
+          .map(x => -x)
+      )
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.natural, example, "natural number", counterExample)
+    );
+  const matcherObject = fc
+    .record({
+      example: fc.object(),
       counterExample: fc.oneof<any>(
         fc.constantFrom(null, undefined),
         fc.string(),
         trueFloat
       )
-    }),
-    fc.record({
-      example: fc.string(),
-      counterExample: fc.oneof<any>(
-        fc.constantFrom(null, undefined),
-        trueFloat,
-        fc.boolean()
-      )
-    }),
-    fc.record({
-      example: trueFloat,
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.object, example, "object", counterExample)
+    );
+
+  fc.boolean(), fc.integer(), fc.string();
+  const matcherFunction = fc
+    .record({
+      example: fc.constant(() => {}),
       counterExample: fc.oneof<any>(
         fc.constantFrom(null, undefined),
         fc.string(),
-        fc.boolean()
+        fc.object(),
+        trueFloat
       )
     })
-  )
-  .map(({ example, counterExample }) =>
-    matchPairOf(
-      matches.literal(example),
-      example,
-      `literal of ${JSON.stringify(example)}`,
-      counterExample
-    )
-  );
-const matcherFunction = fc
-  .record({
-    example: fc.constant(() => {}),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.string(),
-      fc.object(),
-      trueFloat
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.isFunction, example, "function", counterExample)
-  );
-const matcherBoolean = fc
-  .record({
-    example: fc.boolean(),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.string(),
-      fc.object(),
-      trueFloat
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.boolean, example, "boolean", counterExample)
-  );
-const matcherArray = fc
-  .record({
-    example: fc.array(fc.anything()),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined, {}),
-      fc.string(),
-      trueFloat
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.array, example, "array", counterExample)
-  );
-const matcherAny = fc
-  .anything()
-  .map(x => matchPairOf(matches.any, x, "any", noPossibleCounter));
-const matcherString = fc
-  .record({
-    example: fc.string(),
-    counterExample: fc.oneof<any>(
-      fc.constantFrom(null, undefined),
-      fc.object(),
-      trueFloat
-    )
-  })
-  .map(({ example, counterExample }) =>
-    matchPairOf(matches.string, example, "string", counterExample)
-  );
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.isFunction, example, "function", counterExample)
+    );
+  const matcherBoolean = fc
+    .record({
+      example: fc.boolean(),
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined),
+        fc.string(),
+        fc.object(),
+        trueFloat
+      )
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.boolean, example, "boolean", counterExample)
+    );
+  const matcherArray = fc
+    .record({
+      example: fc.array(fc.anything()),
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined, {}),
+        fc.string(),
+        trueFloat
+      )
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.array, example, "array", counterExample)
+    );
+  const matcherAny = fc
+    .anything()
+    .map(x => matchPairOf(matches.any, x, "any", noPossibleCounter));
+  const matcherString = fc
+    .record({
+      example: fc.string(),
+      counterExample: fc.oneof<any>(
+        fc.constantFrom(null, undefined),
+        fc.object(),
+        trueFloat
+      )
+    })
+    .map(({ example, counterExample }) =>
+      matchPairOf(matches.string, example, "string", counterExample)
+    );
 
-const matcherPairsSimple = fc.oneof<MatchPair<any>>(
-  matcherNumber,
-  matcherFunction,
-  matcherObject,
-  matcherConstant,
-  matcherBoolean,
-  matcherArray,
-  matcherAny,
-  matcherString,
-  matcherNat,
-  matcherNill
-);
+  const matcherConstant = fc
+    .oneof<{ example: boolean | string | number; counterExample: any }>(
+      fc.record({
+        example: fc.boolean(),
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          fc.string(),
+          trueFloat
+        )
+      }),
+      fc.record({
+        example: fc.string(),
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          trueFloat,
+          fc.boolean()
+        )
+      }),
+      fc.record({
+        example: trueFloat,
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          fc.string(),
+          fc.boolean()
+        )
+      })
+    )
+    .map(({ example, counterExample }) =>
+      matchPairOf(
+        matches.literal(example),
+        example,
+        `literal of ${JSON.stringify(example)}`,
+        counterExample
+      )
+    );
+
+  const matchesLiteral = fc
+    .oneof<{ example: boolean | string | number; counterExample: any }>(
+      fc.record({
+        example: fc.boolean(),
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          fc.string(),
+          trueFloat
+        )
+      }),
+      fc.record({
+        example: fc.string(),
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          trueFloat,
+          fc.boolean()
+        )
+      }),
+      fc.record({
+        example: trueFloat,
+        counterExample: fc.oneof<any>(
+          fc.constantFrom(null, undefined),
+          fc.string(),
+          fc.boolean()
+        )
+      })
+    )
+    .map(({ example, counterExample }) =>
+      matchPairOf(
+        matches.literal(example),
+        example,
+        `literal of ${JSON.stringify(example)}`,
+        counterExample
+      )
+    );
+  type Constructor<A> = {
+    new (...args: any[]): A;
+  };
+  class TestBase {}
+  const constructors: Constructor<any>[] = [
+    class Test {},
+    class Test2 extends TestBase {},
+    class Test3 {}
+  ];
+
+  const matcherInstanceOf = fc
+    .constantFrom(...constructors)
+    .chain(Cons =>
+      fc.record({
+        example: fc.constant(new Cons()),
+        matcher: fc.constant(matches.instanceOf(Cons)),
+        type: fc.constant(`instanceOf ${Cons.name}`),
+        counterExample: fc.constantFrom(...constructors.filter(x => x != Cons))
+      })
+    )
+    .map(base =>
+      matchPairOf(base.matcher, base.example, base.type, base.counterExample)
+    );
+  return fc.oneof<MatchPair<any>>(
+    matcherNumber,
+    matcherFunction,
+    matcherInstanceOf,
+    matcherObject,
+    matcherConstant,
+    matcherBoolean,
+    matchesLiteral,
+    matcherArray,
+    matcherAny,
+    matcherString,
+    matcherNat,
+    matcherNill
+  );
+})();
+
+const matcherSome = fc
+  .array(matcherPairsSimple)
+  .filter(x => x.length > 0)
+  .chain(matchers =>
+    fc.integer(0, matchers.length - 1).map(atIndex => ({
+      atIndex,
+      matchers
+    }))
+  )
+  .map(({ atIndex, matchers }) => {
+    return matchPairOf(
+      matches.some(...matchers.map(x => x.matcher)),
+      matchers[atIndex].example,
+      `some (${matchers.map(x => x.type).join(", ")})`,
+      noPossibleCounter
+    );
+  });
+
 const matcherArrayOf = matcherPairsSimple.chain(pair =>
   fc.array(fc.constant(pair)).map(pairs => {
     const validCounter =
@@ -189,6 +271,7 @@ const matcherArrayOf = matcherPairsSimple.chain(pair =>
     );
   })
 );
+
 const matcherTuple = fc
   .array(matcherPairsSimple)
   .filter(x => x.length > 0)
@@ -197,11 +280,12 @@ const matcherTuple = fc
       !!xs.length && xs.every(x => x.counterExample !== noPossibleCounter);
     return matchPairOf(
       matches.tuple(xs.map(tupleValue => tupleValue.matcher) as any),
-      xs.map(x => x.example),
+      xs.map(x => x.example) as any,
       `tuple ${JSON.stringify(xs.map(x => x.type))}`,
       validCounter ? xs.map(x => x.counterExample) : 0
     );
   });
+
 const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
   type testingShape = { [key in keyof typeof x]: (typeof x)[key]["example"] };
   const matcher: Validator<testingShape> = matches.shape(
@@ -256,6 +340,7 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
 
   return matchPairOf(matcher, example, type, validCounter ? counterExample : 0);
 });
+
 const matcherShapePartial = fc
   .dictionary(fc.string(), matcherPairsSimple)
   .map(x => {
@@ -323,7 +408,8 @@ export const matcherPairs = fc.oneof<ReturnType<typeof matchPairOf>>(
   matcherShape,
   matcherTuple,
   matcherArrayOf,
-  matcherShapePartial
+  matcherShapePartial,
+  matcherSome
 );
 
 export const testSetupInformation = <A>(
@@ -355,6 +441,7 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
     defaultValue,
     setupInformation: [] as [],
     runMatch: (x: unknown) => matches(x).defaultTo(defaultValue),
+    runMatchLazy: (x: unknown) => matches(x).defaultToLazy(() => defaultValue),
     randomExample: {
       value: defaultValue,
       counter: noPossibleCounter as any,
@@ -386,6 +473,14 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
             matches(x)
           )
           .defaultTo(defaultValue),
+      runMatchLazy: (x: unknown) =>
+        setupInformation
+          .reduce(
+            (acc: ChainMatches<unknown>, { matcher, matchValue }) =>
+              acc.when(matcher, () => matchValue),
+            matches(x)
+          )
+          .defaultToLazy(() => defaultValue),
       randomExample: {
         value: setupInformation[randomExampleIndex].example,
         counter: setupInformation[randomExampleIndex].counterExample,
