@@ -1,5 +1,5 @@
-import { Either } from "./either";
-import { Maybe } from "./maybe";
+import {Either, Right, Left} from './either';
+import {Maybe, Some, None} from './maybe';
 import {
   ChainMatches,
   Validator,
@@ -21,10 +21,10 @@ import {
   object,
   string,
   boolean,
-  instanceOf
-} from "./validators";
+  instanceOf,
+} from './validators';
 
-export { Either, Maybe };
+export {Either, Maybe, Some, None, Right, Left};
 
 class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private value: OutcomeType) {}
@@ -53,7 +53,7 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
     const testedValue = toValidEither.apply(this.a);
     return testedValue.fold<ChainMatches<OutcomeType>>({
       left: () => this,
-      right: value => new Matched<OutcomeType>(thenFn(value))
+      right: value => new Matched<OutcomeType>(thenFn(value)),
     });
   }
 
@@ -99,7 +99,7 @@ export const matches = Object.assign(
     any,
     boolean,
     nill: isNill,
-    instanceOf
+    instanceOf,
   }
 );
 export default matches;
