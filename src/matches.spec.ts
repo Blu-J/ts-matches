@@ -1,4 +1,4 @@
-import matches, { Maybe, Either } from "./matches";
+import matches, { Right, Left, Some, None } from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
 
@@ -64,6 +64,18 @@ describe("matches", () => {
         })
       );
     });
+    test("a matched lazy case will always be the equal to matcher or less than", () => {
+      fc.assert(
+        fc.property(gens.testSetup, testSetup => {
+          const indexOfMatchedValue = (value: any) =>
+            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+          const foundIndex = indexOfMatchedValue(
+            testSetup.runMatchLazy(testSetup.randomExample.value)
+          );
+          expect(foundIndex).toBeLessThanOrEqual(testSetup.randomExample.index);
+        })
+      );
+    });
     test("a counter matched case will never be the equal to matcher", () => {
       fc.assert(
         fc.property(gens.testSetup, testSetup => {
@@ -71,6 +83,20 @@ describe("matches", () => {
             testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.counter)
+          );
+          if (testSetup.randomExample.counter !== gens.noPossibleCounter) {
+            expect(foundIndex).not.toEqual(testSetup.randomExample.index);
+          }
+        })
+      );
+    });
+    test("a counter matched lazy case will never be the equal to matcher", () => {
+      fc.assert(
+        fc.property(gens.testSetup, testSetup => {
+          const indexOfMatchedValue = (value: any) =>
+            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+          const foundIndex = indexOfMatchedValue(
+            testSetup.runMatchLazy(testSetup.randomExample.counter)
           );
           if (testSetup.randomExample.counter !== gens.noPossibleCounter) {
             expect(foundIndex).not.toEqual(testSetup.randomExample.index);
@@ -180,6 +206,22 @@ describe("matches", () => {
               .indexOf(value as any);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.value)
+          );
+          if (testSetup.randomExample.index > -1) {
+            expect(foundIndex).toBeGreaterThanOrEqual(0);
+          }
+        })
+      );
+    });
+    test("a matched lazy value will not go to default", () => {
+      fc.assert(
+        fc.property(gens.testSetup, testSetup => {
+          const indexOfMatchedValue = (value: unknown) =>
+            testSetup.setupInformation
+              .map(x => x.matchValue)
+              .indexOf(value as any);
+          const foundIndex = indexOfMatchedValue(
+            testSetup.runMatchLazy(testSetup.randomExample.value)
           );
           if (testSetup.randomExample.index > -1) {
             expect(foundIndex).toBeGreaterThanOrEqual(0);
@@ -569,22 +611,22 @@ describe("matches", () => {
 
       test("a number in", () => {
         const input = 4;
-        const expected = Either.right(Maybe.some(4));
+        const expected = Right.of(Some.of(4));
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a null in", () => {
         const input = null;
-        const expected = Either.right(Maybe.none);
+        const expected = Right.of(None.of);
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a undefined in", () => {
         const input = undefined;
-        const expected = Either.right(Maybe.none);
+        const expected = Right.of(None.of);
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a object in", () => {
         const input = {};
-        const expected = Either.left("isNumber([object Object])");
+        const expected = Left.of("isNumber([object Object])");
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
     });
@@ -594,22 +636,22 @@ describe("matches", () => {
 
       test("a number in", () => {
         const input = 4;
-        const expected = Either.right(4);
+        const expected = Right.of(4);
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a null in", () => {
         const input = null;
-        const expected = Either.right(0);
+        const expected = Right.of(0);
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a undefined in", () => {
         const input = undefined;
-        const expected = Either.right(0);
+        const expected = Right.of(0);
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
       test("a object in", () => {
         const input = {};
-        const expected = Either.left("isNumber([object Object])");
+        const expected = Left.of("isNumber([object Object])");
         expect("" + maybeNumber.apply(input)).toBe("" + expected);
       });
     });
