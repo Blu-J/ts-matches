@@ -5,6 +5,9 @@ Uses [Monad](https://en.wikipedia.org/wiki/Monad_(functional_programming))
 
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
+## How 
+
+TS-Matches https://runkit.com/5bf1fa84969f3c0012f9d4c5/5bf1fa84b1d47a001280222b
 
 ## Examples
 
@@ -43,7 +46,7 @@ const matchNone = matches.tuple([matches.literal("none")]);
 const matchSome = matches.tuple([matches.literal("some"), matches.any]);
 type option =
   | ReturnType<typeof matchNone.unsafeCast>
-  | ReturnType<typeof matchSome.unsafeCast>;
+  | typeof matchSome._TYPE
 const matchInteger = matches.every(
   matchSome,
   matches.tuple[(matches.any, matches.number)]
