@@ -1158,9 +1158,9 @@ extsprintf@^1.2.0:
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
 fast-check@^1.5.0:
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.8.0.tgz#fad9f975715b931ec7778b1e74d8d6f7427539c0"
-  integrity sha512-BkXKjgri0+wnqrDNv4kma/2YwrAq9SyPBd/7wzMaYGMAT+s100YHDz0K1y+IQf4yOK40CFLwK5BSh0cyY9F1/A==
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.8.1.tgz#c76f9df4910a2351dbc3dae1e8044bd56b68cf0f"
+  integrity sha512-OMkdnZ0VQRHvsn3xUsLWRG1nCknX+CXW62K1486kw+Ob7FSTPDdQQAQg46ThDRYvo5FOmCE5P2qPL9KzBQeroA==
   dependencies:
     lorem-ipsum "~1.0.6"
     pure-rand "^1.5.0"
