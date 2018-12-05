@@ -1,6 +1,7 @@
 # Typescript Matches
 
 [Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
+
 Uses [Monads](https://en.wikipedia.org/wiki/Monad_(functional_programming)) either and maybe under the hood.
 Also useful for casting and boundary verifications.
 
