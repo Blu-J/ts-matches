@@ -8,6 +8,7 @@ Also useful for casting and boundary verifications.
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
+![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
 ## How 
 
 TS-Matches https://runkit.com/blu-j/ts-matches
