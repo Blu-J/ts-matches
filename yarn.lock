@@ -1296,11 +1296,12 @@ extsprintf@^1.2.0:
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
 fast-check@^1.5.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.14.0.tgz#2dbf12551266cfc4176877cc08a8691210bc2d2d"
-  integrity sha512-haI2vSLhtIUhxJJT4Ys67IEINkou9GBlKP+GNr0AqtZUszY6Od+pzHlLki4I3pM9q6G9LTFX03ZyJ9zVCWXUXA==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-1.15.0.tgz#3759ce3b79068bb5a6bbbd10ea938c589a6c59a8"
+  integrity sha512-XgZNSTYi2xkfqcckqbK0RgBSULujzeEg2CovH3KzA+iCbZpmhxHwAqefHIQY2WPJTcLMCQccOgDYTxrsGD4Y5w==
   dependencies:
     pure-rand "^1.6.2"
+    tslib "^1.9.3"
 
 fast-deep-equal@^1.0.0:
   version "1.1.0"
@@ -4062,7 +4063,7 @@ ts-jest@^24.0.0:
     semver "^5.5"
     yargs-parser "10.x"
 
-tslib@^1.9.0:
+tslib@^1.9.0, tslib@^1.9.3:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
   integrity sha512-4krF8scpejhaOgqzBEcGM7yDIEfi0/8+8zDRZhNZZ2kjmHJ4hv3zCbQWxoJGz1iw5U0Jl0nma13xzHXcncMavQ==
