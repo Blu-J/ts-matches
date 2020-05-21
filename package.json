@@ -31,7 +31,8 @@
     "lint-staged": "^10.2.4",
     "prettier": "^2.0.5",
     "ts-jest": "^26.0.0",
-    "typescript": "^3.9.3"
+    "typescript": "^3.9.3",
+    "kind-of": "^6.0.3"
   },
   "lint-staged": {
     "*.{js,json,css,md}": [
