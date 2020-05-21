@@ -131,7 +131,7 @@ const matcherPairsSimple = (() => {
     );
 
   const matcherConstant = fc
-    .oneof<{ example: boolean | string | number; counterExample: any }>(
+    .oneof<fc.Arbitrary<{ example: boolean | string | number; counterExample: any }>[]>(
       fc.record({
         example: fc.boolean(),
         counterExample: fc.oneof<any>(
@@ -167,7 +167,7 @@ const matcherPairsSimple = (() => {
     );
 
   const matchesLiteral = fc
-    .oneof<{ example: boolean | string | number; counterExample: any }>(
+    .oneof<fc.Arbitrary<{ example: boolean | string | number; counterExample: any }>[]>(
       fc.record({
         example: fc.boolean(),
         counterExample: fc.oneof<any>(
@@ -224,7 +224,7 @@ const matcherPairsSimple = (() => {
     .map(base =>
       matchPairOf(base.matcher, base.example, base.type, base.counterExample)
     );
-  return fc.oneof<MatchPair<any>>(
+  return fc.oneof<fc.Arbitrary<MatchPair<any>>[]>(
     matcherNumber,
     matcherFunction,
     matcherInstanceOf,
@@ -403,7 +403,7 @@ const matcherShapePartial = fc
       validCounter ? counterExample : 0
     );
   });
-export const matcherPairs = fc.oneof<ReturnType<typeof matchPairOf>>(
+export const matcherPairs:fc.Arbitrary<ReturnType<typeof matchPairOf>> = fc.oneof(
   matcherPairsSimple,
   matcherShape,
   matcherTuple,
