@@ -24,7 +24,7 @@ import {
   instanceOf,
 } from './validators';
 
-export {Either, Maybe, Some, None, Right, Left};
+export {Either, Maybe, Some, None, Right, Left, Validator, ChainMatches};
 
 class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private value: OutcomeType) {}
