@@ -23,11 +23,11 @@
     }
   },
   "devDependencies": {
-    "@types/jest": "^25.2.3",
-    "fast-check": "^1.24.2",
+    "@types/jest": "^26.0.0",
+    "fast-check": "^2.0.0",
     "husky": "^4.2.5",
     "jest": "^26.0.1",
-    "jest-junit": "^10.0.0",
+    "jest-junit": "^11.0.1",
     "lint-staged": "^10.2.4",
     "prettier": "^2.0.5",
     "ts-jest": "^26.0.0",
