@@ -1,18 +1,24 @@
 # Typescript Matches
 
-[Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
-
-Uses [Monads](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) either and maybe under the hood.
-Also useful for casting and boundary verifications.
-
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
 
-## How
+Living Documentation https://runkit.com/blu-j/ts-matches
 
-TS-Matches https://runkit.com/blu-j/ts-matches
+# Uses
+
+* Schema Validation (Validators: like matches.string)
+* Schema Switching
+
+
+## Tech Used
+
+[Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
+
+Uses [Monads](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) either and maybe under the hood.
+Also useful for casting and boundary verifications.
 
 ## Examples
 
@@ -107,6 +113,12 @@ on that function that return a `validator` or a function that creates a `validat
 | maybe       | output type is now a mabye and deal with null        |
 | defaultTo   | instead of creating a promise we fallback to a value |
 | refine      | we want to add more tests to value                   |
+
+`Validator.validatorErrorAsString` (
+    validationError: ValidatorError
+  ): string
+ This is the exposed transform of the ValidatorError to a string. Override this if you want to make the errors different.
+
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
