@@ -23,6 +23,8 @@ jobs:
 
       - run: yarn install
 
+      - run: yarn ci
+
       - run:
           name: Install JUnit coverage reporter
           command: yarn add --dev jest-junit

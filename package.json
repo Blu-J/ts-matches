@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/Blu-J/ts-matches.git"
   },
-  "version": "3.2.1",
+  "version": "3.4.0",
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "main": "lib/matches.js",
   "types": "lib/matches.d.ts",
@@ -12,33 +12,25 @@
     "lib/"
   ],
   "scripts": {
+    "ci": "npm run build && npm run test && npm run lint && npm run pretty-check",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest",
+    "lint": "tslint --project tsconfig.json --format stylish",
+    "pretty-check": "prettier --check src",
+    "fmt": "prettier --write src"
   },
   "author": "Justin Miller",
   "license": "MIT",
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "devDependencies": {
-    "@types/jest": "^26.0.0",
+    "@types/jest": "^26.0.8",
     "fast-check": "^2.0.0",
-    "husky": "^4.2.5",
-    "jest": "^26.0.1",
-    "jest-junit": "^11.0.1",
-    "lint-staged": "^10.2.4",
+    "jest": "^26.2.2",
+    "jest-junit": "^11.1.0",
+    "kind-of": "^6.0.3",
     "prettier": "^2.0.5",
-    "ts-jest": "^26.0.0",
-    "typescript": "^3.9.3",
-    "kind-of": "^6.0.3"
-  },
-  "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "ts-jest": "^26.1.4",
+    "tslint": "^6.1.3",
+    "typescript": "^3.9.7"
   },
   "jest": {
     "transform": {
@@ -53,6 +45,5 @@
       "json",
       "node"
     ]
-  },
-  "dependencies": {}
+  }
 }

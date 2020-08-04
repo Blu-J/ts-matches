@@ -3,7 +3,7 @@ import matches from "./matches";
 import { Validator, ChainMatches } from "./validators";
 
 export const noPossibleCounter = {
-  noPossibleCounter: true
+  noPossibleCounter: true,
 };
 export const matchPairOf = <A>(
   matcher: Validator<A>,
@@ -14,7 +14,7 @@ export const matchPairOf = <A>(
   matcher,
   type,
   example,
-  counterExample
+  counterExample,
 });
 type MatchPair<A> = {
   matcher: Validator<A>;
@@ -33,7 +33,7 @@ const matcherPairsSimple = (() => {
         fc.constantFrom(null, undefined),
         fc.string(),
         fc.object()
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.number, example, "number", counterExample)
@@ -41,7 +41,7 @@ const matcherPairsSimple = (() => {
   const matcherNill = fc
     .record({
       example: fc.constantFrom(null, undefined),
-      counterExample: fc.oneof<any>(fc.string(), fc.object(), fc.integer())
+      counterExample: fc.oneof<any>(fc.string(), fc.object(), fc.integer()),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.nill, example, "nill", counterExample)
@@ -55,9 +55,9 @@ const matcherPairsSimple = (() => {
         fc.object(),
         fc
           .nat()
-          .filter(x => x !== 0)
-          .map(x => -x)
-      )
+          .filter((x) => x !== 0)
+          .map((x) => -x)
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.natural, example, "natural number", counterExample)
@@ -69,7 +69,7 @@ const matcherPairsSimple = (() => {
         fc.constantFrom(null, undefined),
         fc.string(),
         trueFloat
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.object, example, "object", counterExample)
@@ -84,7 +84,7 @@ const matcherPairsSimple = (() => {
         fc.string(),
         fc.object(),
         trueFloat
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.isFunction, example, "function", counterExample)
@@ -97,7 +97,7 @@ const matcherPairsSimple = (() => {
         fc.string(),
         fc.object(),
         trueFloat
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.boolean, example, "boolean", counterExample)
@@ -109,14 +109,14 @@ const matcherPairsSimple = (() => {
         fc.constantFrom(null, undefined, {}),
         fc.string(),
         trueFloat
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.array, example, "array", counterExample)
     );
   const matcherAny = fc
     .anything()
-    .map(x => matchPairOf(matches.any, x, "any", noPossibleCounter));
+    .map((x) => matchPairOf(matches.any, x, "any", noPossibleCounter));
   const matcherString = fc
     .record({
       example: fc.string(),
@@ -124,21 +124,26 @@ const matcherPairsSimple = (() => {
         fc.constantFrom(null, undefined),
         fc.object(),
         trueFloat
-      )
+      ),
     })
     .map(({ example, counterExample }) =>
       matchPairOf(matches.string, example, "string", counterExample)
     );
 
   const matcherConstant = fc
-    .oneof<fc.Arbitrary<{ example: boolean | string | number; counterExample: any }>[]>(
+    .oneof<
+      fc.Arbitrary<{
+        example: boolean | string | number;
+        counterExample: any;
+      }>[]
+    >(
       fc.record({
         example: fc.boolean(),
         counterExample: fc.oneof<any>(
           fc.constantFrom(null, undefined),
           fc.string(),
           trueFloat
-        )
+        ),
       }),
       fc.record({
         example: fc.string(),
@@ -146,7 +151,7 @@ const matcherPairsSimple = (() => {
           fc.constantFrom(null, undefined),
           trueFloat,
           fc.boolean()
-        )
+        ),
       }),
       fc.record({
         example: trueFloat,
@@ -154,7 +159,7 @@ const matcherPairsSimple = (() => {
           fc.constantFrom(null, undefined),
           fc.string(),
           fc.boolean()
-        )
+        ),
       })
     )
     .map(({ example, counterExample }) =>
@@ -167,14 +172,19 @@ const matcherPairsSimple = (() => {
     );
 
   const matchesLiteral = fc
-    .oneof<fc.Arbitrary<{ example: boolean | string | number; counterExample: any }>[]>(
+    .oneof<
+      fc.Arbitrary<{
+        example: boolean | string | number;
+        counterExample: any;
+      }>[]
+    >(
       fc.record({
         example: fc.boolean(),
         counterExample: fc.oneof<any>(
           fc.constantFrom(null, undefined),
           fc.string(),
           trueFloat
-        )
+        ),
       }),
       fc.record({
         example: fc.string(),
@@ -182,7 +192,7 @@ const matcherPairsSimple = (() => {
           fc.constantFrom(null, undefined),
           trueFloat,
           fc.boolean()
-        )
+        ),
       }),
       fc.record({
         example: trueFloat,
@@ -190,7 +200,7 @@ const matcherPairsSimple = (() => {
           fc.constantFrom(null, undefined),
           fc.string(),
           fc.boolean()
-        )
+        ),
       })
     )
     .map(({ example, counterExample }) =>
@@ -208,20 +218,22 @@ const matcherPairsSimple = (() => {
   const constructors: Constructor<any>[] = [
     class Test {},
     class Test2 extends TestBase {},
-    class Test3 {}
+    class Test3 {},
   ];
 
   const matcherInstanceOf = fc
     .constantFrom(...constructors)
-    .chain(Cons =>
+    .chain((Cons) =>
       fc.record({
         example: fc.constant(new Cons()),
         matcher: fc.constant(matches.instanceOf(Cons)),
         type: fc.constant(`instanceOf ${Cons.name}`),
-        counterExample: fc.constantFrom(...constructors.filter(x => x != Cons))
+        counterExample: fc.constantFrom(
+          ...constructors.filter((x) => x != Cons)
+        ),
       })
     )
-    .map(base =>
+    .map((base) =>
       matchPairOf(base.matcher, base.example, base.type, base.counterExample)
     );
   return fc.oneof<fc.Arbitrary<MatchPair<any>>[]>(
@@ -242,56 +254,56 @@ const matcherPairsSimple = (() => {
 
 const matcherSome = fc
   .array(matcherPairsSimple)
-  .filter(x => x.length > 0)
-  .chain(matchers =>
-    fc.integer(0, matchers.length - 1).map(atIndex => ({
+  .filter((x) => x.length > 0)
+  .chain((matchers) =>
+    fc.integer(0, matchers.length - 1).map((atIndex) => ({
       atIndex,
-      matchers
+      matchers,
     }))
   )
   .map(({ atIndex, matchers }) => {
     return matchPairOf(
-      matches.some(...matchers.map(x => x.matcher)),
+      matches.some(...matchers.map((x) => x.matcher)),
       matchers[atIndex].example,
-      `some (${matchers.map(x => x.type).join(", ")})`,
+      `some (${matchers.map((x) => x.type).join(", ")})`,
       noPossibleCounter
     );
   });
 
-const matcherArrayOf = matcherPairsSimple.chain(pair =>
-  fc.array(fc.constant(pair)).map(pairs => {
+const matcherArrayOf = matcherPairsSimple.chain((pair) =>
+  fc.array(fc.constant(pair)).map((pairs) => {
     const validCounter =
       !!pairs.length &&
-      pairs.every(x => x.counterExample !== noPossibleCounter);
+      pairs.every((x) => x.counterExample !== noPossibleCounter);
     return matchPairOf(
       matches.arrayOf(pair.matcher),
-      pairs.map(x => x.example),
+      pairs.map((x) => x.example),
       `arrayOf ${pair.type}`,
-      validCounter ? pairs.map(x => x.counterExample) : null
+      validCounter ? pairs.map((x) => x.counterExample) : null
     );
   })
 );
 
 const matcherTuple = fc
   .array(matcherPairsSimple)
-  .filter(x => x.length > 0)
-  .map(xs => {
+  .filter((x) => x.length > 0)
+  .map((xs) => {
     const validCounter =
-      !!xs.length && xs.every(x => x.counterExample !== noPossibleCounter);
+      !!xs.length && xs.every((x) => x.counterExample !== noPossibleCounter);
     return matchPairOf(
-      matches.tuple(xs.map(tupleValue => tupleValue.matcher) as any),
-      xs.map(x => x.example) as any,
-      `tuple ${JSON.stringify(xs.map(x => x.type))}`,
-      validCounter ? xs.map(x => x.counterExample) : 0
+      matches.tuple(xs.map((tupleValue) => tupleValue.matcher) as any),
+      xs.map((x) => x.example) as any,
+      `tuple ${JSON.stringify(xs.map((x) => x.type))}`,
+      validCounter ? xs.map((x) => x.counterExample) : 0
     );
   });
 
-const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
-  type testingShape = { [key in keyof typeof x]: (typeof x)[key]["example"] };
+const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
+  type testingShape = { [key in keyof typeof x]: typeof x[key]["example"] };
   const matcher: Validator<testingShape> = matches.shape(
     Object.keys(x).reduce(
       (
-        acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
+        acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
         key: keyof typeof x
       ) => {
         const value = x[key];
@@ -303,7 +315,7 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
   );
   const example: testingShape = Object.keys(x).reduce(
     (
-      acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+      acc: { [key in keyof typeof x]: typeof x[key]["example"] },
       key: keyof typeof x
     ) => {
       const value = x[key];
@@ -324,7 +336,7 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
   )}`;
   const counterExample: testingShape = Object.keys(x).reduce(
     (
-      acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+      acc: { [key in keyof typeof x]: typeof x[key]["example"] },
       key: keyof typeof x
     ) => {
       const value = x[key];
@@ -336,21 +348,21 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map(x => {
 
   const validCounter =
     !!Object.keys(x).length &&
-    Object.values(x).every(x => x.counterExample !== noPossibleCounter);
+    Object.values(x).every((x) => x.counterExample !== noPossibleCounter);
 
   return matchPairOf(matcher, example, type, validCounter ? counterExample : 0);
 });
 
 const matcherShapePartial = fc
   .dictionary(fc.string(), matcherPairsSimple)
-  .map(x => {
+  .map((x) => {
     type testingShape = Partial<
-      { [key in keyof typeof x]: (typeof x)[key]["example"] }
+      { [key in keyof typeof x]: typeof x[key]["example"] }
     >;
     const matcher: Validator<testingShape> = matches.partial(
       Object.keys(x).reduce(
         (
-          acc: { [key in keyof typeof x]: (typeof x)[key]["matcher"] },
+          acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
           key: keyof typeof x
         ) => {
           const value = x[key];
@@ -362,7 +374,7 @@ const matcherShapePartial = fc
     );
     const example: testingShape = Object.keys(x).reduce(
       (
-        acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+        acc: { [key in keyof typeof x]: typeof x[key]["example"] },
         key: keyof typeof x
       ) => {
         const value = x[key];
@@ -383,10 +395,10 @@ const matcherShapePartial = fc
     )}`;
     const validCounter =
       !!Object.keys(x).length &&
-      Object.values(x).every(x => x.counterExample !== noPossibleCounter);
+      Object.values(x).every((x) => x.counterExample !== noPossibleCounter);
     const counterExample: testingShape = Object.keys(x).reduce(
       (
-        acc: { [key in keyof typeof x]: (typeof x)[key]["example"] },
+        acc: { [key in keyof typeof x]: typeof x[key]["example"] },
         key: keyof typeof x
       ) => {
         const value = x[key];
@@ -403,7 +415,9 @@ const matcherShapePartial = fc
       validCounter ? counterExample : 0
     );
   });
-export const matcherPairs:fc.Arbitrary<ReturnType<typeof matchPairOf>> = fc.oneof(
+export const matcherPairs: fc.Arbitrary<ReturnType<
+  typeof matchPairOf
+>> = fc.oneof(
   matcherPairsSimple,
   matcherShape,
   matcherTuple,
@@ -416,7 +430,7 @@ export const testSetupInformation = <A>(
   matchPair: ReturnType<typeof matchPairOf>
 ) => ({
   ...matchPair,
-  matchValue: {}
+  matchValue: {},
 });
 
 export type TestSetup = {
@@ -435,7 +449,7 @@ export type TestSetup = {
     index: number;
   };
 };
-export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
+export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
   const defaultValue = {};
   const defaultTest = {
     defaultValue,
@@ -445,8 +459,8 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
     randomExample: {
       value: defaultValue,
       counter: noPossibleCounter as any,
-      index: -1
-    }
+      index: -1,
+    },
   };
   if (!matcherPairsSets.length) {
     return fc.constant(defaultTest);
@@ -458,7 +472,7 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
     },
     []
   );
-  return fc.nat(matcherPairsSets.length).map(randomExampleIndex => {
+  return fc.nat(matcherPairsSets.length).map((randomExampleIndex) => {
     if (randomExampleIndex === matcherPairsSets.length) {
       return defaultTest;
     }
@@ -484,8 +498,8 @@ export const testSetup = fc.array(matcherPairs).chain(matcherPairsSets => {
       randomExample: {
         value: setupInformation[randomExampleIndex].example,
         counter: setupInformation[randomExampleIndex].counterExample,
-        index: randomExampleIndex
-      }
+        index: randomExampleIndex,
+      },
     };
   });
 });
