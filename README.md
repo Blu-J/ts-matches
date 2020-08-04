@@ -2,14 +2,15 @@
 
 [Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
 
-Uses [Monads](https://en.wikipedia.org/wiki/Monad_(functional_programming)) either and maybe under the hood.
+Uses [Monads](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) either and maybe under the hood.
 Also useful for casting and boundary verifications.
 
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
-## How 
+
+## How
 
 TS-Matches https://runkit.com/blu-j/ts-matches
 
@@ -20,13 +21,13 @@ This is useful on a boundary layer, like fetching a value. In that case we have 
 ```typescript
 import matches from "matches";
 fetch("fishes.com/gold-fishes/12")
-  .then(x => x.json())
+  .then((x) => x.json())
   .then(
     matches.shape({
       type: t.literal("gold-fish"),
       position: t.tuple([t.number, t.number]),
       age: t.natural,
-      name: t.string
+      name: t.string,
     }).unsafeCast
   );
 ```
@@ -37,8 +38,8 @@ And when we get the value out it will either be the type that we want, or it wil
 import matches from "matches";
 const getText = (x: unknown): string =>
   matches(x)
-    .when(matches.string, value => `Found string: ${value}`)
-    .when(matches.number, value => `Found number + 1: ${value + 1}`)
+    .when(matches.string, (value) => `Found string: ${value}`)
+    .when(matches.number, (value) => `Found number + 1: ${value + 1}`)
     .defaultTo("no found type yet");
 ```
 
@@ -48,9 +49,7 @@ And here we can use the type checking and what do in that case. With destructuri
 import matches from "matches";
 const matchNone = matches.tuple([matches.literal("none")]);
 const matchSome = matches.tuple([matches.literal("some"), matches.any]);
-type option =
-  | ReturnType<typeof matchNone.unsafeCast>
-  | typeof matchSome._TYPE
+type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
   matches.tuple[(matches.any, matches.number)]
@@ -90,25 +89,24 @@ on that function that return a `validator` or a function that creates a `validat
 | boolean    | is a boolean                                                  |
 | nill       | is a null or undefined                                        |
 
-
 `MatcherChain` api
 
-| Attribute     | Description                                                   |
-| ----------    | ------------------------------------------------------------- |
-| match         | Create a matching case, when match return value               |
-| defaultTo     | Fall through case, ensures all are caught                     |
-| defaultToLazy | Fall through case, ensures all are caught in lazy fashion     |
+| Attribute     | Description                                               |
+| ------------- | --------------------------------------------------------- |
+| match         | Create a matching case, when match return value           |
+| defaultTo     | Fall through case, ensures all are caught                 |
+| defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
 
-`Validator` api 
+`Validator` api
 
-| Attribute   | Description                                                   |
-| ----------  | ------------------------------------------------------------- |
-| apply       | Use this to turn a value into an either                       |
-| usafeCast   | Use this to get the value or throw an error                   |
-| castPromise | Cast into a promise                                           |
-| maybe       | output type is now a mabye and deal with null                 |
-| defaultTo   | instead of creating a promise we fallback to a value          |
-| refine      | we want to add more tests to value                            |
+| Attribute   | Description                                          |
+| ----------- | ---------------------------------------------------- |
+| apply       | Use this to turn a value into an either              |
+| usafeCast   | Use this to get the value or throw an error          |
+| castPromise | Cast into a promise                                  |
+| maybe       | output type is now a mabye and deal with null        |
+| defaultTo   | instead of creating a promise we fallback to a value |
+| refine      | we want to add more tests to value                   |
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
