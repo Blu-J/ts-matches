@@ -7,6 +7,9 @@ const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
+const isString = (x: unknown): x is string => typeof x === "string";
+const identity = <X>(x: X) => x;
+const noop = () => void 0;
 
 export type ValidatorError = {
   children: ValidatorError[];
@@ -17,10 +20,10 @@ export type ValidatorError = {
 export type ValidatorFn<A> = (value: unknown) => Either<ValidatorError, A>;
 export type MaybePartial<A> = { [key in keyof A]: Maybe<A[key]> };
 export class Validator<A> {
-  static of<A>(apply: (value: unknown) => Either<string | ValidatorError, A>) {
+  static of<A>(apply: (value: unknown) => Either<ValidatorError, A>) {
     return new Validator<A>((x) =>
       apply(x).map(
-        (name) => (isString(name) ? { children: [], name } : name),
+        (name) => (name),
         "left"
       )
     );
@@ -107,8 +110,6 @@ export class Validator<A> {
     return refinementMatch(this.apply, typeCheck, failureName);
   }
 }
-const identity = <X>(x: X) => x;
-const noop = () => void 0;
 
 /**
  * Ensure that we can extend the validator with a more specific validator
@@ -141,34 +142,6 @@ function toValidator<A>(
   validate: (value: unknown) => Either<ValidatorError, A>
 ): Validator<A> {
   return new Validator(validate);
-}
-
-function shapeMatch<A extends {}>(
-  testShape: { [key in keyof A]: Validator<A[key]> },
-  value: Partial<A>
-) {
-  return Object.entries(testShape).reduce<{
-    missing: (keyof A)[];
-    validationErrors: [keyof A, ValidatorError][];
-  }>(
-    (acc, entry) => {
-      const key = entry[0] as keyof A;
-      const validator = testShape[key];
-      if (key in value) {
-        const run = validator.apply(value[key]);
-        run.fold({
-          left: (value) => {
-            acc.validationErrors.push([key, value]);
-          },
-          right: noop,
-        });
-      } else {
-        acc.missing.push(key);
-      }
-      return acc;
-    },
-    { missing: [], validationErrors: [] }
-  );
 }
 
 /**
@@ -239,7 +212,6 @@ export const object = guard<object>(isObject);
 
 export const isArray = guard<ArrayLike<unknown>>(Array.isArray);
 
-const isString = (x: unknown): x is string => typeof x === "string";
 export const string = guard<string>((x): x is string => isString(x), "string");
 export const instanceOf = <C>(classCreator: {
   new (...args: any[]): C;
@@ -339,7 +311,7 @@ export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ): Validator<Partial<A>> =>
   object.chain((value) => {
-    let answer: any = {...value};
+    let answer: any = { ...value };
     let errors: ValidatorError[] = [];
     for (const key in testShape) {
       if (!(key in value)) {
@@ -381,9 +353,9 @@ export const isShape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ) =>
   object.chain((value) => {
-    let answer: any = {...value};
+    let answer: any = { ...value };
     let errors: ValidatorError[] = [];
-    for (const key in testShape) {
+    for (const key of Object.keys(testShape) as Array<keyof typeof testShape>) {
       const tested = testShape[key].apply((value as any)[key]);
       if (tested.value.type === "left") {
         errors.push({ children: [tested.value.value], name: `@${key}` });
