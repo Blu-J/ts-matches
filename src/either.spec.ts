@@ -2,7 +2,7 @@ import { Either, Left, Right } from "./either";
 
 const value = {
   left: (x: any): any => x,
-  right: (x: any): any => x
+  right: (x: any): any => x,
 };
 describe("either", () => {
   describe("left(4)", () => {
@@ -15,19 +15,19 @@ describe("either", () => {
       expect(given.defaultTo(answer)).toBe(answer);
     });
     it("map over function 2x", () => {
-      expect(given.map(x => 2 * x).fold(value)).toBe(4);
+      expect(given.map((x) => 2 * x).fold(value)).toBe(4);
     });
     it("chain over function right 2x", () => {
-      expect(given.chain(x => Right.of(2 * x)).fold(value)).toBe(4);
+      expect(given.chain((x) => Right.of(2 * x)).fold(value)).toBe(4);
     });
     it("chain over function left 3x", () => {
-      expect(given.chain(x => Left.of(3 * x)).fold(value)).toBe(4);
+      expect(given.chain((x) => Left.of(3 * x)).fold(value)).toBe(4);
     });
     it("chain left over function left 4x", () => {
-      expect(given.chain(x => Left.of(4 * x), "left").fold(value)).toBe(16);
+      expect(given.chain((x) => Left.of(4 * x), "left").fold(value)).toBe(16);
     });
     it("chain left over function right 4x", () => {
-      expect(given.chain(x => Right.of(4 * x), "left").fold(value)).toBe(16);
+      expect(given.chain((x) => Right.of(4 * x), "left").fold(value)).toBe(16);
     });
   });
   describe("right(5)", () => {
@@ -40,19 +40,19 @@ describe("either", () => {
       expect(given.defaultTo(defaultValue)).toBe(5);
     });
     it("map will work over function  2x", () => {
-      expect(given.map(x => 2 * x).fold(value)).toBe(10);
+      expect(given.map((x) => 2 * x).fold(value)).toBe(10);
     });
     it("chain over function right 3x", () => {
-      expect(given.chain(x => Right.of(3 * x)).fold(value)).toBe(15);
+      expect(given.chain((x) => Right.of(3 * x)).fold(value)).toBe(15);
     });
     it("chain over function left 3x", () => {
-      expect(given.chain(x => Left.of(3 * x)).fold(value)).toBe(15);
+      expect(given.chain((x) => Left.of(3 * x)).fold(value)).toBe(15);
     });
     it("chain left over function left 4x", () => {
-      expect(given.chain(x => Left.of(4 * x), "left").fold(value)).toBe(5);
+      expect(given.chain((x) => Left.of(4 * x), "left").fold(value)).toBe(5);
     });
     it("chain left over function right 4x", () => {
-      expect(given.chain(x => Right.of(4 * x), "left").fold(value)).toBe(5);
+      expect(given.chain((x) => Right.of(4 * x), "left").fold(value)).toBe(5);
     });
   });
 });

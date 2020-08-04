@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     mutator: "typescript",
     packageManager: "yarn",
@@ -7,6 +7,6 @@ module.exports = function(config) {
     coverageAnalysis: "off",
     mutate: ["src/**/*.ts?(x)", "!src/**/*@(.test|.spec|Spec|.gen).ts?(x)"],
     tsconfigFile: "tsconfig.json",
-    timeoutFactor: 5
+    timeoutFactor: 5,
   });
 };

@@ -26,10 +26,8 @@ export class MonadUnion<A extends {}, DefaultKey extends DisjoinUnionTypes<A>> {
     return (folder as any)[this.value.type](this.value.value);
   }
 
-  chain<B extends MonadUnion<{[key in DisjoinUnionTypes<A>]: any}, DefaultKey>, Key extends DisjoinUnionTypes<A> = DefaultKey>(
-    fn: (
-      value: A[Key]
-    ) => B,
+  chain<B, Key extends keyof A = DefaultKey>(
+    fn: (value: A[Key]) => B,
     key: Key = this.defaultKey as any
   ): B {
     if (key === this.value.type) {
