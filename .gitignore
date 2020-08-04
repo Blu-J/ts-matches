@@ -1,4 +1,4 @@
-git push --set-upstream origin release/release-3.2.3*.log
+*.log
 lib/
 node_modules/
 .vscode/
