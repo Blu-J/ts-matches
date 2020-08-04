@@ -1,27 +1,54 @@
 import { Either, Right, Left } from "./either";
 
 import { Maybe, Some, None } from "./maybe";
+import matches from "./matches";
 
 const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;
 const isFunctionTest = (x: unknown): x is Function => typeof x === "function";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
-export type ValidatorFn<A> = (value: unknown) => Either<string, A>;
+export type ValidatorError = {
+  children: ValidatorError[];
+  name: string;
+  value?: unknown;
+};
+
+export type ValidatorFn<A> = (value: unknown) => Either<ValidatorError, A>;
 export type MaybePartial<A> = { [key in keyof A]: Maybe<A[key]> };
 export class Validator<A> {
-  static of<A>(apply: ((value: unknown) => Either<string, A>)) {
-    return new Validator(apply);
+  static of<A>(apply: (value: unknown) => Either<string | ValidatorError, A>) {
+    return new Validator<A>((x) =>
+      apply(x).map(
+        (name) => (isString(name) ? { children: [], name } : name),
+        "left"
+      )
+    );
   }
+  public static validatorErrorAsString = (
+    validationError: ValidatorError
+  ): string => {
+    const children = (validationError.children || []).map((x) =>
+      Validator.validatorErrorAsString(x)
+    );
+    if ("value" in validationError) {
+      children.push("" + validationError.value);
+    }
+    return `${validationError.name}(${children.join(", ")})`;
+  };
   public readonly _TYPE: A = null as any;
   constructor(readonly apply: ValidatorFn<A>) {}
   unsafeCast(value: unknown): A {
     const matched = this.apply(value);
     return matched.fold<A>({
-      left: error => {
-        throw new TypeError(`Failed type: ${error}`);
+      left: (error) => {
+        throw new TypeError(
+          `Failed type: ${Validator.validatorErrorAsString(
+            error
+          )} given input ${JSON.stringify(value)}`
+        );
       },
-      right: identity
+      right: identity,
     });
   }
   castPromise(value: unknown): Promise<A> {
@@ -34,14 +61,14 @@ export class Validator<A> {
     return Validator.of((value: unknown) => this.apply(value).map(fn));
   }
 
-  chain<B>(fn: (apply: A) => Either<string, B>): Validator<B> {
+  chain<B>(fn: (apply: A) => Either<ValidatorError, B>): Validator<B> {
     return Validator.of((value: unknown) => this.apply(value).chain(fn));
   }
 
   test = (value: unknown): value is A => {
     return this.apply(value).fold({
       left: () => false,
-      right: () => true
+      right: () => true,
     });
   };
 
@@ -57,10 +84,10 @@ export class Validator<A> {
    * and want it to go to a default value
    */
   defaultTo(defaultValue: A): Validator<A> {
-    return maybe(this).map(maybeA =>
+    return maybe(this).map((maybeA) =>
       maybeA.fold({
         some: identity,
-        none: () => defaultValue
+        none: () => defaultValue,
       })
     );
   }
@@ -102,16 +129,16 @@ export function refinementMatch<A>(
   failureName = typeCheck.name
 ) {
   const validateRefinement: ValidatorFn<A> = (value: unknown) =>
-    toValidEither(value).chain(valueA =>
+    toValidEither(value).chain((valueA) =>
       typeCheck(valueA)
         ? Right.of(valueA)
-        : Left.of(`${failureName}(${valueA})`)
+        : Left.of({ children: [], name: failureName, value: valueA })
     );
   return toValidator(validateRefinement);
 }
 
 function toValidator<A>(
-  validate: (value: unknown) => Either<string, A>
+  validate: (value: unknown) => Either<ValidatorError, A>
 ): Validator<A> {
   return new Validator(validate);
 }
@@ -122,7 +149,7 @@ function shapeMatch<A extends {}>(
 ) {
   return Object.entries(testShape).reduce<{
     missing: (keyof A)[];
-    validationErrors: [keyof A, string][];
+    validationErrors: [keyof A, ValidatorError][];
   }>(
     (acc, entry) => {
       const key = entry[0] as keyof A;
@@ -130,10 +157,10 @@ function shapeMatch<A extends {}>(
       if (key in value) {
         const run = validator.apply(value[key]);
         run.fold({
-          left: value => {
+          left: (value) => {
             acc.validationErrors.push([key, value]);
           },
-          right: noop
+          right: noop,
         });
       } else {
         acc.missing.push(key);
@@ -169,7 +196,9 @@ export function guard(
   testName: string = fnTest.name || "test"
 ): Validator<unknown> {
   const isValidEither: ValidatorFn<unknown> = (value: unknown) =>
-    fnTest(value) ? Right.of(value) : Left.of(`${testName}(${value})`);
+    fnTest(value)
+      ? Right.of(value)
+      : Left.of({ name: testName, value, children: [] });
 
   return toValidator(isValidEither);
 }
@@ -197,7 +226,7 @@ export const natural = number.refine(
 
 // tslint:disable-next-line:no-any Need this for casting any function into shape
 export const isFunction = guard<(...args: any[]) => any>(
-  (x): x is ((...args: unknown[]) => unknown) => isFunctionTest(x),
+  (x): x is (...args: unknown[]) => unknown => isFunctionTest(x),
   "isFunction"
 );
 
@@ -218,7 +247,7 @@ export const instanceOf = <C>(classCreator: {
   new Validator((value: unknown) =>
     value instanceof classCreator
       ? Right.of(value)
-      : Left.of(`is${classCreator.name}(${value})`)
+      : Left.of({ children: [], name: `is${classCreator.name}`, value })
   );
 
 export const regex = instanceOf(RegExp);
@@ -248,22 +277,22 @@ export function some<A, B>(
 export function some<A>(...args: Validator<A>[]): Validator<A>;
 
 export function some(...args: Validator<unknown>[]): Validator<unknown> {
-  const validateUnion: ValidatorFn<unknown> = value => {
-    const errors: string[] = [];
-    args.forEach(fnTest => {
+  const validateUnion: ValidatorFn<unknown> = (value) => {
+    const errors: ValidatorError[] = [];
+    args.forEach((fnTest) => {
       const result = fnTest.apply(value);
       result.fold({
-        left: value => {
+        left: (value) => {
           errors.push(value);
         },
-        right: noop
+        right: noop,
       });
     });
     if (errors.length < args.length) {
       return Right.of(value);
     }
-    const uniqueErrors = errors.reduce((acc: string[], value) => {
-      if (acc.indexOf(value) === -1) {
+    const uniqueErrors = errors.reduce((acc: ValidatorError[], value) => {
+      if (!acc.find((x) => x.name === value.name && x.value === value.value)) {
         acc.push(value);
       }
       return acc;
@@ -272,7 +301,7 @@ export function some(...args: Validator<unknown>[]): Validator<unknown> {
     if (uniqueErrors.length === 1) {
       return Left.of(uniqueErrors[0]);
     }
-    return Left.of(`some(${uniqueErrors.join(", ")})`);
+    return Left.of({ children: uniqueErrors, name: "some" });
   };
   return toValidator(validateUnion);
 }
@@ -309,19 +338,33 @@ export function every(...args: Validator<unknown>[]): Validator<unknown> {
 export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ): Validator<Partial<A>> =>
-  object.chain(value => {
-    const shapeMatched = shapeMatch(testShape, value);
-    if (shapeMatched.validationErrors.length === 0) {
-      return Right.of(value);
+  object.chain((value) => {
+    let answer: any = {...value};
+    let errors: ValidatorError[] = [];
+    for (const key in testShape) {
+      if (!(key in value)) {
+        continue;
+      }
+      const tested = testShape[key].apply((value as any)[key]);
+      if (tested.value.type === "left") {
+        errors.push({ children: [tested.value.value], name: `@${key}` });
+      } else {
+        answer[key] = tested.value.value;
+      }
     }
-    const errors = shapeMatched.validationErrors.map(
-      ([key, error]) => `@${key} ${error}`
-    );
-    if (errors.length === 1) {
-      return Left.of(errors[0]);
+    if (errors.length > 0) {
+      return Left.of({
+        children: errors,
+        name: "partialShape",
+      });
     }
-    return Left.of(`(${errors.join(", ")})`);
+    if (Array.isArray(value)) {
+      answer.length = value.length;
+      return Right.of(Array.from(answer));
+    }
+    return Right.of(answer);
   });
+
 /**
  * Good for duck typing an object, with optional values
  * @param testShape Shape of validators, to ensure we match the shape
@@ -337,21 +380,29 @@ export const partial = <A extends {}>(
 export const isShape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
 ) =>
-  object.chain(value =>
-    (Object.keys(testShape) as Array<keyof A>).reduce(
-      (shapeEither, key) =>
-        shapeEither.chain(shape =>
-          testShape[key].apply((value as any)[key]).fold<Either<string, A>>({
-            left: l => Left.of(`@${key} ${l}`),
-            right: r => {
-              shape[key] = r;
-              return Right.of(shape);
-            }
-          })
-        ),
-      Right.of((Array.isArray(value) ? [...value] : { ...value }) as A)
-    )
-  );
+  object.chain((value) => {
+    let answer: any = {...value};
+    let errors: ValidatorError[] = [];
+    for (const key in testShape) {
+      const tested = testShape[key].apply((value as any)[key]);
+      if (tested.value.type === "left") {
+        errors.push({ children: [tested.value.value], name: `@${key}` });
+      } else {
+        answer[key] = tested.value.value;
+      }
+    }
+    if (errors.length > 0) {
+      return Left.of({
+        children: errors,
+        name: "shape",
+      });
+    }
+    if (Array.isArray(value)) {
+      answer.length = value.length;
+      return Right.of(Array.from(answer));
+    }
+    return Right.of(answer);
+  });
 
 export const shape = <A extends {}>(
   testShape: { [key in keyof A]: Validator<A[key]> }
@@ -379,26 +430,35 @@ export function tuple(tupleShape: ArrayLike<Validator<unknown>>) {
  * @param validator What is the validator for the values in the array
  */
 export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
-  return toValidator(value =>
-    isArray
-      .apply(value)
-      .map(x => Array.from(x))
-      .chain(currentArray =>
-        currentArray.reduce(
-          (accEither: Either<string, A[]>, value: any, i: number) =>
-            accEither.chain(acc =>
-              validator.apply(value).fold<Either<string, A[]>>({
-                left: l => Left.of(`@${i} ${l}`),
-                right: r => {
-                  acc[i] = r;
-                  return Right.of(acc);
-                }
-              })
-            ),
-          Right.of(new Array(currentArray.length))
-        )
+  return toValidator((value) => {
+    const arrayValue = isArray.apply(value).map((x) => Array.from(x));
+    if (arrayValue.value.type === "left") {
+      return arrayValue;
+    }
+    const arrayValueCorrect = arrayValue.value.value
+      .map((x, i) =>
+        validator
+          .apply(x)
+          .map((error) => ({ children: [error], name: `@{i}` }), "left")
       )
-  );
+      .map((x) => x.value);
+    const as: A[] = [];
+    const lefts: ValidatorError[] = [];
+    arrayValueCorrect.forEach((value) => {
+      if (value.type === "left") {
+        lefts.push(value.value);
+      } else {
+        as.push(value.value);
+      }
+    });
+    if (lefts.length > 0) {
+      return Left.of({
+        children: lefts,
+        name: "arrayOf",
+      });
+    }
+    return Right.of(as);
+  });
 }
 
 export function maybe<A>(validator: Validator<A>): Validator<Maybe<A>> {
@@ -418,3 +478,9 @@ export interface ChainMatches<OutcomeType> {
   defaultTo(value: OutcomeType): OutcomeType;
   defaultToLazy(getValue: () => OutcomeType): OutcomeType;
 }
+
+export const validatorError = shape({
+  children: arrayOf(object).maybe(),
+  name: string,
+  value: any.maybe(),
+});
