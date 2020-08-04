@@ -21,12 +21,7 @@ export type ValidatorFn<A> = (value: unknown) => Either<ValidatorError, A>;
 export type MaybePartial<A> = { [key in keyof A]: Maybe<A[key]> };
 export class Validator<A> {
   static of<A>(apply: (value: unknown) => Either<ValidatorError, A>) {
-    return new Validator<A>((x) =>
-      apply(x).map(
-        (name) => (name),
-        "left"
-      )
-    );
+    return new Validator<A>((x) => apply(x).map((name) => name, "left"));
   }
   public static validatorErrorAsString = (
     validationError: ValidatorError

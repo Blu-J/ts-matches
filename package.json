@@ -17,7 +17,7 @@
     "test": "jest",
     "lint": "tslint --project tsconfig.json --format stylish",
     "pretty-check": "prettier --check src",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write src"
   },
   "author": "Justin Miller",
   "license": "MIT",
