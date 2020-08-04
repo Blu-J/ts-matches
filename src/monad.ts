@@ -1,52 +1,60 @@
-type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
-  U[keyof U];
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export class MonadUnion<A extends {}, DefaultKey extends keyof A> {
-  static of<A extends {}, Key extends keyof A, DefaultKey extends keyof A>(
-    defaultKey: DefaultKey,
-    key: Key,
-    value: A[Key]
-  ) {
-    return new MonadUnion<A, DefaultKey>(defaultKey, {
-      [key]: value
-    } as any);
+export type DisjoinUnionRaw<A, Key extends keyof A> = Key extends string
+  ? { type: Key; value: A[Key] }
+  : never;
+export type DisjoinUnion<A> = DisjoinUnionRaw<A, keyof A>;
+export type DisjoinUnionTypes<A> = DisjoinUnion<A>["type"] & keyof A;
+export class MonadUnion<A extends {}, DefaultKey extends DisjoinUnionTypes<A>> {
+  static of<
+    A extends {},
+    Key extends DisjoinUnionTypes<A>,
+    DefaultKey extends DisjoinUnionTypes<A>
+  >(defaultKey: DefaultKey, key: Key, value: A[Key]) {
+    const monadValue = ({
+      type: key,
+      value,
+    } as unknown) as DisjoinUnion<A>;
+    return new MonadUnion<A, DefaultKey>(defaultKey, monadValue);
   }
   protected constructor(
     private readonly defaultKey: DefaultKey,
-    readonly value: AtLeastOne<A>
+    readonly value: DisjoinUnion<A>
   ) {}
 
   fold<B>(folder: { [Key in keyof A]: (value: A[Key]) => B }) {
-    const firstKey: keyof A = Object.keys(this.value)[0] as any;
-    return folder[firstKey](this.value[firstKey]);
+    return (folder as any)[this.value.type](this.value.value);
   }
 
-  chain<
-    B extends Omit<A, Key> & { [K in Key]: A[K] } & { [key in keyof A]: any },
-    Key extends keyof A = DefaultKey
-  >(
-    fn: (value: A[Key]) => MonadUnion<B, DefaultKey>,
+  chain<B, Key extends keyof A = DefaultKey>(
+    fn: (
+      value: A[Key]
+    ) => MonadUnion<
+      { [key in keyof A]: key extends Key ? B : A[key] },
+      DefaultKey
+    >,
     key: Key = this.defaultKey as any
-  ): MonadUnion<B, DefaultKey> {
-    if (key in this.value) {
-      return fn(this.value[key]);
+  ): MonadUnion<
+    { [key in keyof A]: key extends Key ? B : A[key] },
+    DefaultKey
+  > {
+    if (key === this.value.type) {
+      return fn(this.value.value as A[Key]);
     }
     return this as any;
   }
 
-  map<
-    B extends Omit<A, Key> & { [K in Key]: A[K] } & { [key in keyof A]: any },
-    Key extends keyof A = DefaultKey
-  >(
-    fn: (value: A[Key]) => B[Key],
+  map<B, Key extends keyof A = DefaultKey>(
+    fn: (value: A[Key]) => B,
     key: Key = this.defaultKey as any
-  ): MonadUnion<B, DefaultKey> {
-    if (key in this.value) {
-      return MonadUnion.of<B, Key, DefaultKey>(
-        this.defaultKey,
-        key,
-        fn(this.value[key])
-      );
+  ): MonadUnion<
+    { [key in keyof A]: key extends Key ? B : A[key] },
+    DefaultKey
+  > {
+    if (key === this.value.type) {
+      return MonadUnion.of<
+        { [key in keyof A]: key extends Key ? B : A[key] },
+        any,
+        DefaultKey
+      >(this.defaultKey, key, fn(this.value.value as A[Key]) as any) as any;
     }
     return this as any;
   }
@@ -57,8 +65,8 @@ export class MonadUnion<A extends {}, DefaultKey extends keyof A> {
     defaultValue: A[Key],
     key = this.defaultKey
   ): A[Key] {
-    if (key in this.value) {
-      return this.value[key] as any;
+    if (key === this.value.type) {
+      return this.value.value as A[Key];
     }
     return defaultValue;
   }
@@ -72,14 +80,13 @@ export class MonadUnion<A extends {}, DefaultKey extends keyof A> {
     defaultValue: () => A[Key],
     key = this.defaultKey
   ): A[Key] {
-    if (key in this.value) {
-      return this.value[key] as any;
+    if (key === this.value.type) {
+      return this.value.value as A[Key];
     }
     return defaultValue();
   }
 
   toString() {
-    const key: keyof A = Object.keys(this.value)[0] as any;
-    return `${key}(${this.value[key]})`;
+    return `${this.value.type}(${JSON.stringify(this.value.value)})`;
   }
 }
