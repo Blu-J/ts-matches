@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/Blu-J/ts-matches.git"
   },
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "main": "lib/matches.js",
   "types": "lib/matches.d.ts",
