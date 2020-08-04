@@ -8,7 +8,9 @@ export class Maybe<A> extends MonadUnion<{ none: ""; some: A }, "some"> {
 }
 
 export const Some = {
-  of: Maybe.some
+  of<A>(a: A | nill) {
+    return Maybe.some(a)
+  }
 };
 
 export const None = {
