@@ -1,12 +1,13 @@
 import matches, { Right, Left, Some, None } from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
+import { validatorError, Validator } from "./validators";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";
 
 const unFold = {
-  left: (x: any): any => x,
-  right: (x: any): any => x
+  left: (x: any): any => Validator.validatorErrorAsString(x),
+  right: (x: any): any => x,
 };
 describe("matches", () => {
   describe("base", () => {
@@ -54,9 +55,9 @@ describe("matches", () => {
   describe("properties", () => {
     test("a matched case will always be the equal to matcher or less than", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: any) =>
-            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+            testSetup.setupInformation.map((x) => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.value)
           );
@@ -66,9 +67,9 @@ describe("matches", () => {
     });
     test("a matched lazy case will always be the equal to matcher or less than", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: any) =>
-            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+            testSetup.setupInformation.map((x) => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatchLazy(testSetup.randomExample.value)
           );
@@ -78,9 +79,9 @@ describe("matches", () => {
     });
     test("a counter matched case will never be the equal to matcher", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: any) =>
-            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+            testSetup.setupInformation.map((x) => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.counter)
           );
@@ -92,9 +93,9 @@ describe("matches", () => {
     });
     test("a counter matched lazy case will never be the equal to matcher", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: any) =>
-            testSetup.setupInformation.map(x => x.matchValue).indexOf(value);
+            testSetup.setupInformation.map((x) => x.matchValue).indexOf(value);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatchLazy(testSetup.randomExample.counter)
           );
@@ -129,7 +130,7 @@ describe("matches", () => {
       fc.assert(
         fc.property(
           gens.matcherPairs.filter(
-            x => x.counterExample !== gens.noPossibleCounter
+            (x) => x.counterExample !== gens.noPossibleCounter
           ),
           ({ counterExample, matcher }) => {
             expect(() => matcher.unsafeCast(counterExample)).toThrow();
@@ -137,7 +138,7 @@ describe("matches", () => {
         )
       );
     });
-    test("a matcher will always be a function to Either of the same value or string on error", () => {
+    test("a matcher will always be a function to Either of the same value or ValidatorError on error", () => {
       fc.assert(
         fc.property(
           gens.matcherPairs,
@@ -146,20 +147,20 @@ describe("matches", () => {
             const matchedValue = matcher.apply(example);
             matchedValue.fold({
               left: (value: any) => {
-                expect(typeof value).toBe("string");
+                validatorError.unsafeCast(value);
               },
               right: (value: any) => {
                 expect(value).toEqual(example);
-              }
+              },
             });
           }
         )
       );
     });
-    test("a matcher defaulted will always be a function to Either of the same type (not nil) or string on error", () => {
+    test("a matcher defaulted will always be a function to Either of the same type (not nil) or ValidationError on error", () => {
       fc.assert(
         fc.property(
-          gens.matcherPairs.filter(x => x.example != null),
+          gens.matcherPairs.filter((x) => x.example != null),
           fc.anything(),
           (pair, example) => {
             const matchedValue = pair.matcher
@@ -167,12 +168,12 @@ describe("matches", () => {
               .apply(example);
             matchedValue.fold({
               left: (value: any) => {
-                expect(typeof value).toBe("string");
+                validatorError.unsafeCast(value);
               },
               right: (value: any) => {
                 expect(value).not.toEqual(null);
                 expect(value).not.toEqual(undefined);
-              }
+              },
             });
           }
         )
@@ -191,7 +192,7 @@ describe("matches", () => {
               },
               right: () => {
                 expect(matcher.test(example)).toEqual(true);
-              }
+              },
             });
           }
         )
@@ -199,10 +200,10 @@ describe("matches", () => {
     });
     test("a matched value will not go to default", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: unknown) =>
             testSetup.setupInformation
-              .map(x => x.matchValue)
+              .map((x) => x.matchValue)
               .indexOf(value as any);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatch(testSetup.randomExample.value)
@@ -215,10 +216,10 @@ describe("matches", () => {
     });
     test("a matched lazy value will not go to default", () => {
       fc.assert(
-        fc.property(gens.testSetup, testSetup => {
+        fc.property(gens.testSetup, (testSetup) => {
           const indexOfMatchedValue = (value: unknown) =>
             testSetup.setupInformation
-              .map(x => x.matchValue)
+              .map((x) => x.matchValue)
               .indexOf(value as any);
           const foundIndex = indexOfMatchedValue(
             testSetup.runMatchLazy(testSetup.randomExample.value)
@@ -242,7 +243,7 @@ describe("matches", () => {
       const testValue = { a: "c" };
       const validator = matches.shape({ a: matches.literal("b") });
       expect(validator.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"@a literal[b](c)"`
+        `"shape(@a(literal[b](c)))"`
       );
     });
 
@@ -258,10 +259,10 @@ describe("matches", () => {
       const testValue = {};
       const validator = matches.shape({
         a: matches.literal("b"),
-        b: matches.literal("b")
+        b: matches.literal("b"),
       });
       expect(validator.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"@a literal[b](undefined)"`
+        `"shape(@a(literal[b](undefined)), @b(literal[b](undefined)))"`
       );
     });
 
@@ -275,10 +276,10 @@ describe("matches", () => {
       const testValue = { a: "a", b: "b" };
       const validator = matches.partial({
         a: matches.literal("c"),
-        b: matches.literal("c")
+        b: matches.literal("c"),
       });
       expect(validator.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"(@a literal[c](a), @b literal[c](b))"`
+        `"partialShape(@a(literal[c](a)), @b(literal[c](b)))"`
       );
     });
 
@@ -408,7 +409,7 @@ describe("matches", () => {
       const testValue = ["bad", 5];
       const validator = matches.tuple([matches.number, matches.string]);
       expect(validator.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"@0 isNumber(bad)"`
+        `"shape(@0(isNumber(bad)), @1(string(5)))"`
       );
     });
 
@@ -481,7 +482,7 @@ describe("matches", () => {
       const testValue = [5, 3, 2, 5, 5];
       const arrayOf = matches.arrayOf(matches.literal(5));
       expect(arrayOf.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"@1 literal[5](3)"`
+        `"arrayOf(@{i}(literal[5](3)), @{i}(literal[5](2)))"`
       );
     });
 
@@ -508,14 +509,22 @@ describe("matches", () => {
     test("should throw on invalid unsafe match throw", () => {
       expect(() =>
         matches.partial({}).unsafeCast(5)
-      ).toThrowErrorMatchingInlineSnapshot(`"Failed type: isObject(5)"`);
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Failed type: isObject(5) given input 5"`
+      );
     });
     test("should throw on invalid unsafe match throw", async () => {
       try {
         await matches.partial({}).castPromise(5);
         expect("never").toBe("called");
       } catch (e) {
-        expect(e).toMatchInlineSnapshot(`"isObject(5)"`);
+        expect(e).toMatchInlineSnapshot(`
+          Object {
+            "children": Array [],
+            "name": "isObject",
+            "value": 5,
+          }
+        `);
       }
     });
     test("should throw on invalid unsafe match throw", async () => {
@@ -531,23 +540,22 @@ describe("matches", () => {
     });
     test("some should only return the unique", () => {
       expect(
-        matches
-          .some(matches.number, matches.number)
-          .apply("hello")
-          .fold(unFold)
+        matches.some(matches.number, matches.number).apply("hello").fold(unFold)
       ).toBe("isNumber(hello)");
     });
 
     test("should guard without a name", () => {
-      expect(matches.guard(x => Number(x) > 3).unsafeCast(6)).toBe(6);
+      expect(matches.guard((x) => Number(x) > 3).unsafeCast(6)).toBe(6);
     });
     test("should guard without a name failure", () => {
       expect(
         matches
-          .guard(x => Number(x) > 3)
+          .guard((x) => Number(x) > 3)
           .apply(2)
           .toString()
-      ).toMatchInlineSnapshot(`"left(test(2))"`);
+      ).toMatchInlineSnapshot(
+        `"left({\\"name\\":\\"test\\",\\"value\\":2,\\"children\\":[]})"`
+      );
     });
 
     test("should be able to test is object for event", () => {
@@ -562,23 +570,17 @@ describe("matches", () => {
       it("should be able to validate it is a instance", () => {
         const value = new Fake(3);
         expect(matches.instanceOf(Fake).test(value)).toEqual(true);
-        expect(
-          matches
-            .instanceOf(Fake)
-            .apply(value)
-            .fold(unFold)
-        ).toEqual(value);
+        expect(matches.instanceOf(Fake).apply(value).fold(unFold)).toEqual(
+          value
+        );
       });
       it("should be able to validate it is not a instance", () => {
         const value = {
-          value: 4
+          value: 4,
         };
         expect(matches.instanceOf(Fake).test(value)).toEqual(false);
         expect(
-          matches
-            .instanceOf(Fake)
-            .apply(value)
-            .fold(unFold)
+          matches.instanceOf(Fake).apply(value).fold(unFold)
         ).toMatchInlineSnapshot(`"isFake([object Object])"`);
       });
     });
@@ -600,7 +602,7 @@ describe("matches", () => {
       );
       expect(
         isEvent
-          .map(x => x.type)
+          .map((x) => x.type)
           .apply(event)
           .fold(unFold)
       ).toBe(testString);
@@ -612,22 +614,34 @@ describe("matches", () => {
       test("a number in", () => {
         const input = 4;
         const expected = Right.of(Some.of(4));
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a null in", () => {
         const input = null;
         const expected = Right.of(None.of);
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a undefined in", () => {
         const input = undefined;
         const expected = Right.of(None.of);
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a object in", () => {
         const input = {};
-        const expected = Left.of("isNumber([object Object])");
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        const expected = Left.of({
+          name: "isNumber",
+          value: {},
+          children: [],
+        });
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
     });
 
@@ -637,22 +651,30 @@ describe("matches", () => {
       test("a number in", () => {
         const input = 4;
         const expected = Right.of(4);
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a null in", () => {
         const input = null;
         const expected = Right.of(0);
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a undefined in", () => {
         const input = undefined;
         const expected = Right.of(0);
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
       test("a object in", () => {
         const input = {};
-        const expected = Left.of("isNumber([object Object])");
-        expect("" + maybeNumber.apply(input)).toBe("" + expected);
+        const expected = Left.of({ name: "isNumber", value: {}, children: [] });
+        expect(JSON.stringify(maybeNumber.apply(input))).toBe(
+          JSON.stringify(expected)
+        );
       });
     });
 
