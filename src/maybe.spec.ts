@@ -7,7 +7,7 @@ describe("Maybe", () => {
   describe("None(4)", () => {
     const given: Maybe<number> = None.ofFn();
     it("should have string value none()", () => {
-      expect(`${given}`).toEqual("none()");
+      expect(`${given}`).toEqual("none(\"\")");
     });
     it("should be able to default to a value", () => {
       const answer = 2;
@@ -53,7 +53,7 @@ describe("Maybe", () => {
   describe("Some(undefined)", () => {
     const given: Maybe<number> = Some.of<number>(undefined);
     it("should have string value none()", () => {
-      expect(`${given}`).toEqual("none()");
+      expect(`${given}`).toEqual("none(\"\")");
     });
     it("should be able to default to a value", () => {
       const answer = 4;
