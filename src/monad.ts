@@ -25,9 +25,7 @@ export class MonadUnion<A extends {}, DefaultKey extends DisjoinUnionTypes<A>> {
   }
 
   chain<B, Key extends keyof A = DefaultKey>(
-    fn: (
-      value: A[Key]
-    ) => B,
+    fn: (value: A[Key]) => B,
     key: Key = this.defaultKey as any
   ): B {
     if (key === this.value.type) {
