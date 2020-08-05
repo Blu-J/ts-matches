@@ -23,6 +23,11 @@ export class Validator<A> {
   static of<A>(apply: (value: unknown) => Either<ValidatorError, A>) {
     return new Validator<A>((x) => apply(x).map((name) => name, "left"));
   }
+  /**
+   * This is the line of code that could be over written if
+   * One would like to have a custom error as a string   *
+   */
+
   public static validatorErrorAsString = (
     validationError: ValidatorError
   ): string => {
