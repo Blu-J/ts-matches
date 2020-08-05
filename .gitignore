@@ -7,3 +7,4 @@ junit.xml
 reports/
 coverage
 .stryker-tmp
+package-lock.json
