@@ -1,6 +1,9 @@
 import * as fc from "fast-check";
 import matches from "./matches";
 import { Validator, ChainMatches } from "./validators";
+import { saferStringify } from "./utils";
+
+export { saferStringify };
 
 export const noPossibleCounter = {
   noPossibleCounter: true,
@@ -166,7 +169,7 @@ const matcherPairsSimple = (() => {
       matchPairOf(
         matches.literal(example),
         example,
-        `literal of ${JSON.stringify(example)}`,
+        `literal of ${saferStringify(example)}`,
         counterExample
       )
     );
@@ -207,7 +210,7 @@ const matcherPairsSimple = (() => {
       matchPairOf(
         matches.literal(example),
         example,
-        `literal of ${JSON.stringify(example)}`,
+        `literal of ${saferStringify(example)}`,
         counterExample
       )
     );
@@ -293,7 +296,7 @@ const matcherTuple = fc
     return matchPairOf(
       matches.tuple(xs.map((tupleValue) => tupleValue.matcher) as any),
       xs.map((x) => x.example) as any,
-      `tuple ${JSON.stringify(xs.map((x) => x.type))}`,
+      `tuple ${saferStringify(xs.map((x) => x.type))}`,
       validCounter ? xs.map((x) => x.counterExample) : 0
     );
   });
@@ -324,7 +327,7 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
     },
     {}
   );
-  const type: string = `shape of ${JSON.stringify(
+  const type: string = `shape of ${saferStringify(
     Object.keys(x).reduce(
       (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
         const value = x[key];
@@ -383,7 +386,7 @@ const matcherShapePartial = fc
       },
       {}
     );
-    const type: string = `shape of ${JSON.stringify(
+    const type: string = `shape of ${saferStringify(
       Object.keys(x).reduce(
         (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
           const value = x[key];
