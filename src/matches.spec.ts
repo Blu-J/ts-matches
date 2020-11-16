@@ -490,7 +490,7 @@ describe("matches", () => {
       const testValue = [5, 3, 2, 5, 5];
       const arrayOf = matches.arrayOf(matches.literal(5));
       expect(arrayOf.apply(testValue).fold(unFold)).toMatchInlineSnapshot(
-        `"arrayOf(@{i}(literal[5](3)), @{i}(literal[5](2)))"`
+        `"arrayOf(@1(literal[5](3)), @2(literal[5](2)))"`
       );
     });
 
