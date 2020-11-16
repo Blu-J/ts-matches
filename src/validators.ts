@@ -406,7 +406,7 @@ export function arrayOf<A>(validator: Validator<A>): Validator<A[]> {
       .map((x, i) =>
         validator
           .apply(x)
-          .map((error) => ({ children: [error], name: `@{i}` }), "left")
+          .map((error) => ({ children: [error], name: `@${i}` }), "left")
       )
       .map((x) => x.value);
     const as: A[] = [];
