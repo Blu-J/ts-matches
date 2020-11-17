@@ -1,3 +1,5 @@
+import { saferStringify } from "./utils";
+
 export type DisjoinUnionRaw<A, Key extends keyof A> = Key extends string
   ? { type: Key; value: A[Key] }
   : never;
@@ -81,6 +83,6 @@ export class MonadUnion<A extends {}, DefaultKey extends DisjoinUnionTypes<A>> {
   }
 
   toString() {
-    return `${this.value.type}(${JSON.stringify(this.value.value)})`;
+    return `${this.value.type}(${saferStringify(this.value.value)})`;
   }
 }

@@ -2,6 +2,7 @@ import { Either, Right, Left } from "./either";
 
 import { Maybe, Some, None } from "./maybe";
 import matches from "./matches";
+import { saferStringify } from "./utils";
 
 const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;
@@ -23,6 +24,11 @@ export class Validator<A> {
   static of<A>(apply: (value: unknown) => Either<ValidatorError, A>) {
     return new Validator<A>((x) => apply(x).map((name) => name, "left"));
   }
+  /**
+   * This is the line of code that could be over written if
+   * One would like to have a custom error as a string   *
+   */
+
   public static validatorErrorAsString = (
     validationError: ValidatorError
   ): string => {
@@ -30,7 +36,7 @@ export class Validator<A> {
       Validator.validatorErrorAsString(x)
     );
     if ("value" in validationError) {
-      children.push("" + validationError.value);
+      children.push(saferStringify(validationError.value));
     }
     return `${validationError.name}(${children.join(", ")})`;
   };
@@ -43,7 +49,7 @@ export class Validator<A> {
         throw new TypeError(
           `Failed type: ${Validator.validatorErrorAsString(
             error
-          )} given input ${JSON.stringify(value)}`
+          )} given input ${saferStringify(value)}`
         );
       },
       right: identity,
@@ -351,11 +357,15 @@ export const isShape = <A extends {}>(
     let answer: any = { ...value };
     let errors: ValidatorError[] = [];
     for (const key of Object.keys(testShape) as Array<keyof typeof testShape>) {
-      const tested = testShape[key].apply((value as any)[key]);
-      if (tested.value.type === "left") {
-        errors.push({ children: [tested.value.value], name: `@${key}` });
+      if (!(key in value)) {
+        errors.push({ children: [], name: `hasProperty@${key}` });
       } else {
-        answer[key] = tested.value.value;
+        const tested = testShape[key].apply((value as any)[key]);
+        if (tested.value.type === "left") {
+          errors.push({ children: [tested.value.value], name: `@${key}` });
+        } else {
+          answer[key] = tested.value.value;
+        }
       }
     }
     if (errors.length > 0) {
@@ -446,8 +456,10 @@ export interface ChainMatches<OutcomeType> {
   defaultToLazy(getValue: () => OutcomeType): OutcomeType;
 }
 
-export const validatorError = shape({
-  children: arrayOf(object).maybe(),
-  name: string,
-  value: any.maybe(),
-});
+export const validatorError = every(
+  shape({
+    children: arrayOf(object).maybe(),
+    name: string,
+  }),
+  partial({ value: any.maybe() })
+);
