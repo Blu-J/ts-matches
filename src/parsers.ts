@@ -16,6 +16,7 @@ export type ParserFrom<P> = P extends IParser<infer A, unknown> ? A : never;
 export type Nil = null | undefined;
 
 export type Optional<A> = A | null | undefined;
+export type _<T> = T;
 
 export type ISimpleParsedError = {
   readonly parser: IParser<unknown, unknown>;
@@ -418,10 +419,79 @@ export function every<A extends Parser<unknown, unknown>[]>(
   ) as any;
 }
 
+export type DictionaryTuple<A> = A extends [
+  Parser<unknown, infer Keys>,
+  Parser<unknown, infer Values>
+]
+  ? Keys extends string | number
+    ? { [key in Keys]: Values }
+    : never
+  : never;
+// prettier-ignore
+export type DictionaryShaped<T> =
+  T extends [infer A] | readonly [infer A] ? DictionaryTuple<A>
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? DictionaryTuple<A> & DictionaryShaped<B>
+  : never
+export class DictionaryParser<
+  A extends object | {},
+  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
+> implements IParser<A, DictionaryShaped<Parsers>> {
+  constructor(
+    readonly parsers: Parsers,
+    readonly name: string = `{${parsers
+      .map(
+        ([keyType, value]) => `${saferStringify(keyType.name)}: ${value.name}`
+      )
+      .join(",")}}`
+  ) {}
+  parse<C, D>(
+    a: A,
+    onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>
+  ): C | D {
+    const { parsers } = this;
+    const parser = this;
+    const answer: any = { ...a };
+    for (const key in a) {
+      let foundValid = false;
+      for (const [keyParser, valueParser] of parsers) {
+        keyParser.parse(key, {
+          parsed(newKey: string | number) {
+            valueParser.parse((a as any)[key], {
+              parsed(newValue) {
+                foundValid = true;
+                delete answer[key];
+                answer[newKey] = newValue;
+              },
+              invalid(_) {},
+            });
+          },
+          invalid(_) {},
+        });
+        if (foundValid) break;
+      }
+      if (!foundValid) {
+        return onParse.invalid({
+          parser,
+          value: a,
+          key,
+        });
+      }
+    }
+
+    return onParse.parsed(answer);
+  }
+}
+export const dictionary = <
+  Parsers extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
+>(
+  ...parsers: Parsers
+): Parser<unknown, _<DictionaryShaped<Parsers>>> => {
+  return object.concat(new DictionaryParser(parsers)) as any;
+};
+
 /**
  * Given an object, we want to make sure the key exists and that the value on
  * the key matches the parser
- * Note: This will mutate the value sent through
  */
 export class ShapeParser<
   A extends object | {},
