@@ -705,5 +705,47 @@ describe("matches", () => {
         expect([0, "hi", 5, {}].filter(matches.number.test)).toEqual([0, 5]);
       });
     });
+
+    describe("Testing dictionaries", () => {
+      const testMatcher = matches.dictionary(
+        [matches.literal("test"), matches.literal("value")],
+        [matches.literal("test2"), matches.literal("value2")]
+      );
+      it("should be able to check correct shape", () => {
+        const input = { test: "value", test2: "value2" };
+        const output: {
+          test: "value";
+          test2: "value2";
+        } = testMatcher.unsafeCast(input);
+        expect(output).toEqual(input);
+      });
+      it("should be able to check incorrect shape", () => {
+        const input = { test: "invalid", test2: "value2" };
+        const output = testMatcher.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(
+          `"isObject|>{\\"literal[\\\\\\"test\\\\\\"]\\": literal[\\"value\\"],\\"literal[\\\\\\"test2\\\\\\"]\\": literal[\\"value2\\"]}@\\"test\\"({\\"test\\":\\"invalid\\",\\"test2\\":\\"value2\\"})"`
+        );
+      });
+      it("should be able to project values", () => {
+        const input = { test: "value" };
+        const output = matches
+          .dictionary([
+            matches.literal("test"),
+            matches.literal("value").map((x) => `value2`),
+          ])
+          .unsafeCast(input);
+        expect(output.test).toEqual("value2");
+      });
+      it("should be able to project keys", () => {
+        const input = { test: "value" };
+        const output = matches
+          .dictionary([
+            matches.literal("test").map((x) => "projected" as const),
+            matches.literal("value"),
+          ])
+          .unsafeCast(input);
+        expect(output.projected).toEqual("value");
+      });
+    });
   });
 });
