@@ -1,8 +1,6 @@
-import { Either, Right, Left } from "./either";
-import { Maybe, Some, None } from "./maybe";
 import {
   ChainMatches,
-  Validator,
+  Parser,
   isArray,
   arrayOf,
   some,
@@ -22,29 +20,15 @@ import {
   string,
   boolean,
   instanceOf,
-  ValidatorFn,
   ValidatorError,
-  MaybePartial,
-} from "./validators";
+} from "./parsers";
 
-export {
-  Either,
-  Maybe,
-  Some,
-  None,
-  Right,
-  Left,
-  Validator,
-  ChainMatches,
-  ValidatorFn,
-  MaybePartial,
-  ValidatorError,
-};
+export { Parser as Validator, ChainMatches, ValidatorError };
 
 class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private value: OutcomeType) {}
   when<B>(
-    fnTest: Validator<B>,
+    fnTest: Parser<unknown, B>,
     thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
     return this as ChainMatches<OutcomeType>;
@@ -57,18 +41,21 @@ class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   }
 }
 
-// tslint:disable-next-line:max-classes-per-file
 class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private a: unknown) {}
 
   when<B>(
-    toValidEither: Validator<B>,
+    toValidEither: Parser<unknown, B>,
     thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
-    const testedValue = toValidEither.apply(this.a);
-    return testedValue.fold<ChainMatches<OutcomeType>>({
-      left: () => this,
-      right: (value) => new Matched<OutcomeType>(thenFn(value)),
+    const me = this;
+    return toValidEither.parse(this.a, {
+      parsed(value) {
+        return new Matched<OutcomeType>(thenFn(value));
+      },
+      invalid(_) {
+        return me;
+      },
     });
   }
 
@@ -115,7 +102,7 @@ export const matches = Object.assign(
     boolean,
     nill: isNill,
     instanceOf,
-    Validator,
+    Parse: Parser,
   }
 );
 export default matches;

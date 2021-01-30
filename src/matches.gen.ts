@@ -1,6 +1,6 @@
 import * as fc from "fast-check";
 import matches from "./matches";
-import { Validator, ChainMatches } from "./validators";
+import { Parser, ChainMatches } from "./parsers";
 import { saferStringify } from "./utils";
 
 export { saferStringify };
@@ -9,7 +9,7 @@ export const noPossibleCounter = {
   noPossibleCounter: true,
 };
 export const matchPairOf = <A>(
-  matcher: Validator<A>,
+  matcher: Parser<unknown, A>,
   example: A,
   type: string,
   counterExample: any
@@ -20,7 +20,7 @@ export const matchPairOf = <A>(
   counterExample,
 });
 type MatchPair<A> = {
-  matcher: Validator<A>;
+  matcher: Parser<unknown, A>;
   example: A;
   type: string;
   counterExample: any;
@@ -303,7 +303,7 @@ const matcherTuple = fc
 
 const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
   type testingShape = { [key in keyof typeof x]: typeof x[key]["example"] };
-  const matcher: Validator<testingShape> = matches.shape(
+  const matcher: Parser<unknown, testingShape> = matches.shape(
     Object.keys(x).reduce(
       (
         acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
@@ -362,7 +362,7 @@ const matcherShapePartial = fc
     type testingShape = Partial<
       { [key in keyof typeof x]: typeof x[key]["example"] }
     >;
-    const matcher: Validator<testingShape> = matches.partial(
+    const matcher: Parser<unknown, testingShape> = matches.partial(
       Object.keys(x).reduce(
         (
           acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
@@ -440,7 +440,7 @@ export type TestSetup = {
   defaultValue: {};
   setupInformation: {
     matchValue: {};
-    matcher: Validator<{}>;
+    matcher: Parser<unknown, {}>;
     type: string;
     example: {};
     counterExample: any;
