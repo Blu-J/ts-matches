@@ -103,15 +103,15 @@ on that function that return a `validator` or a function that creates a `validat
 | defaultTo     | Fall through case, ensures all are caught                 |
 | defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
 
-`Validator` api
+`Parser` api
 
 | Attribute   | Description                                          |
 | ----------- | ---------------------------------------------------- |
-| apply       | Use this to turn a value into an either              |
+| parse       | Use this to turn a value into an either              |
 | usafeCast   | Use this to get the value or throw an error          |
 | castPromise | Cast into a promise                                  |
-| maybe       | output type is now a mabye and deal with null        |
-| defaultTo   | instead of creating a promise we fallback to a value |
+| optional    | output type is now a null of value                   |
+| defaultTo   | instead of creating a optional we fallback to a value |
 | refine      | we want to add more tests to value                   |
 
 `Validator.validatorErrorAsString` (
