@@ -1,5 +1,5 @@
 {
-  "name": "@saltlending/ts-matches",
+  "name": "ts-matches",
   "version": "4.0.0",
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "main": "lib/matches.js",
