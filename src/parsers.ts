@@ -8,12 +8,6 @@ const isNumber = (x: unknown): x is number => typeof x === "number";
 const isString = (x: unknown): x is string => typeof x === "string";
 const identity = <X>(x: X) => x;
 const empty: any[] = [];
-function nonNull<A, B>(a: A, b: B): NonNull<A, B> {
-  if (a == null) {
-    return b as NonNull<A, B>;
-  }
-  return a as NonNull<A, B>;
-}
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
 export type EnsureParser<P> = P extends IParser<unknown, unknown> ? P : never;
@@ -164,7 +158,7 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
 export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
   constructor(
     readonly parent: IParser<A, B>,
-    readonly name: string = `Optional${parent.name}`
+    readonly name: string = `Optional<${parent.name}>`
   ) {}
   parse<C, D>(a: A, onParse: OnParse<Optional<A>, Optional<B>, C, D>): C | D {
     if (a == null) {
@@ -197,9 +191,12 @@ export class DefaultParser<A, B, B2>
   ): C | D {
     const defaultValue = this.defaultValue;
     const parser = this;
+    if (a == null) {
+      return onParse.parsed(defaultValue as any);
+    }
     return this.parent.parse(a, {
       parsed(value) {
-        return onParse.parsed(nonNull(value, defaultValue));
+        return onParse.parsed(value as any);
       },
       invalid(error) {
         return onParse.invalid({
@@ -378,7 +375,7 @@ export const instanceOf = <C>(classCreator: {
 export const regex = instanceOf(RegExp);
 
 // prettier-ignore
-export type SomeParsers<T> = 
+export type SomeParsers<T> =
   T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? OrParser<A, SomeParsers<B>>
   : Parser<unknown, any>
@@ -400,7 +397,7 @@ export function some<Parsers extends Parser<unknown, unknown>[]>(
 }
 
 // prettier-ignore
-export type EveryParser<T> = 
+export type EveryParser<T> =
   T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? AndParser<A, EveryParser<B>>
   : Parser<unknown, any>
@@ -506,7 +503,7 @@ export const shape = <A extends {}>(
 ): Parser<unknown, A> => isShape(testShape);
 
 // prettier-ignore
-export type TupleParserInto<T> = 
+export type TupleParserInto<T> =
   T extends [infer A] | readonly [infer A] ? [ParserInto<A>]
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? [ParserInto<A>, ...TupleParserInto<B>]
   : never
@@ -562,12 +559,6 @@ export function arrayOf<A>(
   validator: Parser<unknown, A>
 ): Parser<unknown, A[]> {
   return isArray.concat(new ArrayOfParser(validator));
-}
-
-export function optional<A, B>(
-  validator: Parser<A, B>
-): Parser<Optional<A>, Optional<B>> {
-  return validator.optional();
 }
 
 export interface ChainMatches<OutcomeType> {

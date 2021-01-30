@@ -448,6 +448,12 @@ describe("matches", () => {
       expect(validator.parse(testValue, unFold)).toEqual(testValue);
     });
 
+    test("should union nothing", () => {
+      const testValue = 4;
+      const validator = matches.some();
+      expect(validator.parse(testValue, unFold)).toEqual(testValue);
+    });
+
     test("should be fallible union several matchers", () => {
       const testValue = false;
       const validator = matches.some(matches.number, matches.string);
@@ -463,6 +469,12 @@ describe("matches", () => {
         "isEven"
       );
       const validator = matches.every(matches.number, isEven);
+      expect(validator.parse(testValue, unFold)).toEqual(testValue);
+    });
+
+    test("should intersection no matchers", () => {
+      const testValue = 4;
+      const validator = matches.every();
       expect(validator.parse(testValue, unFold)).toEqual(testValue);
     });
 
@@ -497,10 +509,14 @@ describe("matches", () => {
 
     test("should refinement matchers", () => {
       const testValue = 4;
-      const isEven = matches.number.refine(
-        (num: number): num is number => num % 2 === 0,
-        "isEven"
-      );
+      const isEven = matches.number.refine((num): num is number => {
+        // Make sure that the refine types pass down the number
+        let _test: number = num;
+        // Asserting to typescript that the infered type not something else
+        // @ts-expect-error
+        let _test2: string = num;
+        return num % 2 === 0;
+      }, "isEven");
       expect(isEven.parse(testValue, unFold)).toEqual(testValue);
     });
 
@@ -603,78 +619,86 @@ describe("matches", () => {
         (x: unknown): x is Event => x instanceof Event,
         "isEvent"
       );
-      expect(isEvent.map((x) => x.type).parse(event, unFold)).toBe(testString);
+      expect(
+        isEvent
+          .map((x) => {
+            // Asserting to typescript that the infered type is event
+            let _test: Event = x;
+            // Asserting to typescript that the infered type not something else
+            // @ts-expect-error
+            let _test2: number = x;
+            return x.type;
+          })
+          .parse(event, unFold)
+      ).toBe(testString);
+    });
+    test("should be able to map validation with name", () => {
+      const testString = "test";
+      const event = new Event(testString);
+      const isEvent = matches.guard(
+        (x: unknown): x is Event => x instanceof Event,
+        "isEvent"
+      );
+      expect(
+        isEvent
+          .map(function asType(x) {
+            return x.type;
+          })
+          .parse(event, unFold)
+      ).toBe(testString);
     });
 
-    // describe("with a number.maybe matcher", () => {
-    //   const maybeNumber = matches.number.optional();
+    describe("with a number.maybe matcher", () => {
+      const maybeNumber = matches.number.optional();
 
-    //   test("a number in", () => {
-    //     const input = 4;
-    //     const expected = Right.of(Some.of(4));
-    //     expect(maybeNumber.parse(input, stringFold)).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a null in", () => {
-    //     const input = null;
-    //     const expected = Right.of(None.of);
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a undefined in", () => {
-    //     const input = undefined;
-    //     const expected = Right.of(None.of);
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a object in", () => {
-    //     const input = {};
-    //     const expected = Left.of({
-    //       name: "isNumber",
-    //       value: {},
-    //       children: [],
-    //     });
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    // });
+      test("a number in", () => {
+        const input = 4;
+        const expected = 4;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a null in", () => {
+        const input = null;
+        const expected = null;
+        expect(maybeNumber.parse(input, unFold)).toBe(null);
+      });
+      test("a undefined in", () => {
+        const input = undefined;
+        const expected = null;
+        expect(maybeNumber.parse(input, unFold)).toBe(null);
+      });
+      test("a object in", () => {
+        const input = {};
+        expect(
+          saferStringify(maybeNumber.parse(input, unFold))
+        ).toMatchInlineSnapshot(`"\\"Optional<isNumber>({})\\""`);
+      });
+    });
 
-    // describe("with a number.defaultTo matcher", () => {
-    //   const maybeNumber = matches.number.defaultTo(0);
+    describe("with a number.defaultTo matcher", () => {
+      const maybeNumber = matches.number.defaultTo(0);
 
-    //   test("a number in", () => {
-    //     const input = 4;
-    //     const expected = Right.of(4);
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a null in", () => {
-    //     const input = null;
-    //     const expected = Right.of(0);
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a undefined in", () => {
-    //     const input = undefined;
-    //     const expected = Right.of(0);
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    //   test("a object in", () => {
-    //     const input = {};
-    //     const expected = Left.of({ name: "isNumber", value: {}, children: [] });
-    //     expect(saferStringify(maybeNumber.apply(input))).toBe(
-    //       saferStringify(expected)
-    //     );
-    //   });
-    // });
+      test("a number in", () => {
+        const input = 4;
+        const expected = 4;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a null in", () => {
+        const input = null;
+        const expected = 0;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a undefined in", () => {
+        const input = undefined;
+        const expected = 0;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a object in", () => {
+        const input = {};
+        expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(
+          `"isNumber[default:0]({})"`
+        );
+      });
+    });
 
     describe("Testing as a filter", () => {
       it("should be able to utilize the test in a filter for typing", () => {
