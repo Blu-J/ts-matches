@@ -21,6 +21,7 @@ import {
   boolean,
   instanceOf,
   ValidatorError,
+  dictionary,
 } from "./parsers";
 
 export { Parser as Validator, ChainMatches, ValidatorError };
@@ -100,6 +101,7 @@ export const matches = Object.assign(
     guard,
     any,
     boolean,
+    dictionary,
     nill: isNill,
     instanceOf,
     Parse: Parser,
