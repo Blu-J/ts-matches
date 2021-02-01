@@ -266,7 +266,9 @@ const matcherSome = fc
   )
   .map(({ atIndex, matchers }) => {
     return matchPairOf(
-      matches.some(...matchers.map((x) => x.matcher)),
+      matchers.length === 0
+        ? matches.any
+        : (matches.some as any)(...matchers.map((x) => x.matcher)),
       matchers[atIndex].example,
       `some (${matchers.map((x) => x.type).join(", ")})`,
       noPossibleCounter

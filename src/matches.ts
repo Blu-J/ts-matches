@@ -22,6 +22,7 @@ import {
   instanceOf,
   ValidatorError,
   dictionary,
+  literals,
 } from "./parsers";
 
 export { Parser as Validator, ChainMatches, ValidatorError };
@@ -102,6 +103,7 @@ export const matches = Object.assign(
     any,
     boolean,
     dictionary,
+    literals,
     nill: isNill,
     instanceOf,
     Parse: Parser,
