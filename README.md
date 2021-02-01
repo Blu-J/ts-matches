@@ -9,15 +9,14 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 
 # Uses
 
-- Schema Validation (Validators: like matches.string)
+- Schema Validation (parsers: like matches.string)
 - Schema Switching
 
 ## Tech Used
 
 [Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
 
-Uses [Monads](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) either and maybe under the hood.
-Also useful for casting and boundary verifications.
+Also useful for casting and boundary verifications. So using this as a json validator. The benefit comes that the parser becomes a validator, also the types are given back to typescript, where something like ajv cannot do or alot of validators.
 
 ## Examples
 
@@ -71,14 +70,14 @@ const currentValue = matches(testValue)
 
 Given that the default export is `matches`
 Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
-on that function that return a `validator` or a function that creates a `validator`
+on that function that return a `parser` or a function that creates a `parser`
 
 | Attribute  | Description                                                                  |
 | ---------- | ---------------------------------------------------------------------------- |
 | array      | Testing that any array is good                                               |
 | arrayOf    | Testing that any array is good and filled with type passed in                |
 | some       | That one of the matchers pass                                                |
-| tuple      | That we match a tuple of validators                                          |
+| tuple      | That we match a tuple of parsers                                             |
 | regex      | That we are a regex                                                          |
 | number     | Number                                                                       |
 | natural    | Number > 0 and is integer                                                    |
@@ -115,14 +114,14 @@ on that function that return a `validator` or a function that creates a `validat
 | defaultTo   | instead of creating a optional we fallback to a value |
 | refine      | we want to add more tests to value                    |
 
-`Validator.validatorErrorAsString` (
-validationError: ValidatorError
+`Parser.parserErrorAsString` (
+validationError: parserError
 ): string
-This is the exposed transform of the ValidatorError to a string. Override this if you want to make the errors different.
+This is the exposed transform of the parserError to a string. Override this if you want to make the errors different.
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
 
 ## Deploying
 
-Use the `npm version minor | major` and push the tags up, circle ci should do the publish on the master based on tags
+Use the `npm version minor | major` and push the tags up, Then publish via npm
