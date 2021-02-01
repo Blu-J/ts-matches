@@ -52,6 +52,15 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+      - run:
+          name: Run tests with JUnit as reporter
+          command: yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
   deploy:
     <<: *defaults
     steps:
