@@ -53,14 +53,14 @@ jobs:
           root: ~/repo
           paths: .
       - run:
-        name: Run tests with JUnit as reporter
-        command: yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
-        environment:
-          JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+          name: Run tests with JUnit as reporter
+          command: yarn jest --ci --runInBand --reporters=default --reporters=jest-junit
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
       - store_test_results:
-        path: ./reports/junit/
+          path: ./reports/junit/
       - store_artifacts:
-        path: ./reports/junit
+          path: ./reports/junit
   deploy:
     <<: *defaults
     steps:
