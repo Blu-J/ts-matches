@@ -266,9 +266,7 @@ const matcherSome = fc
   )
   .map(({ atIndex, matchers }) => {
     return matchPairOf(
-      matchers.length === 0
-        ? matches.any
-        : (matches.some as any)(...matchers.map((x) => x.matcher)),
+      (matches.some as any)(...matchers.map((x) => x.matcher)),
       matchers[atIndex].example,
       `some (${matchers.map((x) => x.type).join(", ")})`,
       noPossibleCounter
@@ -420,9 +418,9 @@ const matcherShapePartial = fc
       validCounter ? counterExample : 0
     );
   });
-export const matcherPairs: fc.Arbitrary<
-  ReturnType<typeof matchPairOf>
-> = fc.oneof(
+export const matcherPairs: fc.Arbitrary<ReturnType<
+  typeof matchPairOf
+>> = fc.oneof(
   matcherPairsSimple,
   matcherShape,
   matcherTuple,
