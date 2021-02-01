@@ -19,10 +19,9 @@ export type Optional<A> = A | null | undefined;
 export type _<T> = T;
 
 export type ISimpleParsedError = {
-  readonly parser: IParser<unknown, unknown>;
-  readonly value: any;
-  readonly index?: number;
-  readonly key?: string;
+  parser: IParser<unknown, unknown>;
+  value: any;
+  keys?: Array<string | number>;
 };
 export type ValidatorError = ISimpleParsedError;
 export type IParser<A, B> = {
@@ -88,10 +87,8 @@ export class MappedAParser<A, B, B2> implements IParser<A, B2> {
         return onParse.parsed(map(value));
       },
       invalid(error) {
-        return onParse.invalid({
-          ...error,
-          parser,
-        });
+        error.parser = parser;
+        return onParse.invalid(error);
       },
     });
   }
@@ -112,11 +109,8 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            // if (!name) return onParse.invalid(error);
-            return onParse.invalid({
-              ...error,
-              parser,
-            });
+            error.parser = parser;
+            return onParse.invalid(error);
           },
         });
       },
@@ -145,10 +139,8 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            return onParse.invalid({
-              ...error,
-              parser,
-            });
+            error.parser = parser;
+            return onParse.invalid(error);
           },
         });
       },
@@ -171,10 +163,8 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
         return onParse.parsed(value);
       },
       invalid(error) {
-        return onParse.invalid({
-          ...error,
-          parser,
-        });
+        error.parser = parser;
+        return onParse.invalid(error);
       },
     });
   }
@@ -200,10 +190,8 @@ export class DefaultParser<A, B, B2>
         return onParse.parsed(value as any);
       },
       invalid(error) {
-        return onParse.invalid({
-          ...error,
-          parser,
-        });
+        error.parser = parser;
+        return onParse.invalid(error);
       },
     });
   }
@@ -233,11 +221,11 @@ export class Parser<A, B> implements IParser<A, B> {
   ): string => {
     const { parser, value } = error;
 
-    const indexedString = "index" in error ? `@${error.index}` : "";
-    const keyString = "key" in error ? `@${saferStringify(error.key)}` : "";
-    return `${parser.name}${indexedString}${keyString}(${saferStringify(
-      value
-    )})`;
+    const keysString =
+      "keys" in error && error.keys
+        ? `@${error.keys.reverse().map(saferStringify).join(",")}`
+        : "";
+    return `${parser.name}${keysString}(${saferStringify(value)})`;
   };
   unsafeCast(value: A): B {
     return this.parse(value, {
@@ -343,6 +331,22 @@ export function literal<A extends string | number | boolean | null | undefined>(
   );
 }
 
+export type OneOf<T> = T extends [infer A] | readonly [infer A]
+  ? A
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B]
+  ? A | OneOf<B>
+  : never;
+export function literals<
+  A extends string | number | boolean | null | undefined,
+  Rest extends Array<string | number | boolean | null | undefined>
+>(firstValue: A, ...restValues: Rest): Parser<unknown, A | OneOf<Rest>> {
+  let answer = literal(firstValue);
+  return restValues.reduce<Parser<unknown, unknown>>(
+    (answer, nextLiteral) => answer.orParser(literal(nextLiteral)),
+    answer
+  ) as any;
+}
+
 export const number = guard(isNumber);
 
 export const isNill = guard(function isNill(x: unknown): x is null | undefined {
@@ -379,43 +383,42 @@ export const regex = instanceOf(RegExp);
 export type SomeParsers<T> =
   T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? OrParser<A, SomeParsers<B>>
-  : Parser<unknown, any>
+  : never
 /**
  * Union is a good tool to make sure that the validated value
  * is in the union of all the validators passed in. Basically an `or`
  * operator for validators.
  */
-export function some<Parsers extends Parser<unknown, unknown>[]>(
-  ...args: Parsers
-): SomeParsers<Parsers> {
-  if (!args.length) {
-    return any as any;
-  }
-  return args.reduce(
-    (left, right) => left.orParser(right),
-    args.splice(0, 1)[0]
-  ) as any;
+export function some<
+  FirstParser extends Parser<unknown, unknown>,
+  RestParsers extends Parser<unknown, unknown>[]
+>(
+  firstParser: FirstParser,
+  ...args: RestParsers
+): SomeParsers<[FirstParser, ...RestParsers]> {
+  return args.reduce((left, right) => left.orParser(right), firstParser) as any;
 }
 
 // prettier-ignore
 export type EveryParser<T> =
   T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? AndParser<A, EveryParser<B>>
-  : Parser<unknown, any>
+  : never
 /**
  * Intersection is a good tool to make sure that the validated value
  * is in the intersection of all the validators passed in. Basically an `and`
  * operator for validators
  */
-export function every<A extends Parser<unknown, unknown>[]>(
-  ...parsers: A
-): EveryParser<A> {
-  if (!parsers.length) {
-    return any as any;
-  }
+export function every<
+  FirstParser extends Parser<unknown, unknown>,
+  RestParsers extends Parser<unknown, unknown>[]
+>(
+  firstParser: FirstParser,
+  ...parsers: RestParsers
+): EveryParser<[FirstParser, ...RestParsers]> {
   return parsers.reduce(
     (left, right) => left.concat(right),
-    parsers.splice(0, 1)[0]
+    firstParser
   ) as any;
 }
 
@@ -452,29 +455,29 @@ export class DictionaryParser<
     const parser = this;
     const answer: any = { ...a };
     for (const key in a) {
-      let foundValid = false;
+      let parseError: false | ISimpleParsedError = false;
       for (const [keyParser, valueParser] of parsers) {
-        keyParser.parse(key, {
+        parseError = keyParser.parse(key, {
           parsed(newKey: string | number) {
-            valueParser.parse((a as any)[key], {
+            return valueParser.parse((a as any)[key], {
               parsed(newValue) {
-                foundValid = true;
                 delete answer[key];
                 answer[newKey] = newValue;
+                return false as const;
               },
-              invalid(_) {},
+              invalid: identity,
             });
           },
-          invalid(_) {},
+          invalid: identity,
         });
-        if (foundValid) break;
+        if (!parseError) break;
       }
-      if (!foundValid) {
-        return onParse.invalid({
-          parser,
-          value: a,
-          key,
-        });
+      if (!!parseError) {
+        parseError.parser = parser;
+        const keys = parseError.keys || [];
+        keys.push(key);
+        parseError.keys = keys;
+        return onParse.invalid(parseError);
       }
     }
 
@@ -482,11 +485,18 @@ export class DictionaryParser<
   }
 }
 export const dictionary = <
-  Parsers extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
+  FirstParserSet extends [Parser<unknown, unknown>, Parser<unknown, unknown>],
+  RestParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
 >(
-  ...parsers: Parsers
-): Parser<unknown, _<DictionaryShaped<Parsers>>> => {
-  return object.concat(new DictionaryParser(parsers)) as any;
+  firstParserSet: FirstParserSet,
+  ...restParserSets: RestParserSets
+): Parser<
+  unknown,
+  _<DictionaryShaped<[FirstParserSet, ...RestParserSets]>>
+> => {
+  return object.concat(
+    new DictionaryParser([firstParserSet, ...restParserSets])
+  ) as any;
 };
 
 /**
@@ -526,10 +536,11 @@ export class ShapeParser<
             return true as const;
           },
           invalid(error) {
-            return {
-              ...error,
-              key,
-            };
+            error.parser = parser;
+            const keys = error.keys || [];
+            keys.push(key);
+            error.keys = keys;
+            return error;
           },
         });
         if (isValidParse !== true) {
@@ -539,7 +550,7 @@ export class ShapeParser<
         return onParse.invalid({
           parser,
           value,
-          key,
+          keys: [key],
         });
       }
     }
@@ -601,21 +612,19 @@ export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
   parse<C, D>(a: A, onParse: OnParse<A, B[], C, D>): C | D {
     const values = [...a];
     for (let index = 0; index < values.length; index++) {
-      const isValidParse = this.parser.parse(values[index], {
+      const error = this.parser.parse(values[index], {
         parsed(value) {
           values[index] = value;
-          return true;
+          return false as const;
         },
-        invalid(_) {
-          return false;
-        },
+        invalid: identity,
       });
-      if (!isValidParse) {
-        return onParse.invalid({
-          parser: this.parser,
-          value: a[index],
-          index,
-        });
+      if (!!error) {
+        let keys = error.keys || [];
+        keys.push(index);
+        error.keys = keys;
+        error.parser = this.parser;
+        return onParse.invalid(error);
       }
     }
     return onParse.parsed(values as any);

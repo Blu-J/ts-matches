@@ -9,9 +9,8 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 
 # Uses
 
-* Schema Validation (Validators: like matches.string)
-* Schema Switching
-
+- Schema Validation (Validators: like matches.string)
+- Schema Switching
 
 ## Tech Used
 
@@ -74,26 +73,28 @@ Given that the default export is `matches`
 Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
 on that function that return a `validator` or a function that creates a `validator`
 
-| Attribute  | Description                                                   |
-| ---------- | ------------------------------------------------------------- |
-| array      | Testing that any array is good                                |
-| arrayOf    | Testing that any array is good and filled with type passed in |
-| some       | That one of the matchers pass                                 |
-| tuple      | That we match a tuple of validators                           |
-| regex      | That we are a regex                                           |
-| number     | Number                                                        |
-| natural    | Number > 0 and is integer                                     |
-| isFunction | is a function                                                 |
-| object     | is an object                                                  |
-| string     | is a string                                                   |
-| shape      | Matches a shape of an object                                  |
-| partial    | Matches a shape of maybe attributes                           |
-| literal    | Matches an exact match                                        |
-| every      | Matches every match passed in                                 |
-| guard      | Custom function for testing                                   |
-| any        | is something                                                  |
-| boolean    | is a boolean                                                  |
-| nill       | is a null or undefined                                        |
+| Attribute  | Description                                                                  |
+| ---------- | ---------------------------------------------------------------------------- |
+| array      | Testing that any array is good                                               |
+| arrayOf    | Testing that any array is good and filled with type passed in                |
+| some       | That one of the matchers pass                                                |
+| tuple      | That we match a tuple of validators                                          |
+| regex      | That we are a regex                                                          |
+| number     | Number                                                                       |
+| natural    | Number > 0 and is integer                                                    |
+| isFunction | is a function                                                                |
+| object     | is an object                                                                 |
+| string     | is a string                                                                  |
+| shape      | Matches a shape of an object                                                 |
+| partial    | Matches a shape of maybe attributes                                          |
+| literal    | Matches an exact match                                                       |
+| every      | Matches every match passed in                                                |
+| guard      | Custom function for testing                                                  |
+| any        | is something                                                                 |
+| boolean    | is a boolean                                                                 |
+| nill       | is a null or undefined                                                       |
+| dictionayr | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type |
+| literals   | One the literals passed through                                              |
 
 `MatcherChain` api
 
@@ -105,20 +106,19 @@ on that function that return a `validator` or a function that creates a `validat
 
 `Parser` api
 
-| Attribute   | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| parse       | Use this to turn a value into an either              |
-| usafeCast   | Use this to get the value or throw an error          |
-| castPromise | Cast into a promise                                  |
-| optional    | output type is now a null of value                   |
+| Attribute   | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| parse       | Use this to turn a value into an either               |
+| usafeCast   | Use this to get the value or throw an error           |
+| castPromise | Cast into a promise                                   |
+| optional    | output type is now a null of value                    |
 | defaultTo   | instead of creating a optional we fallback to a value |
-| refine      | we want to add more tests to value                   |
+| refine      | we want to add more tests to value                    |
 
 `Validator.validatorErrorAsString` (
-    validationError: ValidatorError
-  ): string
- This is the exposed transform of the ValidatorError to a string. Override this if you want to make the errors different.
-
+validationError: ValidatorError
+): string
+This is the exposed transform of the ValidatorError to a string. Override this if you want to make the errors different.
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
