@@ -52,6 +52,8 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
+      - store_test_results:
+        path: coverage/
   deploy:
     <<: *defaults
     steps:
