@@ -1,12 +1,15 @@
 import * as fc from "fast-check";
 import matches from "./matches";
-import { Validator, ChainMatches } from "./validators";
+import { Parser, ChainMatches } from "./parsers";
+import { saferStringify } from "./utils";
+
+export { saferStringify };
 
 export const noPossibleCounter = {
   noPossibleCounter: true,
 };
 export const matchPairOf = <A>(
-  matcher: Validator<A>,
+  matcher: Parser<unknown, A>,
   example: A,
   type: string,
   counterExample: any
@@ -17,7 +20,7 @@ export const matchPairOf = <A>(
   counterExample,
 });
 type MatchPair<A> = {
-  matcher: Validator<A>;
+  matcher: Parser<unknown, A>;
   example: A;
   type: string;
   counterExample: any;
@@ -166,7 +169,7 @@ const matcherPairsSimple = (() => {
       matchPairOf(
         matches.literal(example),
         example,
-        `literal of ${JSON.stringify(example)}`,
+        `literal of ${saferStringify(example)}`,
         counterExample
       )
     );
@@ -207,7 +210,7 @@ const matcherPairsSimple = (() => {
       matchPairOf(
         matches.literal(example),
         example,
-        `literal of ${JSON.stringify(example)}`,
+        `literal of ${saferStringify(example)}`,
         counterExample
       )
     );
@@ -263,7 +266,7 @@ const matcherSome = fc
   )
   .map(({ atIndex, matchers }) => {
     return matchPairOf(
-      matches.some(...matchers.map((x) => x.matcher)),
+      (matches.some as any)(...matchers.map((x) => x.matcher)),
       matchers[atIndex].example,
       `some (${matchers.map((x) => x.type).join(", ")})`,
       noPossibleCounter
@@ -293,14 +296,14 @@ const matcherTuple = fc
     return matchPairOf(
       matches.tuple(xs.map((tupleValue) => tupleValue.matcher) as any),
       xs.map((x) => x.example) as any,
-      `tuple ${JSON.stringify(xs.map((x) => x.type))}`,
+      `tuple ${saferStringify(xs.map((x) => x.type))}`,
       validCounter ? xs.map((x) => x.counterExample) : 0
     );
   });
 
 const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
   type testingShape = { [key in keyof typeof x]: typeof x[key]["example"] };
-  const matcher: Validator<testingShape> = matches.shape(
+  const matcher: Parser<unknown, testingShape> = matches.shape(
     Object.keys(x).reduce(
       (
         acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
@@ -324,7 +327,7 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
     },
     {}
   );
-  const type: string = `shape of ${JSON.stringify(
+  const type: string = `shape of ${saferStringify(
     Object.keys(x).reduce(
       (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
         const value = x[key];
@@ -359,7 +362,7 @@ const matcherShapePartial = fc
     type testingShape = Partial<
       { [key in keyof typeof x]: typeof x[key]["example"] }
     >;
-    const matcher: Validator<testingShape> = matches.partial(
+    const matcher: Parser<unknown, testingShape> = matches.partial(
       Object.keys(x).reduce(
         (
           acc: { [key in keyof typeof x]: typeof x[key]["matcher"] },
@@ -383,7 +386,7 @@ const matcherShapePartial = fc
       },
       {}
     );
-    const type: string = `shape of ${JSON.stringify(
+    const type: string = `shape of ${saferStringify(
       Object.keys(x).reduce(
         (acc: { [key in keyof typeof x]: string }, key: keyof typeof x) => {
           const value = x[key];
@@ -415,9 +418,9 @@ const matcherShapePartial = fc
       validCounter ? counterExample : 0
     );
   });
-export const matcherPairs: fc.Arbitrary<ReturnType<
-  typeof matchPairOf
->> = fc.oneof(
+export const matcherPairs: fc.Arbitrary<
+  ReturnType<typeof matchPairOf>
+> = fc.oneof(
   matcherPairsSimple,
   matcherShape,
   matcherTuple,
@@ -437,7 +440,7 @@ export type TestSetup = {
   defaultValue: {};
   setupInformation: {
     matchValue: {};
-    matcher: Validator<{}>;
+    matcher: Parser<unknown, {}>;
     type: string;
     example: {};
     counterExample: any;

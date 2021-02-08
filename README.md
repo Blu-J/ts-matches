@@ -1,18 +1,22 @@
 # Typescript Matches
 
-[Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
-
-Uses [Monads](<https://en.wikipedia.org/wiki/Monad_(functional_programming)>) either and maybe under the hood.
-Also useful for casting and boundary verifications.
-
 [![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
 [![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
 
-## How
+Living Documentation https://runkit.com/blu-j/ts-matches
 
-TS-Matches https://runkit.com/blu-j/ts-matches
+# Uses
+
+- Schema Validation (parsers: like matches.string)
+- Schema Switching
+
+## Tech Used
+
+[Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
+
+Also useful for casting and boundary verifications. So using this as a json validator. The benefit comes that the parser becomes a validator, also the types are given back to typescript, where something like ajv cannot do or alot of validators.
 
 ## Examples
 
@@ -66,28 +70,30 @@ const currentValue = matches(testValue)
 
 Given that the default export is `matches`
 Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
-on that function that return a `validator` or a function that creates a `validator`
+on that function that return a `parser` or a function that creates a `parser`
 
-| Attribute  | Description                                                   |
-| ---------- | ------------------------------------------------------------- |
-| array      | Testing that any array is good                                |
-| arrayOf    | Testing that any array is good and filled with type passed in |
-| some       | That one of the matchers pass                                 |
-| tuple      | That we match a tuple of validators                           |
-| regex      | That we are a regex                                           |
-| number     | Number                                                        |
-| natural    | Number > 0 and is integer                                     |
-| isFunction | is a function                                                 |
-| object     | is an object                                                  |
-| string     | is a string                                                   |
-| shape      | Matches a shape of an object                                  |
-| partial    | Matches a shape of maybe attributes                           |
-| literal    | Matches an exact match                                        |
-| every      | Matches every match passed in                                 |
-| guard      | Custom function for testing                                   |
-| any        | is something                                                  |
-| boolean    | is a boolean                                                  |
-| nill       | is a null or undefined                                        |
+| Attribute  | Description                                                                  |
+| ---------- | ---------------------------------------------------------------------------- |
+| array      | Testing that any array is good                                               |
+| arrayOf    | Testing that any array is good and filled with type passed in                |
+| some       | That one of the matchers pass                                                |
+| tuple      | That we match a tuple of parsers                                             |
+| regex      | That we are a regex                                                          |
+| number     | Number                                                                       |
+| natural    | Number > 0 and is integer                                                    |
+| isFunction | is a function                                                                |
+| object     | is an object                                                                 |
+| string     | is a string                                                                  |
+| shape      | Matches a shape of an object                                                 |
+| partial    | Matches a shape of maybe attributes                                          |
+| literal    | Matches an exact match                                                       |
+| every      | Matches every match passed in                                                |
+| guard      | Custom function for testing                                                  |
+| any        | is something                                                                 |
+| boolean    | is a boolean                                                                 |
+| nill       | is a null or undefined                                                       |
+| dictionayr | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type |
+| literals   | One the literals passed through                                              |
 
 `MatcherChain` api
 
@@ -97,20 +103,25 @@ on that function that return a `validator` or a function that creates a `validat
 | defaultTo     | Fall through case, ensures all are caught                 |
 | defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
 
-`Validator` api
+`Parser` api
 
-| Attribute   | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| apply       | Use this to turn a value into an either              |
-| usafeCast   | Use this to get the value or throw an error          |
-| castPromise | Cast into a promise                                  |
-| maybe       | output type is now a mabye and deal with null        |
-| defaultTo   | instead of creating a promise we fallback to a value |
-| refine      | we want to add more tests to value                   |
+| Attribute   | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| parse       | Use this to turn a value into an either               |
+| usafeCast   | Use this to get the value or throw an error           |
+| castPromise | Cast into a promise                                   |
+| optional    | output type is now a null of value                    |
+| defaultTo   | instead of creating a optional we fallback to a value |
+| refine      | we want to add more tests to value                    |
+
+`Parser.parserErrorAsString` (
+validationError: parserError
+): string
+This is the exposed transform of the parserError to a string. Override this if you want to make the errors different.
 
 And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
 And the matcher is also a function which creates an either of our value as well.
 
 ## Deploying
 
-Use the `npm version minor | major` and push the tags up, circle ci should do the publish on the master based on tags
+Use the `npm version minor | major` and push the tags up, Then publish via npm
