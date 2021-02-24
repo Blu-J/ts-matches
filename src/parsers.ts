@@ -377,7 +377,10 @@ export const instanceOf = <C>(classCreator: {
 }): Parser<unknown, C> =>
   guard((x): x is C => x instanceof classCreator, `is${classCreator.name}`);
 
-export const regex = instanceOf(RegExp);
+export const regex = (regex: RegExp) =>
+  string.refine(function matchRegularExpression(x): x is string {
+    return regex.test(x);
+  });
 
 // prettier-ignore
 export type SomeParsers<T> =

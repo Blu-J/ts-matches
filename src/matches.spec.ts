@@ -336,15 +336,14 @@ describe("matches", () => {
 
     test("should be able to test regex", () => {
       const testValue = /test/;
-      const validator = matches.regex;
-      expect(validator.parse(testValue, unFold)).toEqual(testValue);
+      const validator = matches.regex(testValue);
+      expect(validator.parse("test", unFold)).toEqual("test");
     });
 
     test("should be able to test regex with failure", () => {
-      const testValue = "test";
-      const validator = matches.regex;
-      expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isRegExp(\\"test\\")"`
+      const validator = matches.regex(/fizz/);
+      expect(validator.parse("buzz", unFold)).toMatchInlineSnapshot(
+        `"string|>matchRegularExpression(\\"buzz\\")"`
       );
     });
 
