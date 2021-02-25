@@ -5,7 +5,7 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
   private constructor(
     readonly parent: IParser<A, B>,
     readonly otherParser: IParser<B, B2>,
-    readonly name: string = `${parent.name}|>${otherParser.name}`
+    readonly name: string
   ) {}
   static of<A, B, B2>(
     parent: IParser<A, B>,
