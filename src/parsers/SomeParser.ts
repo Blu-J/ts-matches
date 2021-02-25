@@ -1,5 +1,6 @@
 import { Parser } from ".";
 import { EnsureParser, OrParser } from "./interfaces";
+import { any } from "./SimpleParsers";
 
 // prettier-ignore
 export type SomeParsers<T> =
@@ -11,12 +12,12 @@ export type SomeParsers<T> =
  * is in the union of all the validators passed in. Basically an `or`
  * operator for validators.
  */
-export function some<
-  FirstParser extends Parser<unknown, unknown>,
-  RestParsers extends Parser<unknown, unknown>[]
->(
-  firstParser: FirstParser,
-  ...args: RestParsers
-): SomeParsers<[FirstParser, ...RestParsers]> {
-  return args.reduce((left, right) => left.orParser(right), firstParser) as any;
+export function some<RestParsers extends Parser<unknown, unknown>[]>(
+  ...parsers: RestParsers
+): SomeParsers<RestParsers> {
+  if (parsers.length <= 0) {
+    return any as any;
+  }
+  const first = parsers.splice(0, 1)[0];
+  return parsers.reduce((left, right) => left.orParser(right), first) as any;
 }
