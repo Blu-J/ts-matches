@@ -425,7 +425,7 @@ describe("matches", () => {
       const testValue = ["bad", 5];
       const validator = matches.tuple([matches.number, matches.string]);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isArray |> [\\"0\\"]isNumber(\\"bad\\")"`
+        `"[\\"0\\"]isNumber(\\"bad\\")"`
       );
     });
 
