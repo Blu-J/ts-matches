@@ -47,13 +47,13 @@ export class DictionaryParser<
                 return false as const;
               },
               invalid(error) {
-                error.name = `<value>${error.name}`;
+                error.name = `<value> ${error.name}`;
                 return error;
               },
             });
           },
           invalid(error) {
-            error.name = `<key>${error.name}`;
+            error.name = `<key> ${error.name}`;
             return error;
           },
         });
@@ -66,7 +66,7 @@ export class DictionaryParser<
       if (parseError.length) {
         return onParse.invalid({
           value: { key: key, value: a[key] },
-          name: parseError.map((x) => x.name).join("||"),
+          name: `(${parseError.map((x) => x.name).join(" || ")})`,
         });
       }
     }

@@ -73,15 +73,12 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(new MappedAParser(this, fn, mappingName));
   }
 
-  concat<C>(otherParser: IParser<B, C>, otherName?: string): Parser<A, C> {
-    return new Parser(ConcatParsers.of(this, otherParser, otherName) as any);
+  concat<C>(otherParser: IParser<B, C>): Parser<A, C> {
+    return new Parser(ConcatParsers.of(this, otherParser) as any);
   }
 
-  orParser<C>(
-    otherParser: IParser<A, C>,
-    otherName?: string
-  ): Parser<A, B | C> {
-    return new Parser(new OrParsers(this, otherParser, otherName));
+  orParser<C>(otherParser: IParser<A, C>): Parser<A, B | C> {
+    return new Parser(new OrParsers(this, otherParser));
   }
 
   test = (value: A): value is A & B => {
@@ -113,10 +110,10 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   refine<C = B>(
     refinementTest: (value: B) => value is B & C,
-    named?: string
+    otherName?: string
   ): Parser<A, B & C> {
     return new Parser(
-      ConcatParsers.of(this, new IsAParser(refinementTest, named)) as any
+      ConcatParsers.of(this, new IsAParser(refinementTest, otherName)) as any
     );
   }
 }
