@@ -36,13 +36,9 @@ export class Parser<A, B> implements IParser<A, B> {
   public static validatorErrorAsString = <A, B>(
     error: ISimpleParsedError
   ): string => {
-    const { parser, value } = error;
+    const { name, value } = error;
 
-    const keysString =
-      "keys" in error && error.keys
-        ? `@${error.keys.reverse().map(saferStringify).join(",")}`
-        : "";
-    return `${parser.name}${keysString}(${saferStringify(value)})`;
+    return `${name}(${saferStringify(value)})`;
   };
   unsafeCast(value: A): B {
     return this.parse(value, {

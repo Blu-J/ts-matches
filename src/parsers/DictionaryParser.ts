@@ -36,9 +36,9 @@ export class DictionaryParser<
     const parser = this;
     const answer: any = { ...a };
     for (const key in a) {
-      let parseError: false | ISimpleParsedError = false;
+      let parseError: Array<ISimpleParsedError> = [];
       for (const [keyParser, valueParser] of parsers) {
-        parseError = keyParser.parse(key, {
+        const newError = keyParser.parse(key, {
           parsed(newKey: string | number) {
             return valueParser.parse((a as any)[key], {
               parsed(newValue) {
@@ -46,19 +46,28 @@ export class DictionaryParser<
                 answer[newKey] = newValue;
                 return false as const;
               },
-              invalid: identity,
+              invalid(error) {
+                error.name = `<value>${error.name}`;
+                return error;
+              },
             });
           },
-          invalid: identity,
+          invalid(error) {
+            error.name = `<key>${error.name}`;
+            return error;
+          },
         });
-        if (!parseError) break;
+        if (newError === false) {
+          parseError = [];
+          break;
+        }
+        parseError.push(newError);
       }
-      if (!!parseError) {
-        parseError.parser = parser;
-        const keys = parseError.keys || [];
-        keys.push(key);
-        parseError.keys = keys;
-        return onParse.invalid(parseError);
+      if (parseError.length) {
+        return onParse.invalid({
+          value: { key: key, value: a[key] },
+          name: parseError.map((x) => x.name).join("||"),
+        });
       }
     }
 
