@@ -586,6 +586,9 @@ describe("matches", () => {
     test("should throw on invalid unsafe match throw", async () => {
       expect(await matches.literal(5).castPromise(5)).toBe(5);
     });
+    test("some should be any if empty", () => {
+      expect(matches.some()).toEqual(matches.any);
+    });
     test("some should only return the unique", () => {
       expect(
         matches
