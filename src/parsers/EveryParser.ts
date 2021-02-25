@@ -19,8 +19,7 @@ export function every<RestParsers extends Parser<unknown, unknown>[]>(
     return any as any;
   }
   const first = filteredParsers.splice(0, 1)[0];
-  return filteredParsers.reduce(
-    (left, right) => left.concat(right),
-    first
-  ) as any;
+  return filteredParsers.reduce((left, right) => {
+    return left.concat(right);
+  }, first) as any;
 }

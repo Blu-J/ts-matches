@@ -21,8 +21,7 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
     return new ConcatParsers(parent, otherParser, name);
   }
   parse<C, D>(a: A, onParse: OnParse<A, B2, C, D>): C | D {
-    const { otherParser, parent, name } = this;
-    const parser = this;
+    const { otherParser, parent } = this;
     return parent.parse(a, {
       parsed(value) {
         return otherParser.parse(value, {
@@ -30,7 +29,7 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            error.parser = parser;
+            error.name = `${parent.name}|>${error.name}`;
             return onParse.invalid(error);
           },
         });

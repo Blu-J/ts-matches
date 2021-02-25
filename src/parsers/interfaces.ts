@@ -10,9 +10,8 @@ export type Optional<A> = A | null | undefined;
 export type _<T> = T;
 
 export type ISimpleParsedError = {
-  parser: IParser<unknown, unknown>;
+  name: string;
   value: any;
-  keys?: Array<string | number>;
 };
 export type ValidatorError = ISimpleParsedError;
 export type IParser<A, B> = {
