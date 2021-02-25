@@ -1,5 +1,4 @@
 import {
-  ChainMatches,
   Parser,
   isArray,
   arrayOf,
@@ -24,6 +23,7 @@ import {
   dictionary,
   literals,
 } from "./parsers";
+import { ChainMatches } from "./parsers/interfaces";
 
 export { Parser as Validator, ChainMatches, ValidatorError };
 
