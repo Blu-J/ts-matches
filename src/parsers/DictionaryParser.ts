@@ -13,7 +13,8 @@ export type DictionaryTuple<A> = A extends [
   : never;
 // prettier-ignore
 export type DictionaryShaped<T> =
-    T extends [infer A] | readonly [infer A] ? DictionaryTuple<A>
+    T extends [] | readonly [] ? IParser<unknown, any>
+    : T extends [infer A] | readonly [infer A] ? DictionaryTuple<A>
     : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? DictionaryTuple<A> & DictionaryShaped<B>
     : never
 export class DictionaryParser<

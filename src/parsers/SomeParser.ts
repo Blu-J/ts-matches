@@ -1,10 +1,11 @@
 import { Parser } from ".";
-import { EnsureParser, OrParser } from "./interfaces";
+import { EnsureParser, IParser, OrParser } from "./interfaces";
 import { any } from "./SimpleParsers";
 
 // prettier-ignore
 export type SomeParsers<T> =
-  T extends [infer A] | readonly [infer A] ? EnsureParser<A>
+  T extends [] | readonly [] ? IParser<unknown, any>
+  : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? OrParser<A, SomeParsers<B>>
   : never
 /**
