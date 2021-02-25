@@ -78,7 +78,7 @@ on that function that return a `parser` or a function that creates a `parser`
 | arrayOf    | Testing that any array is good and filled with type passed in                |
 | some       | That one of the matchers pass                                                |
 | tuple      | That we match a tuple of parsers                                             |
-| regex      | That we are a regex                                                          |
+| regex      | That we match the passed in regex                                            |
 | number     | Number                                                                       |
 | natural    | Number > 0 and is integer                                                    |
 | isFunction | is a function                                                                |
@@ -92,7 +92,7 @@ on that function that return a `parser` or a function that creates a `parser`
 | any        | is something                                                                 |
 | boolean    | is a boolean                                                                 |
 | nill       | is a null or undefined                                                       |
-| dictionayr | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type |
+| dictionary | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type |
 | literals   | One the literals passed through                                              |
 
 `MatcherChain` api
