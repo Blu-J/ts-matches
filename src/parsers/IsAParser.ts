@@ -10,8 +10,8 @@ export class IsAParser<A, B> implements IParser<A, B> {
       return onParse.parsed(a);
     }
     return onParse.invalid({
-      parser: this,
       value: a,
+      name: this.name,
     });
   }
 }

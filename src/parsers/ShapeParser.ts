@@ -7,7 +7,7 @@ import { IParser, OnParse } from "./interfaces";
  * the key matches the parser
  */
 export class ShapeParser<
-  A extends object | {},
+  A extends unknown,
   Key extends string | number | symbol,
   B
 > implements IParser<A, B> {
@@ -23,9 +23,17 @@ export class ShapeParser<
       )
       .join(",")}}`
   ) {}
-  parse<C, D>(a: A, onParse: OnParse<A, { [key in Key]?: B }, C, D>): C | D {
+  parse<C, D>(
+    a: unknown,
+    onParse: OnParse<A, { [key in Key]?: B }, C, D>
+  ): C | D {
+    if (!object.test(a)) {
+      return onParse.invalid({
+        value: a,
+        name: object.name,
+      });
+    }
     const { parserMap, isPartial } = this;
-    const parser = this;
     const value: any = { ...a };
     if (Array.isArray(a)) {
       value.length = a.length;
@@ -39,10 +47,7 @@ export class ShapeParser<
             return true as const;
           },
           invalid(error) {
-            error.parser = parser;
-            const keys = error.keys || [];
-            keys.push(key);
-            error.keys = keys;
+            error.name = `[${saferStringify(key)}]${error.name}`;
             return error;
           },
         });
@@ -51,9 +56,8 @@ export class ShapeParser<
         }
       } else if (!isPartial) {
         return onParse.invalid({
-          parser,
-          value,
-          keys: [key],
+          value: "missingProperty",
+          name: `[${saferStringify(key)}]${parserMap[key].name}`,
         });
       }
     }
@@ -64,7 +68,7 @@ export class ShapeParser<
 export const isPartial = <A extends {}>(
   testShape: { [key in keyof A]: Parser<unknown, A[key]> }
 ): Parser<unknown, Partial<A>> => {
-  return object.concat(new ShapeParser(testShape, true)) as any;
+  return new Parser(new ShapeParser(testShape, true)) as any;
 };
 
 /**
@@ -80,7 +84,7 @@ export const partial = isPartial;
 export const isShape = <A extends {}>(
   testShape: { [key in keyof A]: Parser<unknown, A[key]> }
 ): Parser<unknown, A> => {
-  return object.concat(new ShapeParser(testShape, false)) as any;
+  return new Parser(new ShapeParser(testShape, false)) as any;
 };
 export const shape = <A extends {}>(
   testShape: { [key in keyof A]: Parser<unknown, A[key]> }

@@ -5,14 +5,13 @@ export class DefaultParser<A, B, B2>
   constructor(
     readonly parent: IParser<A, B>,
     readonly defaultValue: B2,
-    readonly name: string = `${parent.name}[default:${defaultValue}]`
+    readonly name: string = `${parent.name}<default:${defaultValue}>`
   ) {}
   parse<C, D>(
     a: A,
     onParse: OnParse<Optional<A>, NonNull<B, B2>, C, D>
   ): C | D {
     const defaultValue = this.defaultValue;
-    const parser = this;
     if (a == null) {
       return onParse.parsed(defaultValue as any);
     }
@@ -21,7 +20,7 @@ export class DefaultParser<A, B, B2>
         return onParse.parsed(value as any);
       },
       invalid(error) {
-        error.parser = parser;
+        error.name = `${error.name}<default:${defaultValue}>`;
         return onParse.invalid(error);
       },
     });

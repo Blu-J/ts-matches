@@ -16,7 +16,6 @@ export class MappedAParser<A, B, B2> implements IParser<A, B2> {
         return onParse.parsed(map(value));
       },
       invalid(error) {
-        error.parser = parser;
         return onParse.invalid(error);
       },
     });

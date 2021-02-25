@@ -10,7 +10,7 @@ import { identity } from "./utils";
 export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
   constructor(
     readonly parser: IParser<A[number], B>,
-    readonly name: string = `${parser.name}[]`
+    readonly name: string = `${parser.name}`
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B[], C, D>): C | D {
     const values = [...a];
@@ -23,10 +23,7 @@ export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
         invalid: identity,
       });
       if (!!error) {
-        let keys = error.keys || [];
-        keys.push(index);
-        error.keys = keys;
-        error.parser = this.parser;
+        error.name = `[${index}]${error.name}`;
         return onParse.invalid(error);
       }
     }

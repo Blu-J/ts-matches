@@ -8,18 +8,17 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
   ) {}
   parse<C, D>(a: A & A2, onParse: OnParse<A | A2, B | B2, C, D>): C | D {
     const otherParser = this.otherParser;
-    const parser = this;
     return this.parent.parse(a, {
       parsed(value) {
         return onParse.parsed(value);
       },
-      invalid(_) {
+      invalid(previousError) {
         return otherParser.parse(a, {
           parsed(value) {
             return onParse.parsed(value);
           },
           invalid(error) {
-            error.parser = parser;
+            error.name = `${previousError.name}||${error.name}`;
             return onParse.invalid(error);
           },
         });

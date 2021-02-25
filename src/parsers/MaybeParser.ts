@@ -8,13 +8,12 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
     if (a == null) {
       return onParse.parsed(null);
     }
-    const parser = this;
     return this.parent.parse(a, {
       parsed(value) {
         return onParse.parsed(value);
       },
       invalid(error) {
-        error.parser = parser;
+        error.name = `optional<${error.name}>`;
         return onParse.invalid(error);
       },
     });
