@@ -1,10 +1,20 @@
 import matches from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
-import { validatorError, Parser, literal } from "./parsers";
+import { Parser, literal, any, every, number, partial, shape } from "./parsers";
 import { saferStringify } from "./utils";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";
+
+export const validatorError = every(
+  shape({
+    parser: shape({
+      name: matches.string,
+    }),
+    value: any,
+  }),
+  partial({ index: number, key: matches.string })
+);
 
 const unFold = {
   invalid: Parser.validatorErrorAsString,
