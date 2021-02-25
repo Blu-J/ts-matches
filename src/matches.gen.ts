@@ -1,6 +1,6 @@
 import * as fc from "fast-check";
-import matches from "./matches";
-import { Parser, ChainMatches } from "./parsers";
+import matches, { ChainMatches } from "./matches";
+import { Parser } from "./parsers";
 import { saferStringify } from "./utils";
 
 export { saferStringify };

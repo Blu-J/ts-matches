@@ -1,10 +1,20 @@
 import matches from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
-import { validatorError, Parser, literal } from "./parsers";
+import { Parser, any, every, number, partial, shape } from "./parsers";
 import { saferStringify } from "./utils";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";
+
+export const validatorError = every(
+  shape({
+    parser: shape({
+      name: matches.string,
+    }),
+    value: any,
+  }),
+  partial({ index: number, key: matches.string })
+);
 
 const unFold = {
   invalid: Parser.validatorErrorAsString,
@@ -466,6 +476,18 @@ describe("matches", () => {
       expect(validator.parse(testValue, unFold)).toEqual(testValue);
     });
 
+    test("every should clean up anys", () => {
+      const every = matches.every(matches.any, matches.any);
+      expect(every).toEqual(matches.any);
+    });
+
+    test("should be remove any in chains", () => {
+      const testValue = 5;
+      const validator = matches.any.concat(matches.string).concat(matches.any);
+      expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
+        `"string(5)"`
+      );
+    });
     test("should be fallible union several matchers", () => {
       const testValue = 5;
       const isEven = matches.guard(
@@ -531,6 +553,19 @@ describe("matches", () => {
       );
     });
 
+    test("should refinement matchers fail cleanup any", () => {
+      const testValue = 5;
+      const isEven = matches.any.refine(
+        (num: any): num is number => num % 2 === 0,
+        "isEven"
+      );
+      expect(() =>
+        isEven.unsafeCast(testValue)
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Failed type: isEven(5) given input 5"`
+      );
+    });
+
     test("should throw on invalid unsafe match throw", () => {
       expect(() =>
         matches.partial({}).unsafeCast(5)
@@ -550,6 +585,9 @@ describe("matches", () => {
     });
     test("should throw on invalid unsafe match throw", async () => {
       expect(await matches.literal(5).castPromise(5)).toBe(5);
+    });
+    test("some should be any if empty", () => {
+      expect(matches.some()).toEqual(matches.any);
     });
     test("some should only return the unique", () => {
       expect(
