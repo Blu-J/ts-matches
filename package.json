@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "ci": "npm run build && npm run test && npm run pretty-check",
-    "build": "tsc",
+    "build": "rm -rf lib && tsc",
     "test": "jest",
     "pretty-check": "prettier --check src",
     "fmt": "prettier --write src"
@@ -39,5 +39,8 @@
       "json",
       "node"
     ]
+  },
+  "dependencies": {
+    "ts-matches": "4.1.5"
   }
 }

@@ -351,7 +351,7 @@ describe("matches", () => {
       const testValue = "Invalid";
       const validator = matches.regex(/test/);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"string |> /test/(\\"Invalid\\")"`
+        `"/test/(\\"Invalid\\")"`
       );
     });
 
@@ -459,7 +459,7 @@ describe("matches", () => {
       const testValue = false;
       const validator = matches.some(matches.number, matches.string);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"(isNumber || string)(false)"`
+        `"isNumber || string(false)"`
       );
     });
 
@@ -497,7 +497,7 @@ describe("matches", () => {
       );
       const validator = matches.every(matches.number, isEven, isGt6);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isNumber |> isEven(5)"`
+        `"isEven(5)"`
       );
     });
 
@@ -512,17 +512,17 @@ describe("matches", () => {
       expect(firstExpectedOutcome).toEqual(4);
       expect(matcher.parse("3", unFold)).toEqual("3");
       expect(matcher.parse(3, unFold)).toMatchInlineSnapshot(
-        `"(literal<4> || literal<\\"3\\">)(3)"`
+        `"literal<4> || literal<\\"3\\">(3)"`
       );
       expect(matcher.parse("4", unFold)).toMatchInlineSnapshot(
-        `"(literal<4> || literal<\\"3\\">)(\\"4\\")"`
+        `"literal<4> || literal<\\"3\\">(\\"4\\")"`
       );
     });
     test("should have array of test fail", () => {
       const testValue = [5, 3, 2, 5, 5];
       const arrayOf = matches.arrayOf(matches.literal(5));
       expect(arrayOf.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isArray |> [1]literal<5>(3)"`
+        `"[1]literal<5>(3)"`
       );
     });
 
@@ -556,7 +556,7 @@ describe("matches", () => {
         "isEven"
       );
       expect(isEven.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isNumber |> isEven(5)"`
+        `"isEven(5)"`
       );
     });
 
@@ -602,13 +602,13 @@ describe("matches", () => {
           .some(matches.number, matches.literal("test"), matches.number)
           .parse("hello", unFold)
       ).toMatchInlineSnapshot(
-        `"((isNumber || literal<\\"test\\">) || isNumber)(\\"hello\\")"`
+        `"isNumber || literal<\\"test\\"> || isNumber(\\"hello\\")"`
       );
     });
     test("some should only return the unique", () => {
       expect(
         matches.some(matches.number, matches.number).parse("hello", unFold)
-      ).toMatchInlineSnapshot(`"(isNumber || isNumber)(\\"hello\\")"`);
+      ).toMatchInlineSnapshot(`"isNumber || isNumber(\\"hello\\")"`);
     });
 
     test("should guard without a name", () => {
@@ -764,7 +764,7 @@ describe("matches", () => {
         const input = { test: "invalid", test2: "value2" };
         const output = testMatcher.parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
-          `"isObject |> (<value> literal<\\"value\\"> || <key> literal<\\"test2\\">)({\\"key\\":\\"test\\",\\"value\\":\\"invalid\\"})"`
+          `"<value> literal<\\"value\\"> || <key> literal<\\"test2\\">({\\"key\\":\\"test\\",\\"value\\":\\"invalid\\"})"`
         );
       });
       it("should be able to check incorrect shape deep", () => {
@@ -781,7 +781,7 @@ describe("matches", () => {
           ])
           .parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
-          `"isArray |> [\\"0\\"][\\"second\\"]literal<\\"valid\\">(\\"invalid\\")"`
+          `"[\\"0\\"][\\"second\\"]literal<\\"valid\\">(\\"invalid\\")"`
         );
       });
       it("should be able to project values", () => {

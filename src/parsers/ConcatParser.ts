@@ -25,7 +25,7 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            error.name = `${parent.name} |> ${error.name}`;
+            error.name = `${error.name || parent.name}`;
             return onParse.invalid(error);
           },
         });

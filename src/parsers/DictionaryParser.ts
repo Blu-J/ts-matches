@@ -67,7 +67,7 @@ export class DictionaryParser<
       if (parseError.length) {
         return onParse.invalid({
           value: { key: key, value: a[key] },
-          name: `(${parseError.map((x) => x.name).join(" || ")})`,
+          name: `${parseError.map((x) => x.name).join(" || ")}`,
         });
       }
     }
