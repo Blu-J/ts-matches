@@ -1,6 +1,6 @@
 {
   "name": "ts-matches",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "main": "lib/matches.js",
   "types": "lib/matches.d.ts",
