@@ -1,9 +1,9 @@
 import { Parser } from ".";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
-export type EnsureParser<P> = P extends IParser<unknown, unknown> ? P : never;
-export type ParserInto<P> = P extends IParser<unknown, infer A> ? A : never;
-export type ParserFrom<P> = P extends IParser<infer A, unknown> ? A : never;
+export type EnsureParser<P> = P extends IParser<any, any> ? P : never;
+export type ParserInto<P> = P extends IParser<any, infer A> ? A : never;
+export type ParserFrom<P> = P extends IParser<infer A, any> ? A : never;
 export type Nil = null | undefined;
 
 export type Optional<A> = A | null | undefined;
