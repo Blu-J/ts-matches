@@ -1,3 +1,5 @@
+dependencies:
+  ts-matches: 4.1.5
 devDependencies:
   '@types/jest': 26.0.20
   fast-check: 2.13.0
@@ -3687,6 +3689,10 @@ packages:
       typescript: '>=3.8 <5.0'
     resolution:
       integrity: sha512-bwyJ2zJieSugf7RB+o8fgkMeoMVMM2KPDE0UklRLuACxjwJsOrZNo6chrcScmK33YavPSwhARffy8dZx5LJdUQ==
+  /ts-matches/4.1.5:
+    dev: false
+    resolution:
+      integrity: sha512-hQoauaEqneX1tasfdnKUItAMcgAqBDK6RJJsvkdEOZc64X1tNaFxn6avJ5/EAAg1iC19/YGirgDh34xjIgy81Q==
   /tunnel-agent/0.6.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -3993,4 +3999,5 @@ specifiers:
   kind-of: ^6.0.3
   prettier: ^2.2
   ts-jest: ^26.1.4
+  ts-matches: 4.1.5
   typescript: ^4.1

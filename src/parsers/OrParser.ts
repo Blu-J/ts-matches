@@ -18,7 +18,7 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            error.name = `(${previousError.name} || ${error.name})`;
+            error.name = `${previousError.name} || ${error.name}`;
             return onParse.invalid(error);
           },
         });
