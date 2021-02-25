@@ -21,7 +21,7 @@ export function literal<A extends string | number | boolean | null | undefined>(
 ) {
   return guard<unknown, A>(
     (a): a is A => a === isEqualToValue,
-    `literal[${saferStringify(isEqualToValue)}]`
+    `literal<${saferStringify(isEqualToValue)}>`
   );
 }
 
