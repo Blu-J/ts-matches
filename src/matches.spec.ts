@@ -1,7 +1,7 @@
 import matches from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
-import { Parser, literal, any, every, number, partial, shape } from "./parsers";
+import { Parser, any, every, number, partial, shape } from "./parsers";
 import { saferStringify } from "./utils";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";
@@ -476,6 +476,18 @@ describe("matches", () => {
       expect(validator.parse(testValue, unFold)).toEqual(testValue);
     });
 
+    test("every should clean up anys", () => {
+      const every = matches.every(matches.any, matches.any);
+      expect(every).toEqual(matches.any);
+    });
+
+    test("should be remove any in chains", () => {
+      const testValue = 5;
+      const validator = matches.any.concat(matches.string).concat(matches.any);
+      expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
+        `"string(5)"`
+      );
+    });
     test("should be fallible union several matchers", () => {
       const testValue = 5;
       const isEven = matches.guard(
@@ -538,6 +550,19 @@ describe("matches", () => {
       );
       expect(isEven.parse(testValue, stringFold)).toMatchInlineSnapshot(
         `"parsed(4)"`
+      );
+    });
+
+    test("should refinement matchers fail cleanup any", () => {
+      const testValue = 5;
+      const isEven = matches.any.refine(
+        (num: any): num is number => num % 2 === 0,
+        "isEven"
+      );
+      expect(() =>
+        isEven.unsafeCast(testValue)
+      ).toThrowErrorMatchingInlineSnapshot(
+        `"Failed type: isEven(5) given input 5"`
       );
     });
 

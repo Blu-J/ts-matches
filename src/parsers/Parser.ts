@@ -78,7 +78,7 @@ export class Parser<A, B> implements IParser<A, B> {
   }
 
   concat<C>(otherParser: IParser<B, C>, otherName?: string): Parser<A, C> {
-    return new Parser(new ConcatParsers(this, otherParser, otherName));
+    return new Parser(ConcatParsers.of(this, otherParser, otherName) as any);
   }
 
   orParser<C>(
@@ -120,7 +120,7 @@ export class Parser<A, B> implements IParser<A, B> {
     named?: string
   ): Parser<A, B & C> {
     return new Parser(
-      new ConcatParsers(this, new IsAParser(refinementTest, named))
+      ConcatParsers.of(this, new IsAParser(refinementTest, named)) as any
     );
   }
 }

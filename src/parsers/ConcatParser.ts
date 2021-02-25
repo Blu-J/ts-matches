@@ -1,11 +1,25 @@
+import { any } from ".";
 import { IParser, OnParse } from "./interfaces";
 
 export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
-  constructor(
+  private constructor(
     readonly parent: IParser<A, B>,
     readonly otherParser: IParser<B, B2>,
     readonly name: string = `${parent.name}|>${otherParser.name}`
   ) {}
+  static of<A, B, B2>(
+    parent: IParser<A, B>,
+    otherParser: IParser<B, B2>,
+    name: string = `${parent.name}|>${otherParser.name}`
+  ) {
+    if (parent === any) {
+      return otherParser;
+    }
+    if (otherParser === any) {
+      return parent;
+    }
+    return new ConcatParsers(parent, otherParser, name);
+  }
   parse<C, D>(a: A, onParse: OnParse<A, B2, C, D>): C | D {
     const { otherParser, parent, name } = this;
     const parser = this;
