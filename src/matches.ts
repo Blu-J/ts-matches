@@ -27,18 +27,29 @@ import { ChainMatches } from "./parsers/interfaces";
 
 export { Parser as Validator, ChainMatches, ValidatorError };
 
+export type ExtendsSimple<A> = A extends
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  ? A
+  : never;
 class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private value: OutcomeType) {}
   when<B>(
-    fnTest: Parser<unknown, B>,
-    thenFn: (b: B) => OutcomeType
+    _fnTest: Parser<unknown, B> | ExtendsSimple<B>,
+    _thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
     return this as ChainMatches<OutcomeType>;
   }
-  defaultTo(defaultValue: OutcomeType) {
+  defaultTo(_defaultValue: OutcomeType) {
     return this.value;
   }
-  defaultToLazy(getValue: () => OutcomeType): OutcomeType {
+  defaultToLazy(_getValue: () => OutcomeType): OutcomeType {
+    return this.value;
+  }
+  unwrap(): OutcomeType {
     return this.value;
   }
 }
@@ -47,11 +58,13 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
   constructor(private a: unknown) {}
 
   when<B>(
-    toValidEither: Parser<unknown, B>,
+    maybeParser: Parser<unknown, B> | ExtendsSimple<B>,
     thenFn: (b: B) => OutcomeType
   ): ChainMatches<OutcomeType> {
     const me = this;
-    return toValidEither.parse(this.a, {
+    const parser =
+      maybeParser instanceof Parser ? maybeParser : literal(maybeParser);
+    return parser.parse(this.a, {
       parsed(value) {
         return new Matched<OutcomeType>(thenFn(value));
       },
@@ -67,6 +80,10 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
 
   defaultToLazy(getValue: () => OutcomeType): OutcomeType {
     return getValue();
+  }
+
+  unwrap(): OutcomeType {
+    throw new Error("Expecting that value is matched");
   }
 }
 
