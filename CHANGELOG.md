@@ -13,7 +13,8 @@ straightforward as possible.
 ### Added
 
 - More features to the matcher, to be able to match on multiple matchers, and literals
-- Allow matcher to
+- Allow matcher to match on literals or matchers, and plural of them
+- Allow when to return a function output or a literal
 
 ### Changed
 
