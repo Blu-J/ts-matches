@@ -92,6 +92,28 @@ describe("matches", () => {
           .unwrap()
       ).toThrowError();
     });
+    test("testing type inferencing of matching", () => {
+      matches(5 as const)
+        // @ts-expect-error Error is that 6 is not a subset 2
+        .when(2, (a: 6) => 1 as const)
+        // @ts-expect-error Error is that 6 is not a subset 2
+        .when(matches.literal(2), (a: 6) => 2 as const)
+        .when(matches.literal(6), (a: 6) => 3 as const)
+        .when(2, 5, (a: 5 | 2) => a)
+        // @ts-expect-error Should be never since all cases are covered
+        .when(2, 5, (a: 5 | 2) => a)
+        .defaultTo(0);
+      matches("test")
+        .when("string", "a")
+        .when(matches.string, "b")
+        // @ts-expect-error Should be never since all cases are covered
+        .when(matches.string, "c")
+        .defaultTo(0);
+      const _answer: "a" | "b" = matches("test")
+        .when("string", "a")
+        .when(matches.string, () => "b" as const)
+        .unwrap();
+    });
   });
   describe("properties", () => {
     test("a matched case will always be the equal to matcher or less than", () => {
