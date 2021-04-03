@@ -92,6 +92,9 @@ describe("matches", () => {
           .unwrap()
       ).toThrowError();
     });
+    test("default literal", () => {
+      expect(matches(5).when("5").unwrap()).toEqual("5");
+    });
     test("testing type inferencing of matching", () => {
       matches(5 as const)
         // @ts-expect-error Error is that 6 is not a subset 2
@@ -109,10 +112,16 @@ describe("matches", () => {
         // @ts-expect-error Should be never since all cases are covered
         .when(matches.string, "c")
         .defaultTo(0);
+      matches("test")
+        .when("a")
+        // @ts-expect-error Should be never since all cases are covered
+        .when("b")
+        .defaultTo(0);
       const _answer: "a" | "b" = matches("test")
         .when("string", "a")
         .when(matches.string, () => "b" as const)
         .unwrap();
+      const _answer2: "a" = matches("test").when("a").unwrap();
     });
   });
   describe("properties", () => {

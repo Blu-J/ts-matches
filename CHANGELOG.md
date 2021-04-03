@@ -13,6 +13,7 @@ straightforward as possible.
 ### Added
 
 - More features to the matcher, to be able to match on multiple matchers, and literals
+- Allow matcher to
 
 ### Changed
 
