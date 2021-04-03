@@ -486,7 +486,7 @@ export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
         setupInformation
           .reduce(
             (acc: ChainMatches<unknown>, { matcher, matchValue }) =>
-              acc.when(matcher, () => matchValue),
+              acc.when(matcher, () => matchValue) as any,
             matches(x)
           )
           .defaultTo(defaultValue),
@@ -494,7 +494,7 @@ export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
         setupInformation
           .reduce(
             (acc: ChainMatches<unknown>, { matcher, matchValue }) =>
-              acc.when(matcher, () => matchValue),
+              acc.when(matcher, () => matchValue) as any,
             matches(x)
           )
           .defaultToLazy(() => defaultValue),

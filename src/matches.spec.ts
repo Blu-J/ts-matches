@@ -58,10 +58,70 @@ describe("matches", () => {
       const left = { left: true };
       const right = { right: true };
       const testMatch = matches.shape({ a: matches.literal("d") });
-      const validator = matches(testValue)
+      const validator: typeof left | typeof right = matches(testValue)
         .when(testMatch, () => left)
         .defaultToLazy(() => right);
       expect(validator).toEqual(right);
+    });
+    test("testing can match literal", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(5, 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("testing can match literal lazy", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(5, () => 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("testing can match several literals", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(2, 5, () => 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("unwrap when not matched will throw", () => {
+      const testValue = 5 as const;
+      expect(() =>
+        matches(testValue)
+          .when(2, () => 2 as const)
+          .unwrap()
+      ).toThrowError();
+    });
+    test("default literal", () => {
+      expect(matches(5).when("5").unwrap()).toEqual("5");
+    });
+    test("testing type inferencing of matching", () => {
+      matches(5 as const)
+        // @ts-expect-error Error is that 6 is not a subset 2
+        .when(2, (a: 6) => 1 as const)
+        // @ts-expect-error Error is that 6 is not a subset 2
+        .when(matches.literal(2), (a: 6) => 2 as const)
+        .when(matches.literal(6), (a: 6) => 3 as const)
+        .when(2, 5, (a: 5 | 2) => a)
+        // @ts-expect-error Should be never since all cases are covered
+        .when(2, 5, (a: 5 | 2) => a)
+        .defaultTo(0);
+      matches("test")
+        .when("string", "a")
+        .when(matches.string, "b")
+        // @ts-expect-error Should be never since all cases are covered
+        .when(matches.string, "c")
+        .defaultTo(0);
+      matches("test")
+        .when("a")
+        // @ts-expect-error Should be never since all cases are covered
+        .when("b")
+        .defaultTo(0);
+      const _answer: "a" | "b" = matches("test")
+        .when("string", "a")
+        .when(matches.string, () => "b" as const)
+        .unwrap();
+      const _answer2: "a" = matches("test").when("a").unwrap();
     });
   });
   describe("properties", () => {
