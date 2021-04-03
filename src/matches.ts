@@ -23,9 +23,49 @@ import {
   dictionary,
   literals,
 } from "./parsers";
-import { ChainMatches } from "./parsers/interfaces";
 
-export { Parser as Validator, ChainMatches, ValidatorError };
+export interface ChainMatches<Values, OutcomeType = never> {
+  when<Args extends Values extends never ? never : unknown[]>(
+    ...args: Args
+  ): ChainMatches<
+    Exclude<Values, WhenInput<Args>>,
+    OutcomeType | WhenOutput<Args>
+  >;
+  defaultTo<B>(value: B): B | OutcomeType;
+  defaultToLazy<B>(getValue: () => B): B | OutcomeType;
+  unwrap(): OutcomeType;
+}
+export { Parser as Validator, ValidatorError };
+
+// prettier-ignore
+export type ValueOrFunction<A, Input> = 
+A extends (() => infer B) ? B :
+  A extends ((input: infer InputB) => infer B) ? (
+    InputB extends Input ? B : never) :
+  A extends Function ? never :
+  A
+// prettier-ignore
+export type ParserOrLiteral<A> = 
+  A extends Parser<unknown, infer B> ? B :
+  A
+// prettier-ignore
+export type WhenOutput<A extends unknown[]> = 
+  A extends [] ? never :
+  A extends [infer B] ? (
+    ValueOrFunction<B, never>
+  ) :
+  A extends [infer B, infer C] ? ValueOrFunction<C, ParserOrLiteral<B>> :
+  A extends [infer B, infer C, infer D] ? ValueOrFunction<D, ParserOrLiteral<B> | ParserOrLiteral<C>> :
+  A extends [infer B, infer C,...infer Betweens, infer D] ? WhenOutput<[ParserOrLiteral<B> | ParserOrLiteral<C>, Betweens,D]> :
+  never
+// prettier-ignore
+export type WhenInput<A extends unknown[]> = 
+    A extends [] ? never :
+    A extends [infer B] ? any :
+    A extends [infer B, unknown] ? ParserOrLiteral<B> :
+    A extends [infer B, infer C, unknown] ? ParserOrLiteral<B> | ParserOrLiteral<C> :
+    A extends [infer B, infer C,...infer Betweens, unknown] ? WhenInput<[ParserOrLiteral<B> | ParserOrLiteral<C>, Betweens,unknown]> :
+    never
 
 export type ExtendsSimple<A> = A extends
   | string
@@ -35,18 +75,20 @@ export type ExtendsSimple<A> = A extends
   | undefined
   ? A
   : never;
-class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
+class Matched<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private value: OutcomeType) {}
-  when<B>(
-    _fnTest: Parser<unknown, B> | ExtendsSimple<B>,
-    _thenFn: (b: B) => OutcomeType
-  ): ChainMatches<OutcomeType> {
-    return this as ChainMatches<OutcomeType>;
+  when<Args extends Ins extends never ? never : unknown[]>(
+    ..._args: Args
+  ): ChainMatches<
+    Exclude<Ins, WhenInput<Args>>,
+    OutcomeType | WhenOutput<Args>
+  > {
+    return this as any;
   }
-  defaultTo(_defaultValue: OutcomeType) {
+  defaultTo<B>(_defaultValue: B) {
     return this.value;
   }
-  defaultToLazy(_getValue: () => OutcomeType): OutcomeType {
+  defaultToLazy<B>(_getValue: () => B) {
     return this.value;
   }
   unwrap(): OutcomeType {
@@ -54,31 +96,40 @@ class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   }
 }
 
-class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
+class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private a: unknown) {}
 
-  when<B>(
-    maybeParser: Parser<unknown, B> | ExtendsSimple<B>,
-    thenFn: (b: B) => OutcomeType
-  ): ChainMatches<OutcomeType> {
+  when<Args extends Ins extends never ? never : unknown[]>(
+    ...args: Args
+  ): ChainMatches<
+    Exclude<Ins, WhenInput<Args>>,
+    OutcomeType | WhenOutput<Args>
+  > {
+    const [outcome, ...matchers] = args.reverse();
     const me = this;
-    const parser =
-      maybeParser instanceof Parser ? maybeParser : literal(maybeParser);
+    const parser = matches.some(
+      ...matchers.map((matcher) =>
+        matcher instanceof Parser ? matcher : literal(matcher as any)
+      )
+    );
     return parser.parse(this.a, {
-      parsed(value) {
-        return new Matched<OutcomeType>(thenFn(value));
+      parsed(value: unknown) {
+        if (outcome instanceof Function) {
+          return new Matched(outcome(value));
+        }
+        return new Matched(outcome);
       },
       invalid(_) {
         return me;
       },
-    });
+    }) as any;
   }
 
-  defaultTo(value: OutcomeType) {
+  defaultTo<B>(value: B) {
     return value;
   }
 
-  defaultToLazy(getValue: () => OutcomeType): OutcomeType {
+  defaultToLazy<B>(getValue: () => B) {
     return getValue();
   }
 
@@ -98,8 +149,8 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
  */
 
 export const matches = Object.assign(
-  function matchesFn<Result>(value: unknown) {
-    return new MatchMore<Result>(value);
+  function matchesFn<Ins extends unknown>(value: Ins) {
+    return new MatchMore<Ins, never>(value);
   },
   {
     array: isArray,
