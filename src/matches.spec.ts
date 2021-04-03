@@ -58,10 +58,39 @@ describe("matches", () => {
       const left = { left: true };
       const right = { right: true };
       const testMatch = matches.shape({ a: matches.literal("d") });
-      const validator = matches(testValue)
+      const validator: typeof left | typeof right = matches(testValue)
         .when(testMatch, () => left)
         .defaultToLazy(() => right);
       expect(validator).toEqual(right);
+    });
+    test("testing can match literal", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(5, 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("testing can match literal lazy", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(5, () => 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("testing can match several literals", () => {
+      const testValue = 5 as const;
+      const value = matches(testValue)
+        .when(2, 5, () => 2 as const)
+        .unwrap();
+      expect(value).toEqual(2);
+    });
+    test("unwrap when not matched will throw", () => {
+      const testValue = 5 as const;
+      expect(() =>
+        matches(testValue)
+          .when(2, () => 2 as const)
+          .unwrap()
+      ).toThrowError();
     });
   });
   describe("properties", () => {
