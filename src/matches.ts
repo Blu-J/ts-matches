@@ -23,10 +23,17 @@ import {
   dictionary,
   literals,
 } from "./parsers";
-import { ChainMatches } from "./parsers/interfaces";
 
-export { Parser as Validator, ChainMatches, ValidatorError };
+export { Parser as Validator, ValidatorError };
 
+// prettier-ignore
+export type ValueOrFunction<In, Out> =
+ | ((a: In) => Out)
+ | (() => Out)
+ | Out
+
+// prettier-ignore
+export type ParserOrLiteral<A> = ExtendsSimple<A> | Parser<unknown, A>
 export type ExtendsSimple<A> = A extends
   | string
   | number
@@ -35,18 +42,31 @@ export type ExtendsSimple<A> = A extends
   | undefined
   ? A
   : never;
-class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
+
+export type WhenArgs<In, Out> =
+  | [ValueOrFunction<In, Out>]
+  | [...ParserOrLiteral<In>[], ValueOrFunction<In, Out>];
+
+export interface ChainMatches<In, OutcomeType = never> {
+  when<A, B>(
+    ...args: In extends never ? never : WhenArgs<A, B>
+  ): ChainMatches<Exclude<In, A>, OutcomeType | B>;
+  defaultTo<B>(value: B): B | OutcomeType;
+  defaultToLazy<B>(getValue: () => B): B | OutcomeType;
+  unwrap(): OutcomeType;
+}
+
+class Matched<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private value: OutcomeType) {}
-  when<B>(
-    _fnTest: Parser<unknown, B> | ExtendsSimple<B>,
-    _thenFn: (b: B) => OutcomeType
-  ): ChainMatches<OutcomeType> {
-    return this as ChainMatches<OutcomeType>;
+  when<A, B>(
+    ...args: WhenArgs<A, B>
+  ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
+    return this as any;
   }
-  defaultTo(_defaultValue: OutcomeType) {
+  defaultTo<B>(_defaultValue: B) {
     return this.value;
   }
-  defaultToLazy(_getValue: () => OutcomeType): OutcomeType {
+  defaultToLazy<B>(_getValue: () => B) {
     return this.value;
   }
   unwrap(): OutcomeType {
@@ -54,31 +74,37 @@ class Matched<OutcomeType> implements ChainMatches<OutcomeType> {
   }
 }
 
-class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
+class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private a: unknown) {}
 
-  when<B>(
-    maybeParser: Parser<unknown, B> | ExtendsSimple<B>,
-    thenFn: (b: B) => OutcomeType
-  ): ChainMatches<OutcomeType> {
+  when<A, B>(
+    ...args: WhenArgs<A, B>
+  ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
+    const [outcome, ...matchers] = args.reverse();
     const me = this;
-    const parser =
-      maybeParser instanceof Parser ? maybeParser : literal(maybeParser);
+    const parser = matches.some(
+      ...matchers.map((matcher) =>
+        matcher instanceof Parser ? matcher : literal(matcher as any)
+      )
+    );
     return parser.parse(this.a, {
-      parsed(value) {
-        return new Matched<OutcomeType>(thenFn(value));
+      parsed(value: any) {
+        if (outcome instanceof Function) {
+          return new Matched(outcome(value));
+        }
+        return new Matched(outcome);
       },
       invalid(_) {
         return me;
       },
-    });
+    }) as any;
   }
 
-  defaultTo(value: OutcomeType) {
+  defaultTo<B>(value: B) {
     return value;
   }
 
-  defaultToLazy(getValue: () => OutcomeType): OutcomeType {
+  defaultToLazy<B>(getValue: () => B) {
     return getValue();
   }
 
@@ -98,8 +124,8 @@ class MatchMore<OutcomeType> implements ChainMatches<OutcomeType> {
  */
 
 export const matches = Object.assign(
-  function matchesFn<Result>(value: unknown) {
-    return new MatchMore<Result>(value);
+  function matchesFn<Ins extends unknown>(value: Ins) {
+    return new MatchMore<Ins, never>(value);
   },
   {
     array: isArray,

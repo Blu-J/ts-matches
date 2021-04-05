@@ -11,6 +11,8 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 
 - Schema Validation (parsers: like matches.string)
 - Schema Switching
+- Pattern matching
+- Switches as expressions
 
 ## Tech Used
 
@@ -64,6 +66,15 @@ const currentValue = matches(testValue)
   .when(matchInteger, ([, value]) => value + 1)
   .when(matchSome, () => 0)
   .defaultTo(0);
+```
+
+We can also use the matches to match on literals, or return literals
+
+```typescript
+import matches from "matches";
+const currentValue = matches("5" as const)
+  .when("5", "6", "At 5 or 6")
+  .unwrap(0);
 ```
 
 ## API
