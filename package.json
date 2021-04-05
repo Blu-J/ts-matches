@@ -40,7 +40,5 @@
       "node"
     ]
   },
-  "dependencies": {
-    "ts-matches": "4.1.5"
-  }
+  "dependencies": {}
 }
