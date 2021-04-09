@@ -105,6 +105,17 @@ export class Parser<A, B> implements IParser<A, B> {
     );
   }
   /**
+   * We want to test value with a test eg isEven
+   */
+  validate(isValid: (value: B) => boolean, otherName?: string): Parser<A, B> {
+    return new Parser(
+      ConcatParsers.of(
+        this,
+        new IsAParser(isValid as (value: B) => value is B, otherName)
+      ) as any
+    );
+  }
+  /**
    * We want to refine to a new type given an original type, like isEven, or casting to a more
    * specific type
    */
