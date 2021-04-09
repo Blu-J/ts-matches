@@ -36,12 +36,3 @@ export type OrParser<P1, P2> = [P1, P2] extends [
 ]
   ? Parser<A1 | A2, B1 | B2>
   : never;
-
-export interface ChainMatches<OutcomeType> {
-  when<B>(
-    test: Parser<unknown, B>,
-    thenFn: (b: B) => OutcomeType
-  ): ChainMatches<OutcomeType>;
-  defaultTo(value: OutcomeType): OutcomeType;
-  defaultToLazy(getValue: () => OutcomeType): OutcomeType;
-}
