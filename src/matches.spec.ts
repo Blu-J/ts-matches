@@ -538,6 +538,18 @@ describe("matches", () => {
       }, "isEven");
       expect(isEven.parse(testValue, unFold)).toEqual(testValue);
     });
+    test("should valid matchers", () => {
+      const testValue = 4;
+      const isEven = matches.number.validate((num) => {
+        // Make sure that the refine types pass down the number
+        let _test: number = num;
+        // Asserting to typescript that the infered type not something else
+        // @ts-expect-error
+        let _test2: string = num;
+        return num % 2 === 0;
+      }, "isEven");
+      expect(isEven.parse(testValue, unFold)).toEqual(testValue);
+    });
 
     test("should refinement matchers fail", () => {
       const testValue = 4;
