@@ -14,14 +14,14 @@ export function guard<A, B extends A>(
   return Parser.isA(test, testName);
 }
 
-export const any = guard((a: unknown): a is any => true, "any");
+export const any = guard((a: unknown): a is any => true, "isAnything");
 
 export function literal<A extends string | number | boolean | null | undefined>(
   isEqualToValue: A
 ) {
   return guard<unknown, A>(
     (a): a is A => a === isEqualToValue,
-    `literal<${saferStringify(isEqualToValue)}>`
+    `isLiteral_${saferStringify(isEqualToValue)}`
   );
 }
 
@@ -43,7 +43,8 @@ export const isNill = guard(function isNill(x: unknown): x is null | undefined {
 });
 
 export const natural = number.refine(
-  (x): x is number => x >= 0 && x === Math.floor(x)
+  (x): x is number => x >= 0 && x === Math.floor(x),
+  "isNatural"
 );
 
 export const isFunction = guard<unknown, (...args: any[]) => any>(
@@ -53,14 +54,14 @@ export const isFunction = guard<unknown, (...args: any[]) => any>(
 
 export const boolean = guard(
   (x): x is boolean => x === true || x === false,
-  "boolean"
+  "isBoolean"
 );
 
 export const object = guard(isObject);
 
 export const isArray = guard<unknown, ArrayLike<unknown>>(Array.isArray);
 
-export const string = guard((x): x is string => isString(x), "string");
+export const string = guard((x): x is string => isString(x), "isString");
 export const instanceOf = <C>(classCreator: {
   new (...args: any[]): C;
 }): Parser<unknown, C> =>

@@ -2,7 +2,7 @@ import { any } from ".";
 import { IParser, OnParse } from "./interfaces";
 
 export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
-  readonly name: string = `${this.parent.name} |> ${this.otherParser.name}`;
+  readonly name: string = this.otherParser.name || this.parent.name;
   private constructor(
     readonly parent: IParser<A, B>,
     readonly otherParser: IParser<B, B2>

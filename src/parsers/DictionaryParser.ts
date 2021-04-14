@@ -1,5 +1,5 @@
 import { object, Parser } from ".";
-import { saferStringify } from "../utils";
+import { prependEitherIndicator, saferStringify } from "../utils";
 import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces";
 import { identity } from "./utils";
 
@@ -48,13 +48,13 @@ export class DictionaryParser<
                 return false as const;
               },
               invalid(error) {
-                error.name = `<value> ${error.name}`;
+                error.name = `[${newKey}]${error.name}`;
                 return error;
               },
             });
           },
           invalid(error) {
-            error.name = `<key> ${error.name}`;
+            error.name = `key_${error.name}`;
             return error;
           },
         });
@@ -67,7 +67,7 @@ export class DictionaryParser<
       if (parseError.length) {
         return onParse.invalid({
           value: { key: key, value: a[key] },
-          name: `${parseError.map((x) => x.name).join(" || ")}`,
+          name: prependEitherIndicator(parseError[0].name),
         });
       }
     }

@@ -11,6 +11,7 @@ import {
 } from "./interfaces";
 import { MappedAParser } from "./MappedAParser";
 import { MaybeParser } from "./MaybeParser";
+import { NamedParser } from "./NamedParser";
 import { OrParsers } from "./OrParser";
 import { identity, booleanOnParse } from "./utils";
 
@@ -44,11 +45,7 @@ export class Parser<A, B> implements IParser<A, B> {
     return this.parse(value, {
       parsed: identity,
       invalid(error) {
-        throw new TypeError(
-          `Failed type: ${Parser.validatorErrorAsString(
-            error
-          )} given input ${saferStringify(value)}`
-        );
+        throw new TypeError(`${Parser.validatorErrorAsString(error)}}`);
       },
     });
   }
@@ -57,13 +54,7 @@ export class Parser<A, B> implements IParser<A, B> {
       this.parse(value, {
         parsed: resolve,
         invalid(error) {
-          reject(
-            new TypeError(
-              `Failed type: ${Parser.validatorErrorAsString(
-                error
-              )} given input ${saferStringify(value)}`
-            )
-          );
+          reject(new TypeError(`${Parser.validatorErrorAsString(error)}}`));
         },
       })
     );
@@ -71,6 +62,9 @@ export class Parser<A, B> implements IParser<A, B> {
 
   map<C>(fn: (apply: B) => C, mappingName?: string): Parser<A, C> {
     return new Parser(new MappedAParser(this, fn, mappingName));
+  }
+  withName(newName: string): Parser<A, B> {
+    return new Parser(new NamedParser(this, newName));
   }
 
   concat<C>(otherParser: IParser<B, C>): Parser<A, C> {

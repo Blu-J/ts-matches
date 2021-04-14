@@ -5,7 +5,7 @@ export class DefaultParser<A, B, B2>
   constructor(
     readonly parent: IParser<A, B>,
     readonly defaultValue: B2,
-    readonly name: string = `${parent.name}<default:${defaultValue}>`
+    readonly name: string = parent.name
   ) {}
   parse<C, D>(
     a: A,
@@ -20,7 +20,6 @@ export class DefaultParser<A, B, B2>
         return onParse.parsed(value as any);
       },
       invalid(error) {
-        error.name = `${error.name}<default:${defaultValue}>`;
         return onParse.invalid(error);
       },
     });

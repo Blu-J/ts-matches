@@ -9,3 +9,12 @@ export function saferStringify(x: unknown): string {
     return "" + x;
   }
 }
+
+const isAlreadyPrepended = RegExp.prototype.test.bind(/^\.\.\.\|\|.*/);
+
+export function prependEitherIndicator(x: string): string {
+  if (isAlreadyPrepended(x)) {
+    return x;
+  }
+  return `...||${x}`;
+}

@@ -13,7 +13,7 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
         return onParse.parsed(value);
       },
       invalid(error) {
-        error.name = `optional<${error.name}>`;
+        error.name = `optional_${error.name}`;
         return onParse.invalid(error);
       },
     });
