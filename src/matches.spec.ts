@@ -8,7 +8,8 @@ const isNumber = (x: unknown): x is number => typeof x === "number";
 
 export const validatorError = every(
   shape({
-    name: matches.string,
+    parser: matches.object,
+    keys: matches.arrayOf(matches.string),
     value: any,
   })
 );
@@ -291,7 +292,7 @@ describe("matches", () => {
       const testValue = {};
       const validator = matches.shape({ a: matches.any });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"a\\"]any(\\"missingProperty\\")"`
+        `"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"`
       );
     });
 
@@ -299,7 +300,7 @@ describe("matches", () => {
       const testValue = { a: "c" };
       const validator = matches.shape({ a: matches.literal("b") });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"a\\"]literal<\\"b\\">(\\"c\\")"`
+        `"[\\"a\\"]Literal<\\"b\\">(\\"c\\")"`
       );
     });
 
@@ -307,7 +308,7 @@ describe("matches", () => {
       const testValue = 5;
       const validator = matches.shape({ a: matches.literal("b") });
       expect(validator.parse(testValue, unFold)).toEqual(
-        `isObject(${saferStringify(testValue)})`
+        `Shape<{a:Literal<\"b\">}>(${saferStringify(testValue)})`
       );
     });
 
@@ -318,7 +319,7 @@ describe("matches", () => {
         b: matches.literal("b"),
       });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"a\\"]literal<\\"b\\">(\\"missingProperty\\")"`
+        `"[\\"a\\"]Shape<{a:Literal<\\"b\\">,b:Literal<\\"b\\">}>(\\"missingProperty\\")"`
       );
     });
     test("should be able to test shape with failure smaller", () => {
@@ -328,7 +329,7 @@ describe("matches", () => {
         b: matches.literal("b"),
       });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"b\\"]literal<\\"b\\">(\\"missingProperty\\")"`
+        `"[\\"b\\"]Shape<{a:Literal<\\"b\\">,b:Literal<\\"b\\">}>(\\"missingProperty\\")"`
       );
     });
 
@@ -345,7 +346,7 @@ describe("matches", () => {
         b: matches.literal("c"),
       });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"a\\"]literal<\\"c\\">(\\"a\\")"`
+        `"[\\"a\\"]Literal<\\"c\\">(\\"a\\")"`
       );
     });
     test("should be able to test partial shape failure smaller", () => {
@@ -355,7 +356,7 @@ describe("matches", () => {
         b: matches.literal("c"),
       });
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"b\\"]literal<\\"c\\">(\\"b\\")"`
+        `"[\\"b\\"]Literal<\\"c\\">(\\"b\\")"`
       );
     });
 
@@ -369,7 +370,7 @@ describe("matches", () => {
       const testValue = "a";
       const validator = matches.literal("b");
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"literal<\\"b\\">(\\"a\\")"`
+        `"Literal<\\"b\\">(\\"a\\")"`
       );
     });
 
@@ -519,7 +520,7 @@ describe("matches", () => {
       const testValue = false;
       const validator = matches.some(matches.number, matches.string);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isNumber || string(false)"`
+        `"Or<isNumber,...>(false)"`
       );
     });
 
@@ -572,17 +573,17 @@ describe("matches", () => {
       expect(firstExpectedOutcome).toEqual(4);
       expect(matcher.parse("3", unFold)).toEqual("3");
       expect(matcher.parse(3, unFold)).toMatchInlineSnapshot(
-        `"literal<4> || literal<\\"3\\">(3)"`
+        `"Literal<4,\\"3\\">(3)"`
       );
       expect(matcher.parse("4", unFold)).toMatchInlineSnapshot(
-        `"literal<4> || literal<\\"3\\">(\\"4\\")"`
+        `"Literal<4,\\"3\\">(\\"4\\")"`
       );
     });
     test("should have array of test fail", () => {
       const testValue = [5, 3, 2, 5, 5];
       const arrayOf = matches.arrayOf(matches.literal(5));
       expect(arrayOf.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[1]literal<5>(3)"`
+        `"[1]Literal<5>(3)"`
       );
     });
 
@@ -649,7 +650,7 @@ describe("matches", () => {
       expect(() =>
         matches.partial({}).unsafeCast(5)
       ).toThrowErrorMatchingInlineSnapshot(
-        `"Failed type: isObject(5) given input 5"`
+        `"Failed type: Shape<{}>(5) given input 5"`
       );
     });
     test("should throw on invalid unsafe match throw", async () => {
@@ -658,7 +659,7 @@ describe("matches", () => {
         expect("never").toBe("called");
       } catch (e) {
         expect(e).toMatchInlineSnapshot(
-          `[TypeError: Failed type: isObject(5) given input 5]`
+          `[TypeError: Failed type: Shape<{}>(5) given input 5]`
         );
       }
     });
@@ -673,14 +674,12 @@ describe("matches", () => {
         matches
           .some(matches.number, matches.literal("test"), matches.number)
           .parse("hello", unFold)
-      ).toMatchInlineSnapshot(
-        `"isNumber || literal<\\"test\\"> || isNumber(\\"hello\\")"`
-      );
+      ).toMatchInlineSnapshot(`"Or<isNumber,...>(\\"hello\\")"`);
     });
     test("some should only return the unique", () => {
       expect(
         matches.some(matches.number, matches.number).parse("hello", unFold)
-      ).toMatchInlineSnapshot(`"isNumber || isNumber(\\"hello\\")"`);
+      ).toMatchInlineSnapshot(`"Or<isNumber,...>(\\"hello\\")"`);
     });
 
     test("should guard without a name", () => {
@@ -691,7 +690,9 @@ describe("matches", () => {
     test("should guard without a name failure", () => {
       expect(
         matches.guard((x): x is number => Number(x) > 3).parse(2, stringFold)
-      ).toMatchInlineSnapshot(`"invalid({\\"value\\":2,\\"name\\":\\"\\"})"`);
+      ).toMatchInlineSnapshot(
+        `"invalid({\\"value\\":2,\\"keys\\":[],\\"parser\\":{\\"typeName\\":\\"\\",\\"description\\":{\\"name\\":\\"Guard\\",\\"children\\":[],\\"extras\\":[\\"\\"]}}})"`
+      );
     });
 
     test("should be able to test is object for event", () => {
@@ -783,7 +784,7 @@ describe("matches", () => {
         const input = {};
         expect(
           saferStringify(maybeNumber.parse(input, unFold))
-        ).toMatchInlineSnapshot(`"\\"optional<isNumber>({})\\""`);
+        ).toMatchInlineSnapshot(`"\\"Maybe<isNumber>({})\\""`);
       });
     });
 
@@ -808,7 +809,7 @@ describe("matches", () => {
       test("a object in", () => {
         const input = {};
         expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(
-          `"optional<isNumber><default:0>({})"`
+          `"Default<0,Maybe<isNumber>>({})"`
         );
       });
     });
@@ -831,13 +832,29 @@ describe("matches", () => {
           test2: "value2";
         } = testMatcher.unsafeCast(input);
         expect(output).toEqual(input);
+        //@ts-expect-error
+        const incorrectCast: {
+          test: "valueWrong";
+          test2: "value2";
+        } = testMatcher.unsafeCast(input);
       });
       it("should be able to check incorrect shape", () => {
         const input = { test: "invalid", test2: "value2" };
         const output = testMatcher.parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
-          `"<value> literal<\\"value\\"> || <key> literal<\\"test2\\">({\\"key\\":\\"test\\",\\"value\\":\\"invalid\\"})"`
+          `"[test]Literal<\\"value\\">(\\"invalid\\")"`
         );
+      });
+      it("should be able to check empty", () => {
+        const testMatcher = matches.dictionary();
+        const input = { test: "invalid", test2: "value2" };
+        const output = testMatcher.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(`
+          Object {
+            "test": "invalid",
+            "test2": "value2",
+          }
+        `);
       });
       it("should be able to check incorrect shape deep", () => {
         const input = [
@@ -853,7 +870,7 @@ describe("matches", () => {
           ])
           .parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
-          `"[\\"0\\"][\\"second\\"]literal<\\"valid\\">(\\"invalid\\")"`
+          `"[\\"0\\"][\\"second\\"]Literal<\\"valid\\">(\\"invalid\\")"`
         );
       });
       it("should be able to project values", () => {
