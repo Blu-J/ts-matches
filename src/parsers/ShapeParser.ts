@@ -10,7 +10,8 @@ export class ShapeParser<
   A extends unknown,
   Key extends string | number | symbol,
   B
-> implements IParser<A, B> {
+> implements IParser<A, B>
+{
   constructor(
     readonly parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
     readonly isPartial: boolean,
