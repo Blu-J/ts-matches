@@ -11,30 +11,10 @@ export function guard<A, B extends A>(
   test: (value: A) => value is B,
   testName?: string
 ): Parser<A, B> {
-  return Parser.isA(test, testName);
+  return Parser.isA(test, testName || test.name);
 }
 
 export const any = guard((a: unknown): a is any => true, "any");
-
-export function literal<A extends string | number | boolean | null | undefined>(
-  isEqualToValue: A
-) {
-  return guard<unknown, A>(
-    (a): a is A => a === isEqualToValue,
-    `literal<${saferStringify(isEqualToValue)}>`
-  );
-}
-
-export function literals<
-  A extends string | number | boolean | null | undefined,
-  Rest extends Array<string | number | boolean | null | undefined>
->(firstValue: A, ...restValues: Rest): Parser<unknown, A | OneOf<Rest>> {
-  let answer = literal(firstValue);
-  return restValues.reduce<Parser<unknown, unknown>>(
-    (answer, nextLiteral) => answer.orParser(literal(nextLiteral)),
-    answer
-  ) as any;
-}
 
 export const number = guard(isNumber);
 

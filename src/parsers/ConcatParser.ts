@@ -2,10 +2,14 @@ import { any } from ".";
 import { IParser, OnParse } from "./interfaces";
 
 export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
-  readonly name: string = `${this.parent.name} |> ${this.otherParser.name}`;
   private constructor(
     readonly parent: IParser<A, B>,
-    readonly otherParser: IParser<B, B2>
+    readonly otherParser: IParser<B, B2>,
+    readonly description = {
+      name: "Concat",
+      children: [parent, otherParser],
+      extras: [],
+    } as const
   ) {}
   static of<A, B, B2>(parent: IParser<A, B>, otherParser: IParser<B, B2>) {
     if (parent === any) {
@@ -25,7 +29,6 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
             return onParse.parsed(value);
           },
           invalid(error) {
-            error.name = `${error.name || parent.name}`;
             return onParse.invalid(error);
           },
         });
