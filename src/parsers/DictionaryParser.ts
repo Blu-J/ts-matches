@@ -23,11 +23,17 @@ export class DictionaryParser<
 > implements IParser<A, DictionaryShaped<Parsers>> {
   constructor(
     readonly parsers: Parsers,
-    readonly name: string = `{${parsers
-      .map(
-        ([keyType, value]) => `${saferStringify(keyType.name)}: ${value.name}`
-      )
-      .join(",")}}`
+    readonly description = {
+      name: "Dictionary" as const,
+      children: parsers.reduce(
+        (acc: Array<IParser<unknown, unknown>>, [k, v]) => {
+          acc.push(k, v);
+          return acc;
+        },
+        []
+      ),
+      extras: [],
+    } as const
   ) {}
   parse<C, D>(
     a: A,
@@ -36,7 +42,7 @@ export class DictionaryParser<
     const { parsers } = this;
     const parser = this;
     const answer: any = { ...a };
-    for (const key in a) {
+    outer: for (const key in a) {
       let parseError: Array<ISimpleParsedError> = [];
       for (const [keyParser, valueParser] of parsers) {
         const newError = keyParser.parse(key, {
@@ -48,27 +54,26 @@ export class DictionaryParser<
                 return false as const;
               },
               invalid(error) {
-                error.name = `<value> ${error.name}`;
+                error.keys.push("" + newKey);
+                parseError.unshift(error);
                 return error;
               },
             });
           },
           invalid(error) {
-            error.name = `<key> ${error.name}`;
+            error.parser = parser;
+            error.keys.push("" + key);
+            parseError.push(error);
             return error;
           },
         });
         if (newError === false) {
-          parseError = [];
-          break;
+          break outer;
         }
-        parseError.push(newError);
       }
       if (parseError.length) {
-        return onParse.invalid({
-          value: { key: key, value: a[key] },
-          name: `${parseError.map((x) => x.name).join(" || ")}`,
-        });
+        const error = parseError[0];
+        return onParse.invalid(error);
       }
     }
 

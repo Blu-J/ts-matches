@@ -1,12 +1,10 @@
 import { _, ValidatorError } from "./interfaces";
 import { isNumber } from "./utils";
-import { IsAParser } from "./IsAParser";
+import { GuardParser } from "./GuardParser";
 import { Parser } from "./Parser";
 import {
-  literal,
   guard,
   any,
-  literals,
   string,
   isFunction,
   boolean,
@@ -24,10 +22,11 @@ import { dictionary } from "./DictionaryParser";
 import { partial, shape } from "./ShapeParser";
 import { tuple } from "./TupleParser";
 import { arrayOf } from "./ArrayOfParser";
+import { literal, literals } from "./LiteralParser";
 
 export {
   ValidatorError,
-  IsAParser,
+  GuardParser as IsAParser,
   Parser,
   literal,
   guard,
