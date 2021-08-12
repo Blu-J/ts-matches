@@ -20,7 +20,8 @@ export type DictionaryShaped<T> =
 export class DictionaryParser<
   A extends object | {},
   Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
-> implements IParser<A, DictionaryShaped<Parsers>> {
+> implements IParser<A, DictionaryShaped<Parsers>>
+{
   constructor(
     readonly parsers: Parsers,
     readonly description = {
