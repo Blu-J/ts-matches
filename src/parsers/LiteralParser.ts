@@ -3,7 +3,8 @@ import { Parser } from "./Parser";
 import { OneOf } from "./utils";
 
 export class LiteralsParser<B extends unknown[]>
-  implements IParser<unknown, OneOf<B>> {
+  implements IParser<unknown, OneOf<B>>
+{
   constructor(
     readonly values: B,
     readonly description = {
@@ -27,9 +28,7 @@ export class LiteralsParser<B extends unknown[]>
 export function literal<A extends string | number | boolean | null | undefined>(
   isEqualToValue: A
 ) {
-  return new Parser(
-    new LiteralsParser<[A]>([isEqualToValue])
-  );
+  return new Parser(new LiteralsParser<[A]>([isEqualToValue]));
 }
 
 export function literals<

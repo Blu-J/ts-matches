@@ -418,16 +418,15 @@ const matcherShapePartial = fc
       validCounter ? counterExample : 0
     );
   });
-export const matcherPairs: fc.Arbitrary<
-  ReturnType<typeof matchPairOf>
-> = fc.oneof(
-  matcherPairsSimple,
-  matcherShape,
-  matcherTuple,
-  matcherArrayOf,
-  matcherShapePartial,
-  matcherSome
-);
+export const matcherPairs: fc.Arbitrary<ReturnType<typeof matchPairOf>> =
+  fc.oneof(
+    matcherPairsSimple,
+    matcherShape,
+    matcherTuple,
+    matcherArrayOf,
+    matcherShapePartial,
+    matcherSome
+  );
 
 export const testSetupInformation = <A>(
   matchPair: ReturnType<typeof matchPairOf>
