@@ -832,6 +832,11 @@ describe("matches", () => {
           test2: "value2";
         } = testMatcher.unsafeCast(input);
         expect(output).toEqual(input);
+        //@ts-expect-error
+        const incorrectCast: {
+          test: "valueWrong";
+          test2: "value2";
+        } = testMatcher.unsafeCast(input);
       });
       it("should be able to check incorrect shape", () => {
         const input = { test: "invalid", test2: "value2" };
@@ -839,6 +844,17 @@ describe("matches", () => {
         expect(output).toMatchInlineSnapshot(
           `"[test]Literal<\\"value\\">(\\"invalid\\")"`
         );
+      });
+      it("should be able to check empty", () => {
+        const testMatcher = matches.dictionary();
+        const input = { test: "invalid", test2: "value2" };
+        const output = testMatcher.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(`
+          Object {
+            "test": "invalid",
+            "test2": "value2",
+          }
+        `);
       });
       it("should be able to check incorrect shape deep", () => {
         const input = [

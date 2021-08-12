@@ -17,6 +17,11 @@ import { OrParsers } from "./OrParser";
 import { ShapeParser } from "./ShapeParser";
 import { identity, booleanOnParse } from "./utils";
 
+function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
+  if (a instanceof Parser) return unwrapParser(a.parser);
+  return a;
+}
+
 export class Parser<A, B> implements IParser<A, B> {
   public readonly _TYPE: B = null as any;
   constructor(
@@ -59,23 +64,13 @@ export class Parser<A, B> implements IParser<A, B> {
     )})`;
   };
 
-  public static parserAsString(parser: IParser<unknown, unknown>): string {
-    if (parser instanceof Parser) {
-      return Parser.parserAsString(parser.parser);
-    }
+  public static parserAsString(
+    parserComingIn: IParser<unknown, unknown>
+  ): string {
+    const parser = unwrapParser(parserComingIn);
     const {
       description: { name, extras, children },
     } = parser;
-    if (parser instanceof DictionaryParser) {
-      return `${name}<{${parser.parsers
-        .map(
-          ([key, value]: [
-            IParser<unknown, unknown>,
-            IParser<unknown, unknown>
-          ]) => `${Parser.parserAsString(key)}:${Parser.parserAsString(value)}`
-        )
-        .join(",")}}>`;
-    }
     if (parser instanceof ShapeParser) {
       return `${name}<{${parser.description.children
         .map(
@@ -87,13 +82,9 @@ export class Parser<A, B> implements IParser<A, B> {
         .join(",")}}>`;
     }
     if (parser instanceof OrParsers) {
-      const parentString = Parser.parserAsString(parser.parent);
-      if (parser.parent instanceof OrParsers) return parentString;
-      if (
-        parser.parent instanceof Parser &&
-        parser.parent.parser instanceof OrParsers
-      )
-        return parentString;
+      const parent = unwrapParser(parser.parent);
+      const parentString = Parser.parserAsString(parent);
+      if (parent instanceof OrParsers) return parentString;
 
       return `${name}<${parentString},...>`;
     }
@@ -104,9 +95,7 @@ export class Parser<A, B> implements IParser<A, B> {
       ...extras.map(saferStringify),
       ...children.map(Parser.parserAsString),
     ];
-    const specifiersString = !specifiers.length
-      ? ""
-      : `<${specifiers.join(",")}>`;
+    const specifiersString = `<${specifiers.join(",")}>`;
     const childrenString = !children.length ? "" : `<>`;
 
     return `${name}${specifiersString}`;

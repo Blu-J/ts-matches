@@ -20,8 +20,7 @@ export type DictionaryShaped<T> =
 export class DictionaryParser<
   A extends object | {},
   Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
-> implements IParser<A, DictionaryShaped<Parsers>>
-{
+> implements IParser<A, DictionaryShaped<Parsers>> {
   constructor(
     readonly parsers: Parsers,
     readonly description = {
@@ -45,6 +44,7 @@ export class DictionaryParser<
     const answer: any = { ...a };
     outer: for (const key in a) {
       let parseError: Array<ISimpleParsedError> = [];
+      console.log(parsers);
       for (const [keyParser, valueParser] of parsers) {
         const newError = keyParser.parse(key, {
           parsed(newKey: string | number) {
@@ -72,8 +72,8 @@ export class DictionaryParser<
           break outer;
         }
       }
-      if (parseError.length) {
-        const error = parseError[0];
+      const error = parseError[0];
+      if (!!error) {
         return onParse.invalid(error);
       }
     }
@@ -82,16 +82,9 @@ export class DictionaryParser<
   }
 }
 export const dictionary = <
-  FirstParserSet extends [Parser<unknown, unknown>, Parser<unknown, unknown>],
-  RestParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
+  ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
 >(
-  firstParserSet: FirstParserSet,
-  ...restParserSets: RestParserSets
-): Parser<
-  unknown,
-  _<DictionaryShaped<[FirstParserSet, ...RestParserSets]>>
-> => {
-  return object.concat(
-    new DictionaryParser([firstParserSet, ...restParserSets])
-  ) as any;
+  ...parsers: ParserSets
+): Parser<unknown, _<DictionaryShaped<[...ParserSets]>>> => {
+  return object.concat(new DictionaryParser([...parsers])) as any;
 };
