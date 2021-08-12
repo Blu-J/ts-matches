@@ -1,9 +1,14 @@
 import { IParser, OnParse } from "./interfaces";
 
-export class IsAParser<A, B> implements IParser<A, B> {
+export class GuardParser<A, B> implements IParser<A, B> {
   constructor(
     readonly checkIsA: (value: A) => value is A & B,
-    readonly name: string = checkIsA.name
+    readonly typeName: string,
+    readonly description = {
+      name: "Guard",
+      children: [],
+      extras: [typeName],
+    } as const
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     if (this.checkIsA(a)) {
@@ -11,7 +16,8 @@ export class IsAParser<A, B> implements IParser<A, B> {
     }
     return onParse.invalid({
       value: a,
-      name: this.name,
+      keys: [],
+      parser: this,
     });
   }
 }

@@ -14,23 +14,25 @@ export class ShapeParser<
   constructor(
     readonly parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
     readonly isPartial: boolean,
-    readonly name: string = `{${Object.entries(parserMap)
-      .map(
-        ([key, value]) =>
-          `${saferStringify(key)}${isPartial ? "?" : ""}: ${
-            (value as Parser<unknown, unknown>).name
-          }`
-      )
-      .join(",")}}`
+    readonly parserKeys = Object.keys(parserMap) as Array<
+      keyof typeof parserMap
+    >,
+    readonly description = {
+      name: "Shape",
+      children: parserKeys.map((key) => parserMap[key]),
+      extras: parserKeys,
+    } as const
   ) {}
   parse<C, D>(
     a: unknown,
     onParse: OnParse<A, { [key in Key]?: B }, C, D>
   ): C | D {
+    const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
       return onParse.invalid({
         value: a,
-        name: object.name,
+        keys: [],
+        parser,
       });
     }
     const { parserMap, isPartial } = this;
@@ -47,7 +49,7 @@ export class ShapeParser<
             return true as const;
           },
           invalid(error) {
-            error.name = `[${saferStringify(key)}]${error.name}`;
+            error.keys.push(saferStringify(key));
             return error;
           },
         });
@@ -57,7 +59,8 @@ export class ShapeParser<
       } else if (!isPartial) {
         return onParse.invalid({
           value: "missingProperty",
-          name: `[${saferStringify(key)}]${parserMap[key].name}`,
+          parser,
+          keys: [saferStringify(key)],
         });
       }
     }
