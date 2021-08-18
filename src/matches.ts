@@ -23,9 +23,9 @@ import {
   dictionary,
   literals,
 } from "./parsers";
-import { ParserNames } from "./parsers/interfaces";
+export { IParser, ParserNames } from "./parsers/interfaces";
 
-export { Parser as Validator, ValidatorError, ParserNames };
+export { Parser as Validator, ValidatorError };
 
 // prettier-ignore
 export type ValueOrFunction<In, Out> =
