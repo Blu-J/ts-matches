@@ -16,7 +16,7 @@ export class ShapeParser<
     readonly parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
     readonly isPartial: boolean,
     readonly parserKeys = Object.keys(parserMap) as Array<
-      keyof typeof parserMap
+      string & keyof typeof parserMap
     >,
     readonly description = {
       name: "Shape",
