@@ -384,7 +384,7 @@ describe("matches", () => {
       const testValue = "a";
       const validator = matches.number;
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isNumber(\\"a\\")"`
+        `"number(\\"a\\")"`
       );
     });
 
@@ -426,7 +426,7 @@ describe("matches", () => {
       const testValue = "test";
       const validator = matches.isFunction;
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"isFunction(\\"test\\")"`
+        `"Function(\\"test\\")"`
       );
     });
 
@@ -473,7 +473,7 @@ describe("matches", () => {
     test("should be able to test object with failure", () => {
       const testValue = 5;
       const validator = matches.object;
-      expect(validator.parse(testValue, unFold)).toEqual("isObject(5)");
+      expect(validator.parse(testValue, unFold)).toEqual("object(5)");
     });
 
     test("should be able to test tuple(number, string)", () => {
@@ -486,7 +486,7 @@ describe("matches", () => {
       const testValue = ["bad", 5];
       const validator = matches.tuple([matches.number, matches.string]);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"[\\"0\\"]isNumber(\\"bad\\")"`
+        `"[\\"0\\"]number(\\"bad\\")"`
       );
     });
 
@@ -520,7 +520,7 @@ describe("matches", () => {
       const testValue = false;
       const validator = matches.some(matches.number, matches.string);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
-        `"Or<isNumber,...>(false)"`
+        `"Or<number,...>(false)"`
       );
     });
 
@@ -650,7 +650,7 @@ describe("matches", () => {
       expect(() =>
         matches.partial({}).unsafeCast(5)
       ).toThrowErrorMatchingInlineSnapshot(
-        `"Failed type: Shape<{}>(5) given input 5"`
+        `"Failed type: Partial<{}>(5) given input 5"`
       );
     });
     test("should throw on invalid unsafe match throw", async () => {
@@ -659,7 +659,7 @@ describe("matches", () => {
         expect("never").toBe("called");
       } catch (e) {
         expect(e).toMatchInlineSnapshot(
-          `[TypeError: Failed type: Shape<{}>(5) given input 5]`
+          `[TypeError: Failed type: Partial<{}>(5) given input 5]`
         );
       }
     });
@@ -674,12 +674,12 @@ describe("matches", () => {
         matches
           .some(matches.number, matches.literal("test"), matches.number)
           .parse("hello", unFold)
-      ).toMatchInlineSnapshot(`"Or<isNumber,...>(\\"hello\\")"`);
+      ).toMatchInlineSnapshot(`"Or<number,...>(\\"hello\\")"`);
     });
     test("some should only return the unique", () => {
       expect(
         matches.some(matches.number, matches.number).parse("hello", unFold)
-      ).toMatchInlineSnapshot(`"Or<isNumber,...>(\\"hello\\")"`);
+      ).toMatchInlineSnapshot(`"Or<number,...>(\\"hello\\")"`);
     });
 
     test("should guard without a name", () => {
@@ -724,7 +724,7 @@ describe("matches", () => {
       const o: any = {};
       o.o = o;
       expect(matches.isFunction.parse(o, unFold)).toMatchInlineSnapshot(
-        `"isFunction([object Object])"`
+        `"Function([object Object])"`
       );
     });
 
@@ -784,7 +784,7 @@ describe("matches", () => {
         const input = {};
         expect(
           saferStringify(maybeNumber.parse(input, unFold))
-        ).toMatchInlineSnapshot(`"\\"Maybe<isNumber>({})\\""`);
+        ).toMatchInlineSnapshot(`"\\"Maybe<number>({})\\""`);
       });
     });
 
@@ -809,7 +809,7 @@ describe("matches", () => {
       test("a object in", () => {
         const input = {};
         expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(
-          `"Default<0,Maybe<isNumber>>({})"`
+          `"Default<0,Maybe<number>>({})"`
         );
       });
     });

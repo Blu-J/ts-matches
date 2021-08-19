@@ -8,35 +8,114 @@ export type Nil = null | undefined;
 
 export type Optional<A> = A | null | undefined;
 export type _<T> = T;
+export type SomeParser = IParser<unknown, unknown>;
 
 export type ISimpleParsedError = {
-  parser: IParser<unknown, unknown>;
+  parser: SomeParser;
   value: any;
   keys: string[];
 };
 export type ValidatorError = ISimpleParsedError;
 export type IParser<A, B> = {
-  readonly description: {
-    readonly name: ParserNames;
-    readonly extras: ReadonlyArray<unknown>;
-    readonly children: ReadonlyArray<IParser<unknown, unknown>>;
-  };
+  readonly description: Readonly<Description & {}>;
   parse<C, D>(this: IParser<A, B>, a: A, onParse: OnParse<A, B, C, D>): C | D;
 };
+export type Description = {
+  readonly name: ParserNames;
+  readonly extras: ReadonlyArray<unknown>;
+  readonly children: ReadonlyArray<SomeParser>;
+} & (
+  | {
+      readonly name: "ArrayOf";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Concat";
+      readonly children: readonly [SomeParser, SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Default";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
+      readonly name: "Dictionary";
+      readonly children: ReadonlyArray<SomeParser>;
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Guard";
+      readonly children: readonly [];
+      readonly extras: readonly [unknown];
+    }
+  | {
+      readonly name: "Literal";
+      readonly children: readonly [];
+      readonly extras: ReadonlyArray<unknown>;
+    }
+  | {
+      readonly name: "Mapped";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [string];
+    }
+  | {
+      readonly name: "Maybe";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Or";
+      readonly children: readonly [SomeParser, SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Wrapper";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Shape" | "Partial";
+      readonly children: ReadonlyArray<SomeParser>;
+      readonly extras: ReadonlyArray<string | number>;
+    }
+  | {
+      readonly name:
+        | "Any"
+        | "Null"
+        | "Number"
+        | "Boolean"
+        | "Function"
+        | "String"
+        | "Object"
+        | "Array";
+      readonly children: readonly [];
+      readonly extras: readonly [];
+    }
+);
 
 export type ParserNames =
+  | "Any"
   | "Array"
+  | "ArrayOf"
+  | "Boolean"
   | "Concat"
   | "Default"
   | "Dictionary"
-  | "Every"
+  | "Function"
   | "Guard"
   | "Literal"
   | "Mapped"
   | "Maybe"
   | "Named"
+  | "Null"
+  | "Number"
+  | "Partial"
+  | "Object"
   | "Or"
   | "Shape"
+  | "String"
   | "Wrapper";
 
 export type OnParse<A, B, C, D> = {

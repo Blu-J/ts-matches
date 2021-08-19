@@ -7,7 +7,7 @@ export class MappedAParser<A, B, B2> implements IParser<A, B2> {
     readonly mappingName = map.name,
     readonly description = {
       name: "Mapped",
-      children: [],
+      children: [parent],
       extras: [mappingName],
     } as const
   ) {}

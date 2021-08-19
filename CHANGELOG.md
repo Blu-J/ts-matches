@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.0] - ??.??.??
+
+Making the description type to convert the parser into something else, like JsonSchema or typescript types. This brings in the names, children, and extras for each.
+
+Moving several simple parsers into their own description and parsers. Useful for things like typescript that have primitives like strings, numbers, and booleans.
+
 ## [4.2.0] - 2021-04-03
 
 Adding in better matching capabilities.
