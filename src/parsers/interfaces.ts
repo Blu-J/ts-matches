@@ -26,7 +26,7 @@ export type Description = {
   readonly children: ReadonlyArray<SomeParser>;
 } & (
   | {
-      readonly name: "Array";
+      readonly name: "ArrayOf";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
     }
@@ -80,10 +80,25 @@ export type Description = {
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: ReadonlyArray<string | number>;
     }
+  | {
+      readonly name:
+        | "Any"
+        | "Null"
+        | "Number"
+        | "Boolean"
+        | "Function"
+        | "String"
+        | "Object"
+        | "Array";
+      readonly children: readonly [];
+      readonly extras: readonly [];
+    }
 );
 
 export type ParserNames =
+  | "Any"
   | "Array"
+  | "ArrayOf"
   | "Concat"
   | "Default"
   | "Dictionary"
@@ -92,6 +107,12 @@ export type ParserNames =
   | "Mapped"
   | "Maybe"
   | "Named"
+  | "Number"
+  | "Boolean"
+  | "Function"
+  | "Object"
+  | "String"
+  | "Null"
   | "Or"
   | "Shape"
   | "Wrapper";

@@ -11,7 +11,7 @@ export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
   constructor(
     readonly parser: IParser<A[number], B>,
     readonly description = {
-      name: "Array",
+      name: "ArrayOf",
       children: [parser],
       extras: [],
     } as const

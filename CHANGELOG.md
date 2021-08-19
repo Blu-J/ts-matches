@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 Making the description type to convert the parser into something else, like JsonSchema or typescript types. This brings in the names, children, and extras for each.
 
+Moving several simple parsers into their own description and parsers. Useful for things like typescript that have primitives like strings, numbers, and booleans.
+
 ## [4.2.0] - 2021-04-03
 
 Adding in better matching capabilities.
