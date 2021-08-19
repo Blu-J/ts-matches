@@ -45,7 +45,6 @@ export class DictionaryParser<
     const answer: any = { ...a };
     outer: for (const key in a) {
       let parseError: Array<ISimpleParsedError> = [];
-      console.log(parsers);
       for (const [keyParser, valueParser] of parsers) {
         const newError = keyParser.parse(key, {
           parsed(newKey: string | number) {

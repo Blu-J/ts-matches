@@ -1,8 +1,12 @@
 import { IsAParser } from ".";
 import { saferStringify } from "../utils";
+import { AnyParser } from "./AnyParser";
+import { ArrayParser } from "./ArrayParser";
+import { BoolParser } from "./BoolParser";
 import { ConcatParsers } from "./ConcatParser";
 import { DefaultParser } from "./DefaultParser";
 import { DictionaryParser } from "./DictionaryParser";
+import { FunctionParser } from "./FunctionParser";
 import { GuardParser } from "./GuardParser";
 import {
   IParser,
@@ -13,8 +17,12 @@ import {
 } from "./interfaces";
 import { MappedAParser } from "./MappedAParser";
 import { MaybeParser } from "./MaybeParser";
+import { NilParser } from "./NillParser";
+import { NumberParser } from "./NumberParser";
+import { ObjectParser } from "./ObjectParser";
 import { OrParsers } from "./OrParser";
 import { ShapeParser } from "./ShapeParser";
+import { StringParser } from "./StringParser";
 import { identity, booleanOnParse } from "./utils";
 
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
@@ -90,6 +98,24 @@ export class Parser<A, B> implements IParser<A, B> {
     }
     if (parser instanceof GuardParser) {
       return String(extras[0] || name);
+    }
+    if (
+      parser instanceof StringParser ||
+      parser instanceof ObjectParser ||
+      parser instanceof NumberParser ||
+      parser instanceof BoolParser ||
+      parser instanceof AnyParser
+    ) {
+      return name.toLowerCase();
+    }
+    if (parser instanceof FunctionParser) {
+      return name;
+    }
+    if (parser instanceof NilParser) {
+      return "null";
+    }
+    if (parser instanceof ArrayParser) {
+      return "Array<unknown>";
     }
     const specifiers = [
       ...extras.map(saferStringify),
