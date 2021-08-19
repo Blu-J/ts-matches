@@ -650,7 +650,7 @@ describe("matches", () => {
       expect(() =>
         matches.partial({}).unsafeCast(5)
       ).toThrowErrorMatchingInlineSnapshot(
-        `"Failed type: Shape<{}>(5) given input 5"`
+        `"Failed type: Partial<{}>(5) given input 5"`
       );
     });
     test("should throw on invalid unsafe match throw", async () => {
@@ -659,7 +659,7 @@ describe("matches", () => {
         expect("never").toBe("called");
       } catch (e) {
         expect(e).toMatchInlineSnapshot(
-          `[TypeError: Failed type: Shape<{}>(5) given input 5]`
+          `[TypeError: Failed type: Partial<{}>(5) given input 5]`
         );
       }
     });

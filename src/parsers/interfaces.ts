@@ -76,7 +76,7 @@ export type Description = {
       readonly extras: readonly [];
     }
   | {
-      readonly name: "Shape";
+      readonly name: "Shape" | "Partial";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: ReadonlyArray<string | number>;
     }
@@ -99,22 +99,23 @@ export type ParserNames =
   | "Any"
   | "Array"
   | "ArrayOf"
+  | "Boolean"
   | "Concat"
   | "Default"
   | "Dictionary"
+  | "Function"
   | "Guard"
   | "Literal"
   | "Mapped"
   | "Maybe"
   | "Named"
-  | "Number"
-  | "Boolean"
-  | "Function"
-  | "Object"
-  | "String"
   | "Null"
+  | "Number"
+  | "Partial"
+  | "Object"
   | "Or"
   | "Shape"
+  | "String"
   | "Wrapper";
 
 export type OnParse<A, B, C, D> = {
