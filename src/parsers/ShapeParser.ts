@@ -19,7 +19,7 @@ export class ShapeParser<
       string & keyof typeof parserMap
     >,
     readonly description = {
-      name: "Shape",
+      name: isPartial ? "Partial" : "Shape",
       children: parserKeys.map((key) => parserMap[key]),
       extras: parserKeys,
     } as const
