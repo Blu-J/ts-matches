@@ -1,7 +1,12 @@
 import { Parser } from ".";
-import { saferStringify } from "../utils";
-import { isFunctionTest, isNumber, isObject, isString, OneOf } from "./utils";
-
+import { AnyParser } from "./AnyParser";
+import { ArrayParser } from "./ArrayParser";
+import { BoolParser } from "./BoolParser";
+import { FunctionParser } from "./FunctionParser";
+import { NilParser } from "./NillParser";
+import { NumberParser } from "./NumberParser";
+import { ObjectParser } from "./ObjectParser";
+import { StringParser } from "./StringParser";
 /**
  * Create a custom type guard
  * @param test A function that will determine runtime if the value matches
@@ -14,33 +19,25 @@ export function guard<A, B extends A>(
   return Parser.isA(test, testName || test.name);
 }
 
-export const any = guard((a: unknown): a is any => true, "any");
+export const any = new Parser(new AnyParser());
 
-export const number = guard(isNumber);
+export const number = new Parser(new NumberParser());
 
-export const isNill = guard(function isNill(x: unknown): x is null | undefined {
-  return x == null;
-});
+export const isNill = new Parser(new NilParser());
 
 export const natural = number.refine(
   (x): x is number => x >= 0 && x === Math.floor(x)
 );
 
-export const isFunction = guard<unknown, (...args: any[]) => any>(
-  (x): x is (...args: unknown[]) => unknown => isFunctionTest(x),
-  "isFunction"
-);
+export const isFunction = new Parser(new FunctionParser());
 
-export const boolean = guard(
-  (x): x is boolean => x === true || x === false,
-  "boolean"
-);
+export const boolean = new Parser(new BoolParser());
 
-export const object = guard(isObject);
+export const object = new Parser(new ObjectParser());
 
-export const isArray = guard<unknown, ArrayLike<unknown>>(Array.isArray);
+export const isArray = new Parser(new ArrayParser());
 
-export const string = guard((x): x is string => isString(x), "string");
+export const string = new Parser(new StringParser());
 export const instanceOf = <C>(classCreator: {
   new (...args: any[]): C;
 }): Parser<unknown, C> =>
