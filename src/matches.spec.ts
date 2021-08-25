@@ -819,6 +819,23 @@ describe("matches", () => {
         expect([0, "hi", 5, {}].filter(matches.number.test)).toEqual([0, 5]);
       });
     });
+    describe("Testing named", () => {
+      const enumTest = matches.literals("A", "B").name("enumTest");
+      type EnumTest = typeof enumTest._TYPE;
+      it("should be able to test valid should be the same", () => {
+        const input = "A";
+        // @ts-expect-error
+        const output: "B" = enumTest.unsafeCast(input);
+        const correctType: EnumTest = enumTest.unsafeCast(input);
+      });
+      it("should be able to test invalid with wrapped name", () => {
+        const input = "bad";
+        const output = enumTest.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(
+          `"Named<\\"enumTest\\",Literal<\\"A\\",\\"B\\">>(\\"bad\\")"`
+        );
+      });
+    });
 
     describe("Testing dictionaries", () => {
       const testMatcher = matches.dictionary(
