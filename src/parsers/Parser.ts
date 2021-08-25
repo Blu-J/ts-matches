@@ -17,6 +17,7 @@ import {
 } from "./interfaces";
 import { MappedAParser } from "./MappedAParser";
 import { MaybeParser } from "./MaybeParser";
+import { parserName } from "./Named";
 import { NilParser } from "./NillParser";
 import { NumberParser } from "./NumberParser";
 import { ObjectParser } from "./ObjectParser";
@@ -207,5 +208,9 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(
       ConcatParsers.of(this, new IsAParser(refinementTest, otherName)) as any
     );
+  }
+
+  name(nameString: string) {
+    return parserName(nameString, this);
   }
 }

@@ -31,6 +31,11 @@ export type Description = {
       readonly extras: readonly [];
     }
   | {
+      readonly name: "Named";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [string];
+    }
+  | {
       readonly name: "Concat";
       readonly children: readonly [SomeParser, SomeParser];
       readonly extras: readonly [];
@@ -102,6 +107,7 @@ export type ParserNames =
   | "Boolean"
   | "Concat"
   | "Default"
+  | "Named"
   | "Dictionary"
   | "Function"
   | "Guard"
