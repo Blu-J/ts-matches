@@ -23,7 +23,8 @@ import {
   dictionary,
   literals,
 } from "./parsers";
-export { IParser, ParserNames } from "./parsers/interfaces";
+import { parserName } from "./parsers/Named";
+export { ParserNames, IParser } from "./parsers/interfaces";
 
 export { Parser as Validator, ValidatorError };
 
@@ -151,6 +152,7 @@ export const matches = Object.assign(
     nill: isNill,
     instanceOf,
     Parse: Parser,
+    parserName,
   }
 );
 export default matches;
