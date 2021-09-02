@@ -8,4 +8,3 @@ reports/
 coverage
 .stryker-tmp
 package-lock.json
-testTemp/*
