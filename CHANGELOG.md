@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 Making the description type to convert the parser into something else, like JsonSchema or typescript types. This brings in the names, children, and extras for each.
 
+Adding in optional transformers to bring in to make things like typescript types
+
+```ts
+import matches from "ts-matches";
+import parserAsTypescriptString from "ts-matches/lib/typescriptTypes";
+console.log(parserAsTypescriptString(matches.string)); // string
+```
+
 Moving several simple parsers into their own description and parsers. Useful for things like typescript that have primitives like strings, numbers, and booleans.
 
 ## [4.2.0] - 2021-04-03
@@ -49,3 +57,7 @@ lambdas meaning less hitting of the garbage collector.
 ### Changed
 
 ### Fixed
+
+```
+
+```

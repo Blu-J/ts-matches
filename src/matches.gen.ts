@@ -120,6 +120,9 @@ const matcherPairsSimple = (() => {
   const matcherAny = fc
     .anything()
     .map((x) => matchPairOf(matches.any, x, "any", noPossibleCounter));
+  const matcherUnknown = fc
+    .anything()
+    .map((x) => matchPairOf(matches.unknown, x, "unknown", noPossibleCounter));
   const matcherString = fc
     .record({
       example: fc.string(),
@@ -249,6 +252,7 @@ const matcherPairsSimple = (() => {
     matchesLiteral,
     matcherArray,
     matcherAny,
+    matcherUnknown,
     matcherString,
     matcherNat,
     matcherNill
