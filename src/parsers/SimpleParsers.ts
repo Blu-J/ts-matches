@@ -7,6 +7,7 @@ import { NilParser } from "./NillParser";
 import { NumberParser } from "./NumberParser";
 import { ObjectParser } from "./ObjectParser";
 import { StringParser } from "./StringParser";
+import { UnknownParser } from "./UnknownParser";
 /**
  * Create a custom type guard
  * @param test A function that will determine runtime if the value matches
@@ -20,6 +21,8 @@ export function guard<A, B extends A>(
 }
 
 export const any = new Parser(new AnyParser());
+
+export const unknown = new Parser(new UnknownParser());
 
 export const number = new Parser(new NumberParser());
 
