@@ -14,8 +14,8 @@ export class LiteralsParser<B extends unknown[]>
     } as const
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, OneOf<B>, C, D>): C | D {
-    for (const value of this.values) {
-      if (value === a) return onParse.parsed(a as OneOf<B>);
+    if (this.values.indexOf(a) >= 0) {
+      return onParse.parsed(a as OneOf<B>);
     }
     return onParse.invalid({
       value: a,
