@@ -88,6 +88,7 @@ export type Description = {
   | {
       readonly name:
         | "Any"
+        | "Unknown"
         | "Null"
         | "Number"
         | "Boolean"
@@ -122,6 +123,7 @@ export type ParserNames =
   | "Or"
   | "Shape"
   | "String"
+  | "Unknown"
   | "Wrapper";
 
 export type OnParse<A, B, C, D> = {

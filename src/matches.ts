@@ -24,6 +24,7 @@ import {
   literals,
 } from "./parsers";
 import { parserName } from "./parsers/Named";
+import { unknown } from "./parsers/SimpleParsers";
 export { ParserNames, IParser } from "./parsers/interfaces";
 
 export { Parser as Validator, ValidatorError };
@@ -145,6 +146,7 @@ export const matches = Object.assign(
     literal,
     every,
     guard,
+    unknown,
     any,
     boolean,
     dictionary,
