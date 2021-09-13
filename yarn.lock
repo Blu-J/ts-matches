@@ -550,7 +550,7 @@
   dependencies:
     "@types/istanbul-lib-report" "*"
 
-"@types/jest@^26.0.8":
+"@types/jest@^26.0.24":
   version "26.0.24"
   resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.24.tgz#943d11976b16739185913a1936e0de0c4a7d595a"
   integrity sha512-E/X5Vib8BWqZNRlDxj9vYXhsDwPYbPINqKF9BsnSoon4RQ0D9moEuLD8txgyypFLH7J4+Lho9Nr/c8H0Fi+17w==
@@ -1357,7 +1357,7 @@ extsprintf@^1.2.0:
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
 
-fast-check@^2.0.0:
+fast-check@^2.17.0:
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/fast-check/-/fast-check-2.17.0.tgz#9b9637684332be386219a5f73a4799874da7461c"
   integrity sha512-fNNKkxNEJP+27QMcEzF6nbpOYoSZIS0p+TyB+xh/jXqRBxRhLkiZSREly4ruyV8uJi7nwH1YWAhi7OOK5TubRw==
@@ -2021,7 +2021,7 @@ jest-jasmine2@^26.6.3:
     pretty-format "^26.6.2"
     throat "^5.0.0"
 
-jest-junit@^12.0.0:
+jest-junit@^12.2.0:
   version "12.2.0"
   resolved "https://registry.yarnpkg.com/jest-junit/-/jest-junit-12.2.0.tgz#cff7f9516e84f8e30f6bdea04cd84db6b095a376"
   integrity sha512-ecGzF3KEQwLbMP5xMO7wqmgmyZlY/5yWDvgE/vFa+/uIT0KsU5nluf0D2fjIlOKB+tb6DiuSSpZuGpsmwbf7Fw==
@@ -2240,7 +2240,7 @@ jest-worker@^26.6.2:
     merge-stream "^2.0.0"
     supports-color "^7.0.0"
 
-jest@^26.2.2:
+jest@^26.6.3:
   version "26.6.3"
   resolved "https://registry.yarnpkg.com/jest/-/jest-26.6.3.tgz#40e8fdbe48f00dfa1f0ce8121ca74b88ac9148ef"
   integrity sha512-lGS5PXGAzR4RF7V5+XObhqz2KZIDUA1yD0DG6pBVmy10eh0ZIXQImRuzocsI/N2XZ1GrLFwTS27In2i2jlpq1Q==
@@ -2779,10 +2779,10 @@ prelude-ls@~1.1.2:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
 
-prettier@^2.2:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
-  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
+prettier@^2.3.2:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.0.tgz#85bdfe0f70c3e777cf13a4ffff39713ca6f64cba"
+  integrity sha512-DsEPLY1dE5HF3BxCRBmD4uYZ+5DCbvatnolqTqcxEgKVZnL2kUfyu7b8pPQ5+hTBkdhU9SLUmK0/pHb07RE4WQ==
 
 pretty-format@^26.0.0, pretty-format@^26.6.2:
   version "26.6.2"
@@ -3401,7 +3401,7 @@ tr46@^2.0.2:
   dependencies:
     punycode "^2.1.1"
 
-ts-jest@^26.1.4:
+ts-jest@^26.5.6:
   version "26.5.6"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.6.tgz#c32e0746425274e1dfe333f43cd3c800e014ec35"
   integrity sha512-rua+rCP8DxpA8b4DQD/6X2HQS8Zy/xzViVYfEs2OQu68tkCuKLV0Md8pmX55+W24uRIyAsf/BajRfxOs+R2MKA==
@@ -3416,11 +3416,6 @@ ts-jest@^26.1.4:
     mkdirp "1.x"
     semver "7.x"
     yargs-parser "20.x"
-
-ts-matches@4.1.5:
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/ts-matches/-/ts-matches-4.1.5.tgz#c5147aa55c24bc264f8ad11b97718e1a761cc4f3"
-  integrity sha512-hQoauaEqneX1tasfdnKUItAMcgAqBDK6RJJsvkdEOZc64X1tNaFxn6avJ5/EAAg1iC19/YGirgDh34xjIgy81Q==
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
@@ -3468,10 +3463,10 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.1:
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
-  integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
+typescript@^4.4.0:
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.3.tgz#bdc5407caa2b109efd4f82fe130656f977a29324"
+  integrity sha512-4xfscpisVgqqDfPaJo5vkd+Qd/ItkoagnHpufr+i2QCHBsNYp+G7UAoyFl8aPtx879u38wPV65rZ8qbGZijalA==
 
 union-value@^1.0.0:
   version "1.0.1"
