@@ -478,13 +478,19 @@ describe("matches", () => {
 
     test("should be able to test tuple(number, string)", () => {
       const testValue = [4, "test"];
-      const validator = matches.tuple([matches.number, matches.string]);
-      expect(validator.parse(testValue, unFold)).toEqual(testValue);
+      const validator = matches.tuple(matches.number, matches.string);
+      // @ts-expect-error
+      const badOutput: [string, number] = validator.unsafeCast(testValue);
+      // @ts-expect-error Type '[number, string]' is not assignable to type '[]'.\n  Source has 2 element(s) but target allows only 0.
+      const badOutput2: [] = validator.unsafeCast(testValue);
+      const goodOutput: [number, string] = validator.unsafeCast(testValue);
+      const output: [number, string] = validator.parse(testValue, unFold);
+      expect(output).toEqual(testValue);
     });
 
     test("should be able to test tuple(number, string) with failure", () => {
       const testValue = ["bad", 5];
-      const validator = matches.tuple([matches.number, matches.string]);
+      const validator = matches.tuple(matches.number, matches.string);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
         `"[\\"0\\"]number(\\"bad\\")"`
       );
@@ -880,15 +886,38 @@ describe("matches", () => {
           },
         ];
         const output = matches
-          .tuple([
+          .tuple(
             matches.shape({
               second: matches.literal("valid"),
-            }),
-          ])
+            })
+          )
           .parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
           `"[\\"0\\"][\\"second\\"]Literal<\\"valid\\">(\\"invalid\\")"`
         );
+      });
+
+      it("should be able to check tuple exact shape", () => {
+        const input = [1, 2, 3];
+        const matcher = matches.tuple(
+          matches.number,
+          matches.literal(2),
+          matches.number
+        );
+        // @ts-expect-error
+        const outputWrong: [number, number] = matcher.unsafeCast(input);
+        // @ts-expect-error
+        const outputWrong2: [number, 3, number] = matcher.unsafeCast(input);
+        // @ts-expect-error
+        const outputWrong3: [number, number, number, number] =
+          matcher.unsafeCast(input);
+        const outputRight1: [number, number, number] =
+          matcher.unsafeCast(input);
+        const outputRight2: [number, 2, number] = matcher.unsafeCast(input);
+        // expected type: Validator<unknown, [number,number,number]>
+        // actual type: Validator<unknown, never>;
+        expect(outputRight1).toEqual(input);
+        expect(outputWrong).toEqual(input);
       });
       it("should be able to project values", () => {
         const input = { test: "value" };

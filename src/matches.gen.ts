@@ -298,7 +298,7 @@ const matcherTuple = fc
     const validCounter =
       !!xs.length && xs.every((x) => x.counterExample !== noPossibleCounter);
     return matchPairOf(
-      matches.tuple(xs.map((tupleValue) => tupleValue.matcher) as any),
+      matches.tuple(...(xs.map((tupleValue) => tupleValue.matcher) as any)),
       xs.map((x) => x.example) as any,
       `tuple ${saferStringify(xs.map((x) => x.type))}`,
       validCounter ? xs.map((x) => x.counterExample) : 0
