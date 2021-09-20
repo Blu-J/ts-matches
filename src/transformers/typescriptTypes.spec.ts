@@ -4,6 +4,7 @@ import { parserAsTypescriptString } from "./typescriptTypes";
 const { execSync } = require("child_process");
 
 import * as ts from "typescript";
+import { tuple } from "../parsers";
 
 // This was pulled from the transpile in the typescript compiler
 function tsCompile(input: string, transpileOptions: ts.TranspileOptions = {}) {
@@ -137,10 +138,11 @@ describe("typescriptType Transformer", () => {
           mapped: number.map((x) => x + 1),
           default: number.defaultTo(5),
           dictionary: dictionary([literals("a", 5), number], [string, string]),
+          tuple: tuple(string, number),
         })
       )
     ).toMatchInlineSnapshot(
-      `"{\\"literals\\":(\\"a\\" | true | 5 | 6), \\"string\\":string, \\"number\\":number, \\"boolean\\":boolean, \\"array\\":Array<unknown>, \\"arrayOfString5\\":(Array<unknown> & Array<(string & (\\"5\\"))>), \\"object\\":object, \\"any\\":any, \\"unknown\\":unknown, \\"partial\\":Partial<{\\"someValue\\":string}>, \\"some\\":(number | string), \\"every\\":(number & number), \\"named\\":Date, \\"function\\":Function, \\"nill\\":null, \\"maybeLiterals\\":null | (\\"a\\" | true | 5 | 6), \\"maybeString\\":null | string, \\"maybeNumber\\":null | number, \\"maybeBoolean\\":null | boolean, \\"maybeArray\\":null | Array<unknown>, \\"mapped\\":number, \\"default\\":null | null | number, \\"dictionary\\":(object & {[keyT0 in (\\"a\\" | 5)]:number}&{[keyT1 in string]:string})}"`
+      `"{\\"literals\\":(\\"a\\" | true | 5 | 6), \\"string\\":string, \\"number\\":number, \\"boolean\\":boolean, \\"array\\":Array<unknown>, \\"arrayOfString5\\":(Array<unknown> & Array<(string & (\\"5\\"))>), \\"object\\":object, \\"any\\":any, \\"unknown\\":unknown, \\"partial\\":Partial<{\\"someValue\\":string}>, \\"some\\":(number | string), \\"every\\":(number & number), \\"named\\":Date, \\"function\\":Function, \\"nill\\":null, \\"maybeLiterals\\":null | (\\"a\\" | true | 5 | 6), \\"maybeString\\":null | string, \\"maybeNumber\\":null | number, \\"maybeBoolean\\":null | boolean, \\"maybeArray\\":null | Array<unknown>, \\"mapped\\":number, \\"default\\":null | null | number, \\"dictionary\\":(object & {[keyT0 in (\\"a\\" | 5)]:number}&{[keyT1 in string]:string}), \\"tuple\\":[string, number]}"`
     );
   });
   it("Should be able to compile output", () => {
