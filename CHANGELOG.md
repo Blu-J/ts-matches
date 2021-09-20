@@ -19,6 +19,8 @@ console.log(parserAsTypescriptString(matches.string)); // string
 
 Moving several simple parsers into their own description and parsers. Useful for things like typescript that have primitives like strings, numbers, and booleans.
 
+Changed the tuples to use the style of variadic instead of arrays, needed for typescript inference.
+
 ## [4.2.0] - 2021-04-03
 
 Adding in better matching capabilities.
