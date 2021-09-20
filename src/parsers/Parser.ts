@@ -1,11 +1,11 @@
 import { IsAParser } from ".";
+import { TupleStateInvalid, TupleStateValid } from "../tupleState";
 import { saferStringify } from "../utils";
 import { AnyParser } from "./AnyParser";
 import { ArrayParser } from "./ArrayParser";
 import { BoolParser } from "./BoolParser";
 import { ConcatParsers } from "./ConcatParser";
 import { DefaultParser } from "./DefaultParser";
-import { DictionaryParser } from "./DictionaryParser";
 import { FunctionParser } from "./FunctionParser";
 import { GuardParser } from "./GuardParser";
 import {
@@ -25,11 +25,19 @@ import { OrParsers } from "./OrParser";
 import { ShapeParser } from "./ShapeParser";
 import { StringParser } from "./StringParser";
 import { identity, booleanOnParse } from "./utils";
-
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;
 }
+
+const passThroughParse = {
+  parsed<A>(a: A) {
+    return ["valid", a] as const;
+  },
+  invalid(a: ISimpleParsedError) {
+    return ["invalid", a] as const;
+  },
+};
 
 export class Parser<A, B> implements IParser<A, B> {
   public readonly _TYPE: B = null as any;
@@ -212,5 +220,12 @@ export class Parser<A, B> implements IParser<A, B> {
 
   name(nameString: string) {
     return parserName(nameString, this);
+  }
+
+  asTupleState(value: A) {
+    return this.parse<TupleStateValid<B>, TupleStateInvalid>(
+      value,
+      passThroughParse
+    );
   }
 }
