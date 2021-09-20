@@ -860,6 +860,10 @@ describe("matches", () => {
           test: "valueWrong";
           test2: "value2";
         } = testMatcher.unsafeCast(input);
+        const correctCast: {
+          test: "value";
+          test2: "value2";
+        } = testMatcher.unsafeCast(input);
       });
       it("should be able to check incorrect shape", () => {
         const input = { test: "invalid", test2: "value2" };
@@ -921,22 +925,25 @@ describe("matches", () => {
       });
       it("should be able to project values", () => {
         const input = { test: "value" };
-        const output = matches
-          .dictionary([
-            matches.literal("test"),
-            matches.literal("value").map((x) => `value2`),
-          ])
-          .unsafeCast(input);
-        expect(output.test).toEqual("value2");
+        const matcher = matches.dictionary([
+          matches.literal("test"),
+          matches.literal("value").map((x) => `value2` as const),
+        ]);
+        // @ts-expect-error
+        const outputWrong: { test: "value" } = matcher.unsafeCast(input);
+        const outputOk: { test: string } = matcher.unsafeCast(input);
+        const outputMostCorrect: { test: "value2" } = matcher.unsafeCast(input);
+        expect(outputMostCorrect.test).toEqual("value2");
       });
       it("should be able to project keys", () => {
         const input = { test: "value" };
-        const output = matches
-          .dictionary([
-            matches.literal("test").map((x) => "projected" as const),
-            matches.literal("value"),
-          ])
-          .unsafeCast(input);
+        const matcher = matches.dictionary([
+          matches.literal("test").map((x) => "projected" as const),
+          matches.literal("value"),
+        ]);
+        // @ts-expect-error
+        const incorrectOutput: { test: "value" } = matcher.unsafeCast(input);
+        const output: { projected: "value" } = matcher.unsafeCast(input);
         expect(output.projected).toEqual("value");
       });
     });
