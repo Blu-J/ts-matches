@@ -1,9 +1,4 @@
 import { Parser, isArray, literal } from ".";
-import {
-  tupleStateInvalidValue,
-  tupleStateIsInvalid,
-  tupleStateValidValue,
-} from "../tupleState";
 import { saferStringify } from "../utils";
 import { IParser, OnParse, ParserInto } from "./interfaces";
 
@@ -29,27 +24,27 @@ export class TupleParser<A extends Parser<unknown, unknown>[]>
     input: unknown,
     onParse: OnParse<unknown, TupleParserInto<A>, C, D>
   ): C | D {
-    const tupleStateArray = isArray.asTupleState(input);
-    if (tupleStateIsInvalid(tupleStateArray))
-      return onParse.invalid(tupleStateInvalidValue(tupleStateArray));
-    const values = tupleStateValidValue(tupleStateArray);
-    const tupleStateLength = this.lengthMatcher.asTupleState(values.length);
-    if (tupleStateIsInvalid(tupleStateLength)) {
-      const result = tupleStateInvalidValue(tupleStateLength);
-      result.keys.push(saferStringify("length"));
-      return onParse.invalid(result);
+    const tupleError = isArray.enumParsed(input);
+    if ("error" in tupleError) return onParse.invalid(tupleError.error);
+    const values = input as unknown[];
+    const stateCheck = this.lengthMatcher.enumParsed(values.length);
+    if ("error" in stateCheck) {
+      stateCheck.error.keys.push(saferStringify("length"));
+      return onParse.invalid(stateCheck.error);
     }
+    const answer = new Array(this.parsers.length);
     for (const key in this.parsers) {
       const parser = this.parsers[key];
       const value = values[key];
-      const resultTuple = parser.asTupleState(value);
-      if (tupleStateIsInvalid(resultTuple)) {
-        const result = tupleStateInvalidValue(resultTuple);
-        result.keys.push(saferStringify(key));
-        return onParse.invalid(result);
+      const result = parser.enumParsed(value);
+      if ("error" in result) {
+        const { error } = result;
+        error.keys.push(saferStringify(key));
+        return onParse.invalid(error);
       }
+      answer[key] = result.value;
     }
-    return onParse.parsed(values as any);
+    return onParse.parsed(answer as any);
   }
 }
 

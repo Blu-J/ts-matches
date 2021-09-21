@@ -1,7 +1,7 @@
 import matches from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
-import { Parser, any, every, number, partial, shape } from "./parsers";
+import { Parser, any, every, shape } from "./parsers";
 import { saferStringify } from "./utils";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";

@@ -1,9 +1,10 @@
 import { IParser, OnParse } from "./interfaces";
+import { Parser } from "./Parser";
 
 export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
   constructor(
-    readonly parent: IParser<A, B>,
-    readonly otherParser: IParser<A2, B2>,
+    readonly parent: Parser<A, B>,
+    readonly otherParser: Parser<A2, B2>,
     readonly description = {
       name: "Or",
       children: [parent, otherParser],
@@ -11,23 +12,17 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
     } as const
   ) {}
   parse<C, D>(a: A & A2, onParse: OnParse<A | A2, B | B2, C, D>): C | D {
-    const otherParser = this.otherParser;
     const parser = this;
-    return this.parent.parse(a, {
-      parsed(value) {
-        return onParse.parsed(value);
-      },
-      invalid(previousError) {
-        return otherParser.parse(a, {
-          parsed(value) {
-            return onParse.parsed(value);
-          },
-          invalid(error) {
-            error.parser = parser;
-            return onParse.invalid(error);
-          },
-        });
-      },
-    });
+    const parent = this.parent.enumParsed(a);
+    if ("value" in parent) {
+      return onParse.parsed(parent.value);
+    }
+    const other = this.otherParser.enumParsed(a);
+    if ("error" in other) {
+      const { error } = other;
+      error.parser = parser;
+      return onParse.invalid(error);
+    }
+    return onParse.parsed(other.value);
   }
 }
