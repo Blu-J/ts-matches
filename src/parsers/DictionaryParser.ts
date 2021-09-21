@@ -1,7 +1,5 @@
 import { object, Parser } from ".";
-import { saferStringify } from "../utils";
 import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces";
-import { identity } from "./utils";
 
 export type DictionaryTuple<A> = A extends [
   Parser<unknown, infer Keys>,
