@@ -17,7 +17,7 @@
   "author": "Justin Miller",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^27.2.0",
+    "@types/jest": "^27.0.1",
     "fast-check": "^2.17.0",
     "jest": "27.2.0",
     "prettier": "^2.4.1",
