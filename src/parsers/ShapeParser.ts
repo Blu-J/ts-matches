@@ -64,9 +64,9 @@ export class ShapeParser<
     return onParse.parsed(value);
   }
 }
-export const isPartial = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, Partial<A>> => {
+export const isPartial = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, Partial<A>> => {
   return new Parser(new ShapeParser(testShape, true)) as any;
 };
 
@@ -80,11 +80,11 @@ export const partial = isPartial;
  * @param testShape Shape of validators, to ensure we match the shape
  */
 
-export const isShape = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, A> => {
+export const isShape = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, A> => {
   return new Parser(new ShapeParser(testShape, false)) as any;
 };
-export const shape = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, A> => isShape(testShape);
+export const shape = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, A> => isShape(testShape);
