@@ -363,9 +363,9 @@ const matcherShape = fc.dictionary(fc.string(), matcherPairsSimple).map((x) => {
 const matcherShapePartial = fc
   .dictionary(fc.string(), matcherPairsSimple)
   .map((x) => {
-    type testingShape = Partial<
-      { [key in keyof typeof x]: typeof x[key]["example"] }
-    >;
+    type testingShape = Partial<{
+      [key in keyof typeof x]: typeof x[key]["example"];
+    }>;
     const matcher: Parser<unknown, testingShape> = matches.partial(
       Object.keys(x).reduce(
         (
