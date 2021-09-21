@@ -1,6 +1,5 @@
 import { Parser, isArray } from ".";
 import { IParser, OnParse } from "./interfaces";
-import { identity } from "./utils";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on

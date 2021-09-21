@@ -1,7 +1,6 @@
 # Typescript Matches
 
-[![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
-[![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
+[![codecov](https://codecov.io/gh/Blu-J/ts-matches/branch/master/graph/badge.svg?token=RQ37H4AWWR)](https://codecov.io/gh/Blu-J/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
 
