@@ -23,7 +23,7 @@ jobs:
 
       - run: yarn install
 
-      - run: yarn ci
+      - run: yarn yarnCi
 
       - run:
           name: Install JUnit coverage reporter

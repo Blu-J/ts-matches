@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "ci": "npm run build && npm run test && npm run pretty-check",
+    "yarnCi": "yarn run build && yarn run test && yarn run pretty-check",
     "build": "rm -rf lib && tsc",
     "test": "jest",
     "pretty-check": "prettier --check src",
