@@ -90,17 +90,15 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
         matcher instanceof Parser ? matcher : literal(matcher as any)
       )
     );
-    return parser.parse(this.a, {
-      parsed(value: any) {
-        if (outcome instanceof Function) {
-          return new Matched(outcome(value));
-        }
-        return new Matched(outcome);
-      },
-      invalid(_) {
-        return me;
-      },
-    }) as any;
+    const result = parser.enumParsed(this.a);
+    if ("error" in result) {
+      return me;
+    }
+    const { value } = result;
+    if (outcome instanceof Function) {
+      return new Matched(outcome(value));
+    }
+    return new Matched(outcome) as any;
   }
 
   defaultTo<B>(value: B) {

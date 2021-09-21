@@ -44,19 +44,14 @@ export class ShapeParser<
     for (const key in parserMap) {
       if (key in value) {
         const parser = parserMap[key];
-        const isValidParse = parser.parse((a as any)[key], {
-          parsed(smallValue) {
-            value[key] = smallValue;
-            return true as const;
-          },
-          invalid(error) {
-            error.keys.push(saferStringify(key));
-            return error;
-          },
-        });
-        if (isValidParse !== true) {
-          return onParse.invalid(isValidParse);
+        const state = parser.enumParsed((a as any)[key]);
+        if ("error" in state) {
+          const { error } = state;
+          error.keys.push(saferStringify(key));
+          return onParse.invalid(error);
         }
+        const smallValue = state.value;
+        value[key] = smallValue;
       } else if (!isPartial) {
         return onParse.invalid({
           value: "missingProperty",
@@ -69,9 +64,9 @@ export class ShapeParser<
     return onParse.parsed(value);
   }
 }
-export const isPartial = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, Partial<A>> => {
+export const isPartial = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, Partial<A>> => {
   return new Parser(new ShapeParser(testShape, true)) as any;
 };
 
@@ -85,11 +80,11 @@ export const partial = isPartial;
  * @param testShape Shape of validators, to ensure we match the shape
  */
 
-export const isShape = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, A> => {
+export const isShape = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, A> => {
   return new Parser(new ShapeParser(testShape, false)) as any;
 };
-export const shape = <A extends {}>(
-  testShape: { [key in keyof A]: Parser<unknown, A[key]> }
-): Parser<unknown, A> => isShape(testShape);
+export const shape = <A extends {}>(testShape: {
+  [key in keyof A]: Parser<unknown, A[key]>;
+}): Parser<unknown, A> => isShape(testShape);
