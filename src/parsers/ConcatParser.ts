@@ -12,10 +12,10 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
     } as const
   ) {}
   static of<A, B, B2>(parent: Parser<A, B>, otherParser: Parser<B, B2>) {
-    if (parent === any) {
+    if (parent.unwrappedParser().description.name === "Any") {
       return otherParser;
     }
-    if (otherParser === any) {
+    if (otherParser.unwrappedParser().description.name === "Any") {
       return parent;
     }
     return new ConcatParsers(parent, otherParser);

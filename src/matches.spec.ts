@@ -552,6 +552,14 @@ describe("matches", () => {
         `"string(5)"`
       );
     });
+
+    test("should be remove any in chains", () => {
+      const testValue = 5;
+      const validator = matches.any.concat(matches.string).concat(matches.any);
+      expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
+        `"string(5)"`
+      );
+    });
     test("should be fallible union several matchers", () => {
       const testValue = 5;
       const isEven = matches.guard(
@@ -934,6 +942,17 @@ describe("matches", () => {
         const outputOk: { test: string } = matcher.unsafeCast(input);
         const outputMostCorrect: { test: "value2" } = matcher.unsafeCast(input);
         expect(outputMostCorrect.test).toEqual("value2");
+      });
+      it("should be able to still reject values", () => {
+        const input = { test: "value2" };
+        const matcher = matches.dictionary([
+          matches.literal("test"),
+          matches.literal("value").map((x) => `value2` as const),
+        ]);
+        const output = matcher.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(
+          `"[test]Literal<\\"value\\">(\\"value2\\")"`
+        );
       });
       it("should be able to project keys", () => {
         const input = { test: "value" };
