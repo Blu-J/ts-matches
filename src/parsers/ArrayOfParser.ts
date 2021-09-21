@@ -1,6 +1,5 @@
 import { Parser, isArray } from ".";
 import { IParser, OnParse } from "./interfaces";
-import { identity } from "./utils";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on
@@ -9,7 +8,7 @@ import { identity } from "./utils";
  */
 export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
   constructor(
-    readonly parser: IParser<A[number], B>,
+    readonly parser: Parser<A[number], B>,
     readonly description = {
       name: "ArrayOf",
       children: [parser],
@@ -19,16 +18,12 @@ export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
   parse<C, D>(a: A, onParse: OnParse<A, B[], C, D>): C | D {
     const values = [...a];
     for (let index = 0; index < values.length; index++) {
-      const error = this.parser.parse(values[index], {
-        parsed(value) {
-          values[index] = value;
-          return false as const;
-        },
-        invalid: identity,
-      });
-      if (!!error) {
-        error.keys.push("" + index);
-        return onParse.invalid(error);
+      const result = this.parser.enumParsed(values[index]);
+      if ("error" in result) {
+        result.error.keys.push("" + index);
+        return onParse.invalid(result.error);
+      } else {
+        values[index] = result.value;
       }
     }
     return onParse.parsed(values as any);

@@ -3,7 +3,7 @@ import { IParser, OnParse } from "./interfaces";
 
 export class NamedParser<A, B> implements IParser<A, B> {
   constructor(
-    readonly parent: IParser<A, B>,
+    readonly parent: Parser<A, B>,
     readonly name: string,
     readonly description = {
       name: "Named",
@@ -13,18 +13,19 @@ export class NamedParser<A, B> implements IParser<A, B> {
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     const parser = this;
-    return this.parent.parse(a, {
-      parsed(value) {
-        return onParse.parsed(value);
-      },
-      invalid(error) {
-        error.parser = parser;
-        return onParse.invalid(error);
-      },
-    });
+    const parent = this.parent.enumParsed(a);
+    if ("error" in parent) {
+      const { error } = parent;
+      error.parser = parser;
+      return onParse.invalid(error);
+    }
+    return onParse.parsed(parent.value);
   }
 }
 
-export function parserName<A, B>(name: string, parent: IParser<A, B>) {
+export function parserName<A, B>(
+  name: string,
+  parent: Parser<A, B>
+): Parser<A, B> {
   return new Parser(new NamedParser(parent, name));
 }

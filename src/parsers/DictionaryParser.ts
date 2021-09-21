@@ -1,7 +1,5 @@
 import { object, Parser } from ".";
-import { saferStringify } from "../utils";
 import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces";
-import { identity } from "./utils";
 
 export type DictionaryTuple<A> = A extends [
   Parser<unknown, infer Keys>,
@@ -46,31 +44,25 @@ export class DictionaryParser<
     outer: for (const key in a) {
       let parseError: Array<ISimpleParsedError> = [];
       for (const [keyParser, valueParser] of parsers) {
-        const newError = keyParser.parse(key, {
-          parsed(newKey: string | number) {
-            return valueParser.parse((a as any)[key], {
-              parsed(newValue) {
-                delete answer[key];
-                answer[newKey] = newValue;
-                return false as const;
-              },
-              invalid(error) {
-                error.keys.push("" + newKey);
-                parseError.unshift(error);
-                return error;
-              },
-            });
-          },
-          invalid(error) {
-            error.parser = parser;
-            error.keys.push("" + key);
-            parseError.push(error);
-            return error;
-          },
-        });
-        if (newError === false) {
-          break outer;
+        const enumState = keyParser.enumParsed(key);
+        if ("error" in enumState) {
+          const { error } = enumState;
+          error.parser = parser;
+          error.keys.push("" + key);
+          parseError.push(error);
+          continue;
         }
+        const newKey = enumState.value as string | number;
+        const valueState = valueParser.enumParsed((a as any)[key]);
+        if ("error" in valueState) {
+          const { error } = valueState;
+          error.keys.push("" + newKey);
+          parseError.unshift(error);
+          continue;
+        }
+        delete answer[key];
+        answer[newKey] = valueState.value;
+        break outer;
       }
       const error = parseError[0];
       if (!!error) {

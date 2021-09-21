@@ -1,7 +1,6 @@
 # Typescript Matches
 
-[![CircleCI](https://circleci.com/gh/Blu-J/ts-matches.svg?style=svg)](https://circleci.com/gh/Blu-J/ts-matches)
-[![Coverage Status](https://coveralls.io/repos/github/Blu-J/ts-matches/badge.svg?branch=master)](https://coveralls.io/github/Blu-J/ts-matches?branch=master)
+[![codecov](https://codecov.io/gh/Blu-J/ts-matches/branch/master/graph/badge.svg?token=RQ37H4AWWR)](https://codecov.io/gh/Blu-J/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/minzip/ts-matches)
 ![Bundle Phobia](https://badgen.net/bundlephobia/min/ts-matches)
 
@@ -31,7 +30,7 @@ fetch("fishes.com/gold-fishes/12")
   .then(
     matches.shape({
       type: t.literal("gold-fish"),
-      position: t.tuple([t.number, t.number]),
+      position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
     }).unsafeCast
@@ -53,12 +52,12 @@ And here we can use the type checking and what do in that case. With destructuri
 
 ```typescript
 import matches from "matches";
-const matchNone = matches.tuple([matches.literal("none")]);
-const matchSome = matches.tuple([matches.literal("some"), matches.any]);
+const matchNone = matches.tuple(matches.literal("none"));
+const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple[(matches.any, matches.number)]
+  matches.tuple(matches.any, matches.number)
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)

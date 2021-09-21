@@ -46,6 +46,11 @@ export type Description = {
       readonly extras: readonly [unknown];
     }
   | {
+      readonly name: "Tuple";
+      readonly children: ReadonlyArray<SomeParser>;
+      readonly extras: readonly [];
+    }
+  | {
       readonly name: "Dictionary";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: readonly [];
@@ -123,6 +128,7 @@ export type ParserNames =
   | "Or"
   | "Shape"
   | "String"
+  | "Tuple"
   | "Unknown"
   | "Wrapper";
 
