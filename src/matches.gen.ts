@@ -81,7 +81,7 @@ const matcherPairsSimple = (() => {
   fc.boolean(), fc.integer(), fc.string();
   const matcherFunction = fc
     .record({
-      example: fc.constant(() => {}),
+      example: fc.func(fc.nat()),
       counterExample: fc.oneof<any>(
         fc.constantFrom(null, undefined),
         fc.string(),
