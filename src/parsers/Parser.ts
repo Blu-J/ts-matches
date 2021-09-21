@@ -225,4 +225,16 @@ export class Parser<A, B> implements IParser<A, B> {
   enumParsed(value: A): { value: B } | { error: ISimpleParsedError } {
     return this.parse(value, enumParsed) as any;
   }
+
+  unwrappedParser() {
+    let answer: Parser<any, any> = this;
+    while (true) {
+      const next = answer.parser;
+      if (next instanceof Parser) {
+        answer = next;
+      } else {
+        return next;
+      }
+    }
+  }
 }
