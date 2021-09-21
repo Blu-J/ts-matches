@@ -1,5 +1,4 @@
 import { IsAParser } from ".";
-import { TupleStateInvalid, TupleStateValid } from "../tupleState";
 import { saferStringify } from "../utils";
 import { AnyParser } from "./AnyParser";
 import { ArrayParser } from "./ArrayParser";
@@ -30,12 +29,12 @@ function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   return a;
 }
 
-const passThroughParse = {
-  parsed<A>(a: A) {
-    return ["valid", a] as const;
+const enumParsed = {
+  parsed<A>(value: A) {
+    return { value };
   },
-  invalid(a: ISimpleParsedError) {
-    return ["invalid", a] as const;
+  invalid(error: ISimpleParsedError) {
+    return { error };
   },
 };
 
@@ -136,31 +135,25 @@ export class Parser<A, B> implements IParser<A, B> {
     return `${name}${specifiersString}`;
   }
   unsafeCast(value: A): B {
-    return this.parse(value, {
-      parsed: identity,
-      invalid(error) {
-        throw new TypeError(
-          `Failed type: ${Parser.validatorErrorAsString(
-            error
-          )} given input ${saferStringify(value)}`
-        );
-      },
-    });
+    const state = this.enumParsed(value);
+    if ("value" in state) return state.value;
+    const { error } = state;
+    throw new TypeError(
+      `Failed type: ${Parser.validatorErrorAsString(
+        error
+      )} given input ${saferStringify(value)}`
+    );
   }
   castPromise(value: A): Promise<B> {
-    return new Promise((resolve, reject) =>
-      this.parse(value, {
-        parsed: resolve,
-        invalid(error) {
-          reject(
-            new TypeError(
-              `Failed type: ${Parser.validatorErrorAsString(
-                error
-              )} given input ${saferStringify(value)}`
-            )
-          );
-        },
-      })
+    const state = this.enumParsed(value);
+    if ("value" in state) return Promise.resolve(state.value);
+    const { error } = state;
+    return Promise.reject(
+      new TypeError(
+        `Failed type: ${Parser.validatorErrorAsString(
+          error
+        )} given input ${saferStringify(value)}`
+      )
     );
   }
 
@@ -169,11 +162,11 @@ export class Parser<A, B> implements IParser<A, B> {
   }
 
   concat<C>(otherParser: IParser<B, C>): Parser<A, C> {
-    return new Parser(ConcatParsers.of(this, otherParser) as any);
+    return new Parser(ConcatParsers.of(this, new Parser(otherParser)) as any);
   }
 
   orParser<C>(otherParser: IParser<A, C>): Parser<A, B | C> {
-    return new Parser(new OrParsers(this, otherParser));
+    return new Parser(new OrParsers(this, new Parser(otherParser)));
   }
 
   test = (value: A): value is A & B => {
@@ -192,7 +185,9 @@ export class Parser<A, B> implements IParser<A, B> {
    * and want it to go to a default value
    */
   defaultTo<C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> {
-    return new Parser(new DefaultParser(new MaybeParser(this), defaultValue));
+    return new Parser(
+      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue)
+    );
   }
   /**
    * We want to test value with a test eg isEven
@@ -201,7 +196,9 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(
       ConcatParsers.of(
         this,
-        new IsAParser(isValid as (value: B) => value is B, otherName)
+        new Parser(
+          new IsAParser(isValid as (value: B) => value is B, otherName)
+        )
       ) as any
     );
   }
@@ -214,7 +211,10 @@ export class Parser<A, B> implements IParser<A, B> {
     otherName: string = refinementTest.name
   ): Parser<A, B & C> {
     return new Parser(
-      ConcatParsers.of(this, new IsAParser(refinementTest, otherName)) as any
+      ConcatParsers.of(
+        this,
+        new Parser(new IsAParser(refinementTest, otherName))
+      ) as any
     );
   }
 
@@ -222,10 +222,7 @@ export class Parser<A, B> implements IParser<A, B> {
     return parserName(nameString, this);
   }
 
-  asTupleState(value: A) {
-    return this.parse<TupleStateValid<B>, TupleStateInvalid>(
-      value,
-      passThroughParse
-    );
+  enumParsed(value: A): { value: B } | { error: ISimpleParsedError } {
+    return this.parse(value, enumParsed) as any;
   }
 }

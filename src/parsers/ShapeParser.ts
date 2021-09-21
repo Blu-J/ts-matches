@@ -44,19 +44,14 @@ export class ShapeParser<
     for (const key in parserMap) {
       if (key in value) {
         const parser = parserMap[key];
-        const isValidParse = parser.parse((a as any)[key], {
-          parsed(smallValue) {
-            value[key] = smallValue;
-            return true as const;
-          },
-          invalid(error) {
-            error.keys.push(saferStringify(key));
-            return error;
-          },
-        });
-        if (isValidParse !== true) {
-          return onParse.invalid(isValidParse);
+        const state = parser.enumParsed((a as any)[key]);
+        if ("error" in state) {
+          const { error } = state;
+          error.keys.push(saferStringify(key));
+          return onParse.invalid(error);
         }
+        const smallValue = state.value;
+        value[key] = smallValue;
       } else if (!isPartial) {
         return onParse.invalid({
           value: "missingProperty",

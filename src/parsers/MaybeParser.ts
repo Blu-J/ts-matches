@@ -1,7 +1,8 @@
+import { Parser } from ".";
 import { IParser, Optional, OnParse } from "./interfaces";
 export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
   constructor(
-    readonly parent: IParser<A, B>,
+    readonly parent: Parser<A, B>,
     readonly description = {
       name: "Maybe",
       children: [parent],
@@ -13,14 +14,13 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
       return onParse.parsed(null);
     }
     const parser = this;
-    return this.parent.parse(a, {
-      parsed(value) {
-        return onParse.parsed(value);
-      },
-      invalid(error) {
-        error.parser = parser;
-        return onParse.invalid(error);
-      },
-    });
+    const parentState = this.parent.enumParsed(a);
+    if ("error" in parentState) {
+      const { error } = parentState;
+
+      error.parser = parser;
+      return onParse.invalid(error);
+    }
+    return onParse.parsed(parentState.value);
   }
 }
