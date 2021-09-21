@@ -28,6 +28,9 @@
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
     },
+    "testPathIgnorePatterns": [
+      "/src/.*.gen.(jsx?|tsx?)$"
+    ],
     "testRegex": "/src/.*.spec.(jsx?|tsx?)$",
     "moduleFileExtensions": [
       "ts",
