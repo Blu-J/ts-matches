@@ -23,7 +23,7 @@ import { ObjectParser } from "./ObjectParser";
 import { OrParsers } from "./OrParser";
 import { ShapeParser } from "./ShapeParser";
 import { StringParser } from "./StringParser";
-import { identity, booleanOnParse } from "./utils";
+import { booleanOnParse } from "./utils";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;
