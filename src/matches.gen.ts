@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import * as fc from "fast-check";
 import matches, { ChainMatches } from "./matches";
 import { Parser } from "./parsers";
