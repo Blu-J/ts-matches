@@ -1,11 +1,13 @@
 import matches from "./matches";
 import fc from "fast-check";
 import * as gens from "./matches.gen";
-import { Parser, any, every, number, partial, shape } from "./parsers";
+import { Parser, any, every, shape } from "./parsers";
 import { saferStringify } from "./utils";
 
 const isNumber = (x: unknown): x is number => typeof x === "number";
-
+class Event {
+  constructor(readonly type: string) {}
+}
 export const validatorError = every(
   shape({
     parser: matches.object,
@@ -478,13 +480,19 @@ describe("matches", () => {
 
     test("should be able to test tuple(number, string)", () => {
       const testValue = [4, "test"];
-      const validator = matches.tuple([matches.number, matches.string]);
-      expect(validator.parse(testValue, unFold)).toEqual(testValue);
+      const validator = matches.tuple(matches.number, matches.string);
+      // @ts-expect-error
+      const badOutput: [string, number] = validator.unsafeCast(testValue);
+      // @ts-expect-error Type '[number, string]' is not assignable to type '[]'.\n  Source has 2 element(s) but target allows only 0.
+      const badOutput2: [] = validator.unsafeCast(testValue);
+      const goodOutput: [number, string] = validator.unsafeCast(testValue);
+      const output: [number, string] = validator.parse(testValue, unFold);
+      expect(output).toEqual(testValue);
     });
 
     test("should be able to test tuple(number, string) with failure", () => {
       const testValue = ["bad", 5];
-      const validator = matches.tuple([matches.number, matches.string]);
+      const validator = matches.tuple(matches.number, matches.string);
       expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
         `"[\\"0\\"]number(\\"bad\\")"`
       );
@@ -537,6 +545,14 @@ describe("matches", () => {
     test("every should clean up anys", () => {
       const every = matches.every(matches.any, matches.any);
       expect(every).toEqual(matches.any);
+    });
+
+    test("should be remove any in chains", () => {
+      const testValue = 5;
+      const validator = matches.any.concat(matches.string).concat(matches.any);
+      expect(validator.parse(testValue, unFold)).toMatchInlineSnapshot(
+        `"string(5)"`
+      );
     });
 
     test("should be remove any in chains", () => {
@@ -854,6 +870,10 @@ describe("matches", () => {
           test: "valueWrong";
           test2: "value2";
         } = testMatcher.unsafeCast(input);
+        const correctCast: {
+          test: "value";
+          test2: "value2";
+        } = testMatcher.unsafeCast(input);
       });
       it("should be able to check incorrect shape", () => {
         const input = { test: "invalid", test2: "value2" };
@@ -880,34 +900,71 @@ describe("matches", () => {
           },
         ];
         const output = matches
-          .tuple([
+          .tuple(
             matches.shape({
               second: matches.literal("valid"),
-            }),
-          ])
+            })
+          )
           .parse(input, unFold);
         expect(output).toMatchInlineSnapshot(
           `"[\\"0\\"][\\"second\\"]Literal<\\"valid\\">(\\"invalid\\")"`
         );
       });
+
+      it("should be able to check tuple exact shape", () => {
+        const input = [1, 2, 3];
+        const matcher = matches.tuple(
+          matches.number,
+          matches.literal(2),
+          matches.number
+        );
+        // @ts-expect-error
+        const outputWrong: [number, number] = matcher.unsafeCast(input);
+        // @ts-expect-error
+        const outputWrong2: [number, 3, number] = matcher.unsafeCast(input);
+        // @ts-expect-error
+        const outputWrong3: [number, number, number, number] =
+          matcher.unsafeCast(input);
+        const outputRight1: [number, number, number] =
+          matcher.unsafeCast(input);
+        const outputRight2: [number, 2, number] = matcher.unsafeCast(input);
+        // expected type: Validator<unknown, [number,number,number]>
+        // actual type: Validator<unknown, never>;
+        expect(outputRight1).toEqual(input);
+        expect(outputWrong).toEqual(input);
+      });
       it("should be able to project values", () => {
         const input = { test: "value" };
-        const output = matches
-          .dictionary([
-            matches.literal("test"),
-            matches.literal("value").map((x) => `value2`),
-          ])
-          .unsafeCast(input);
-        expect(output.test).toEqual("value2");
+        const matcher = matches.dictionary([
+          matches.literal("test"),
+          matches.literal("value").map((x) => `value2` as const),
+        ]);
+        // @ts-expect-error
+        const outputWrong: { test: "value" } = matcher.unsafeCast(input);
+        const outputOk: { test: string } = matcher.unsafeCast(input);
+        const outputMostCorrect: { test: "value2" } = matcher.unsafeCast(input);
+        expect(outputMostCorrect.test).toEqual("value2");
+      });
+      it("should be able to still reject values", () => {
+        const input = { test: "value2" };
+        const matcher = matches.dictionary([
+          matches.literal("test"),
+          matches.literal("value").map((x) => `value2` as const),
+        ]);
+        const output = matcher.parse(input, unFold);
+        expect(output).toMatchInlineSnapshot(
+          `"[test]Literal<\\"value\\">(\\"value2\\")"`
+        );
       });
       it("should be able to project keys", () => {
         const input = { test: "value" };
-        const output = matches
-          .dictionary([
-            matches.literal("test").map((x) => "projected" as const),
-            matches.literal("value"),
-          ])
-          .unsafeCast(input);
+        const matcher = matches.dictionary([
+          matches.literal("test").map((x) => "projected" as const),
+          matches.literal("value"),
+        ]);
+        // @ts-expect-error
+        const incorrectOutput: { test: "value" } = matcher.unsafeCast(input);
+        const output: { projected: "value" } = matcher.unsafeCast(input);
         expect(output.projected).toEqual("value");
       });
     });

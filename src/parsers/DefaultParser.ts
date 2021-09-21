@@ -1,10 +1,11 @@
+import { Parser } from ".";
 import { IParser, Optional, NonNull, OnParse } from "./interfaces";
 
 export class DefaultParser<A, B, B2>
   implements IParser<Optional<A>, NonNull<B, B2>>
 {
   constructor(
-    readonly parent: IParser<A, B>,
+    readonly parent: Parser<A, B>,
     readonly defaultValue: B2,
     readonly description = {
       name: "Default" as const,
@@ -21,14 +22,11 @@ export class DefaultParser<A, B, B2>
     if (a == null) {
       return onParse.parsed(defaultValue as any);
     }
-    return this.parent.parse(a, {
-      parsed(value) {
-        return onParse.parsed(value as any);
-      },
-      invalid(error) {
-        error.parser = parser;
-        return onParse.invalid(error);
-      },
-    });
+    const parentCheck = this.parent.enumParsed(a);
+    if ("error" in parentCheck) {
+      parentCheck.error.parser = parser;
+      return onParse.invalid(parentCheck.error);
+    }
+    return onParse.parsed(parentCheck.value as any);
   }
 }
