@@ -15,6 +15,12 @@ export const validatorError = every(
     value: any,
   })
 );
+type AssertNever<A> = A extends string | number | boolean | object | Function
+  ? A
+  : never;
+function assertNeverUnknown<A>(a: AssertNever<A>): A {
+  return a;
+}
 
 const unFold = {
   invalid: Parser.validatorErrorAsString,
@@ -582,6 +588,22 @@ describe("matches", () => {
       const testValue = [5, 5, 5];
       const arrayOf = matches.arrayOf(matches.literal(5));
       expect(arrayOf.parse(testValue, unFold)).toEqual(testValue);
+    });
+    test("should have array of test negative", () => {
+      const testValue = "bad";
+      const arrayOf = matches.arrayOf(matches.literal(5));
+      expect(arrayOf.parse(testValue, unFold)).toMatchInlineSnapshot(
+        `"ArrayOf<Literal<5>>(\\"bad\\")"`
+      );
+    });
+    test("should be able to get the value of an array of", () => {
+      const testValue = [{ test: 5 }];
+      const matchTest = matches.shape({ test: matches.number });
+      type Test = typeof matchTest._TYPE;
+      const arrayOf = matches.arrayOf(matchTest);
+      const _testValue = assertNeverUnknown(arrayOf.unsafeCast(testValue)[0]);
+      const testValuesGood: Test = arrayOf.unsafeCast(testValue)[0];
+      expect(testValuesGood).toEqual(testValue[0]);
     });
     test("should be able to match literals", () => {
       const matcher = matches.literals(4, "3");
