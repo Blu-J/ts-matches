@@ -6,16 +6,22 @@ import { IParser, OnParse } from "./interfaces";
  * the key matches the parser
  * Note: This will mutate the value sent through
  */
-export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
+export class ArrayOfParser<B> implements IParser<unknown, B[]> {
   constructor(
-    readonly parser: Parser<A[number], B>,
+    readonly parser: Parser<unknown, B>,
     readonly description = {
       name: "ArrayOf",
       children: [parser],
       extras: [],
     } as const
   ) {}
-  parse<C, D>(a: A, onParse: OnParse<A, B[], C, D>): C | D {
+  parse<C, D>(a: unknown, onParse: OnParse<unknown, B[], C, D>): C | D {
+    if (!Array.isArray(a))
+      return onParse.invalid({
+        value: a,
+        keys: [],
+        parser: this,
+      });
     const values = [...a];
     for (let index = 0; index < values.length; index++) {
       const result = this.parser.enumParsed(values[index]);
@@ -36,5 +42,5 @@ export class ArrayOfParser<A extends unknown[], B> implements IParser<A, B[]> {
 export function arrayOf<A>(
   validator: Parser<unknown, A>
 ): Parser<unknown, A[]> {
-  return isArray.concat(new ArrayOfParser(validator));
+  return new Parser(new ArrayOfParser(validator));
 }
