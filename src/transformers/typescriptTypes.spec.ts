@@ -10,7 +10,7 @@ import { tuple } from "../parsers";
 function tsCompile(input: string, transpileOptions: ts.TranspileOptions = {}) {
   const diagnostics: ts.Diagnostic[] = [];
 
-  const options: ts.CompilerOptions = transpileOptions.compilerOptions ?? {};
+  const options: ts.CompilerOptions = transpileOptions.compilerOptions || {};
   // transpileModule does not write anything to disk so there is no need to verify that there are no conflicts between input and output paths.
   options.suppressOutputPathCheck = true;
 
