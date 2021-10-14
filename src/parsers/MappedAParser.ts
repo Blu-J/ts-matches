@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { IParser, OnParse } from "./interfaces";
 
 export class MappedAParser<A, B, B2> implements IParser<A, B2> {

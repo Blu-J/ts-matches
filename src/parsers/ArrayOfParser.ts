@@ -1,4 +1,4 @@
-import { Parser, isArray } from ".";
+import { Parser, isArray } from "./index";
 import { IParser, OnParse } from "./interfaces";
 
 /**

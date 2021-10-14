@@ -1,4 +1,4 @@
-import { isNumber } from ".";
+import { isNumber } from "./index";
 import { IParser, OnParse } from "./interfaces";
 
 export class NumberParser implements IParser<unknown, number> {

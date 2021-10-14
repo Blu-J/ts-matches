@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { EnsureParser, IParser, OrParser } from "./interfaces";
 import { any } from "./SimpleParsers";
 
