@@ -36,16 +36,16 @@ function tsCompile(input: string, transpileOptions: ts.TranspileOptions = {}) {
 
   // Create a compilerHost object to allow the compiler to read and write files
   const compilerHost: ts.CompilerHost = {
-    getSourceFile: (fileName) => sourceFile,
-    writeFile: (name, text) => {
+    getSourceFile: (fileName: string) => sourceFile,
+    writeFile: (name: string, text: string) => {
       outputText = text;
     },
     getDefaultLibFileName: () => "lib.d.ts",
     useCaseSensitiveFileNames: () => false,
-    getCanonicalFileName: (fileName) => fileName,
+    getCanonicalFileName: (fileName: string) => fileName,
     getCurrentDirectory: () => "",
     getNewLine: () => newLine,
-    fileExists: (fileName): boolean => fileName === inputFileName,
+    fileExists: (fileName: string): boolean => fileName === inputFileName,
     readFile: () => "",
     directoryExists: () => true,
     getDirectories: () => [],
@@ -116,13 +116,13 @@ describe("typescriptType Transformer", () => {
             someValue: string,
           }),
           some: some(
-            number.refine(function isEven(n): n is number {
+            number.refine(function isEven(n: number): n is number {
               return n % 2 === 0;
             }),
             string
           ),
           every: every(
-            number.refine(function isEven(n): n is number {
+            number.refine(function isEven(n: number): n is number {
               return n % 2 === 0;
             }, "test"),
             number
@@ -135,7 +135,7 @@ describe("typescriptType Transformer", () => {
           maybeNumber: number.optional(),
           maybeBoolean: boolean.optional(),
           maybeArray: array.optional(),
-          mapped: number.map((x) => x + 1),
+          mapped: number.map((x: number) => x + 1),
           default: number.defaultTo(5),
           dictionary: dictionary([literals("a", 5), number], [string, string]),
           tuple: tuple(string, number),
@@ -161,13 +161,13 @@ describe("typescriptType Transformer", () => {
           someValue: string,
         }),
         some: some(
-          number.refine(function isEven(n): n is number {
+          number.refine(function isEven(n: number): n is number {
             return n % 2 === 0;
           }),
           string
         ),
         every: every(
-          number.refine(function isEven(n): n is number {
+          number.refine(function isEven(n: number): n is number {
             return n % 2 === 0;
           }, "test"),
           number
@@ -180,7 +180,7 @@ describe("typescriptType Transformer", () => {
         maybeNumber: number.optional(),
         maybeBoolean: boolean.optional(),
         maybeArray: array.optional(),
-        mapped: number.map((x) => x + 1),
+        mapped: number.map((x: number) => x + 1),
         default: number.defaultTo(5),
         dictionary: dictionary([literals("a"), number], [string, number]),
       })

@@ -1,4 +1,4 @@
-import { any, Parser } from ".";
+import { any, Parser } from "./index";
 import { IParser, OnParse } from "./interfaces";
 
 export class ConcatParsers<A, B, B2> implements IParser<A, B2> {

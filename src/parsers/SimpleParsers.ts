@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { AnyParser } from "./AnyParser";
 import { ArrayParser } from "./ArrayParser";
 import { BoolParser } from "./BoolParser";
@@ -29,7 +29,7 @@ export const number = new Parser(new NumberParser());
 export const isNill = new Parser(new NilParser());
 
 export const natural = number.refine(
-  (x): x is number => x >= 0 && x === Math.floor(x)
+  (x: number): x is number => x >= 0 && x === Math.floor(x)
 );
 
 export const isFunction = new Parser(new FunctionParser());
@@ -47,6 +47,6 @@ export const instanceOf = <C>(classCreator: {
   guard((x): x is C => x instanceof classCreator, `is${classCreator.name}`);
 
 export const regex = (tester: RegExp) =>
-  string.refine(function (x): x is string {
+  string.refine(function (x: string): x is string {
     return tester.test(x);
   }, tester.toString());
