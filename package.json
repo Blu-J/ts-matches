@@ -1,14 +1,14 @@
 {
   "name": "ts-matches",
-  "version": "5.1.0-0",
+  "version": "5.1.0-1",
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "types": "lib/mjs/matches.d.ts",
-  "main": "lib/cjs/index.js",
-  "module": "lib/mjs/index.js",
+  "main": "lib/cjs/matches.js",
+  "module": "lib/mjs/matches.js",
   "exports": {
     ".": {
-      "import": "./lib/mjs/index.js",
-      "require": "./lib/cjs/index.js"
+      "import": "./lib/mjs/matches.js",
+      "require": "./lib/cjs/matches.js"
     }
   },
   "files": [
