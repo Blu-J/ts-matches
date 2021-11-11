@@ -109,7 +109,7 @@ on that function that return a `parser` or a function that creates a `parser`
 
 | Attribute     | Description                                               |
 | ------------- | --------------------------------------------------------- |
-| match         | Create a matching case, when match return value           |
+| when         | Create a matching case, when match return value           |
 | defaultTo     | Fall through case, ensures all are caught                 |
 | defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
 
