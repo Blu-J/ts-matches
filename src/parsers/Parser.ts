@@ -1,4 +1,4 @@
-import { IsAParser } from ".";
+import { IsAParser } from "./index";
 import { saferStringify } from "../utils";
 import { AnyParser } from "./AnyParser";
 import { ArrayParser } from "./ArrayParser";

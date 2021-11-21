@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { IParser, Optional, OnParse } from "./interfaces";
 export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
   constructor(

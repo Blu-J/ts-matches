@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { IParser, OnParse } from "./interfaces";
 
 export class NamedParser<A, B> implements IParser<A, B> {

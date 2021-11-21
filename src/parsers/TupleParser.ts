@@ -1,4 +1,4 @@
-import { Parser, isArray, literal } from ".";
+import { Parser, isArray, literal } from "./index";
 import { saferStringify } from "../utils";
 import { IParser, OnParse, ParserInto } from "./interfaces";
 

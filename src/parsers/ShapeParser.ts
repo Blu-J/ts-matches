@@ -1,4 +1,4 @@
-import { Parser, object } from ".";
+import { Parser, object } from "./index";
 import { saferStringify } from "../utils";
 import { IParser, OnParse } from "./interfaces";
 
@@ -37,7 +37,7 @@ export class ShapeParser<
       });
     }
     const { parserMap, isPartial } = this;
-    const value: any = { ...a };
+    const value: any = { ...(a as object) };
     if (Array.isArray(a)) {
       value.length = a.length;
     }

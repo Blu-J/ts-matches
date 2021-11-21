@@ -1,4 +1,4 @@
-import { object, Parser } from ".";
+import { object, Parser } from "./index";
 import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces";
 
 export type DictionaryTuple<A> = A extends [
