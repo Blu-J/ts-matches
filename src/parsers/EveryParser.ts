@@ -1,4 +1,4 @@
-import { any, Parser } from ".";
+import { any, Parser } from "./index";
 import { EnsureParser, AndParser, IParser } from "./interfaces";
 
 // prettier-ignore

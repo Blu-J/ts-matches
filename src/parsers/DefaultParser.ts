@@ -1,4 +1,4 @@
-import { Parser } from ".";
+import { Parser } from "./index";
 import { IParser, Optional, NonNull, OnParse } from "./interfaces";
 
 export class DefaultParser<A, B, B2>

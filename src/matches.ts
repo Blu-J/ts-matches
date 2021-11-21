@@ -22,7 +22,7 @@ import {
   ValidatorError,
   dictionary,
   literals,
-} from "./parsers";
+} from "./parsers/index";
 import { parserName } from "./parsers/Named";
 import { unknown } from "./parsers/SimpleParsers";
 export { ParserNames, IParser } from "./parsers/interfaces";
