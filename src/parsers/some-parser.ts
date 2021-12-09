@@ -1,6 +1,6 @@
-import { Parser } from "./index";
-import { EnsureParser, IParser, OrParser } from "./interfaces";
-import { any } from "./simple-parsers";
+import { Parser } from "./index.ts";
+import { EnsureParser, IParser, OrParser } from "./interfaces.ts";
+import { any } from "./simple-parsers.ts";
 
 // prettier-ignore
 export type SomeParsers<T> =

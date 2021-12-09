@@ -1,29 +1,29 @@
-import { IsAParser } from "./index";
-import { saferStringify } from "../utils";
-import { AnyParser } from "./anyParser";
-import { ArrayParser } from "./arrayParser";
-import { BoolParser } from "./boolParser";
-import { ConcatParsers } from "./concatParser";
-import { DefaultParser } from "./defaultParser";
-import { FunctionParser } from "./functionParser";
-import { GuardParser } from "./guardParser";
+import { IsAParser } from "./index.ts";
+import { saferStringify } from "../utils.ts";
+import { AnyParser } from "./any-parser.ts";
+import { ArrayParser } from "./array-parser.ts";
+import { BoolParser } from "./bool-parser.ts";
+import { ConcatParsers } from "./concat-parser.ts";
+import { DefaultParser } from "./default-parser.ts";
+import { FunctionParser } from "./function-parser.ts";
+import { GuardParser } from "./guard-parser.ts";
 import {
   IParser,
   OnParse,
   ISimpleParsedError,
   Optional,
   NonNull,
-} from "./interfaces";
-import { MappedAParser } from "./mappedAParser";
-import { MaybeParser } from "./maybeParser";
-import { parserName } from "./named";
-import { NilParser } from "./nillParser";
-import { NumberParser } from "./numberParser";
-import { ObjectParser } from "./objectParser";
-import { OrParsers } from "./orParser";
-import { ShapeParser } from "./shapeParser";
-import { StringParser } from "./stringParser";
-import { booleanOnParse } from "./utils";
+} from "./interfaces.ts";
+import { MappedAParser } from "./mapped-parser.ts";
+import { MaybeParser } from "./maybe-parser.ts";
+import { parserName } from "./named.ts";
+import { NilParser } from "./nill-parser.ts";
+import { NumberParser } from "./number-parser.ts";
+import { ObjectParser } from "./object-parser.ts";
+import { OrParsers } from "./or-parser.ts";
+import { ShapeParser } from "./shape-parser.ts";
+import { StringParser } from "./string-parser.ts";
+import { booleanOnParse } from "./utils.ts";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;

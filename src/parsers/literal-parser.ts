@@ -1,6 +1,6 @@
-import { IParser, OnParse } from "./interfaces";
-import { Parser } from "./parser";
-import { OneOf } from "./utils";
+import { IParser, OnParse } from "./interfaces.ts";
+import { Parser } from "./parser.ts";
+import { OneOf } from "./utils.ts";
 
 export class LiteralsParser<B extends unknown[]>
   implements IParser<unknown, OneOf<B>>

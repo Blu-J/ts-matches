@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { IParser, OnParse } from "./interfaces.ts";
 export class NilParser implements IParser<unknown, null | undefined> {
   constructor(
     readonly description = {

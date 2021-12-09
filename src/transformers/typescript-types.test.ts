@@ -1,10 +1,11 @@
-import matches from "../matches";
-import { unknown } from "../parsers/SimpleParsers";
-import { parserAsTypescriptString } from "./typescriptTypes";
-const { execSync } = require("child_process");
+import matches from "../matches.ts";
+import { unknown } from "../parsers/simple-parsers.ts";
+import { parserAsTypescriptString } from "./typescript-types.ts";
 
-import * as ts from "typescript";
 import { tuple } from "../parsers";
+import { expect } from "https://deno.land/x/expect/mod.ts";
+
+const test = Deno;
 
 // This was pulled from the transpile in the typescript compiler
 function tsCompile(input: string, transpileOptions: ts.TranspileOptions = {}) {
@@ -51,6 +52,10 @@ function tsCompile(input: string, transpileOptions: ts.TranspileOptions = {}) {
     getDirectories: () => [],
   };
 
+  function assertSnapshot(expected: string, actual: any) {
+    expect(saferStringify(actual)).toEqual(expected);
+  }
+
   const program = ts.createProgram([inputFileName], options, compilerHost);
 
   if (transpileOptions.reportDiagnostics) {
@@ -80,7 +85,7 @@ function addRange(
     to.push(item);
   }
 }
-describe("typescriptType Transformer", () => {
+{
   const {
     string,
     number,
@@ -99,8 +104,9 @@ describe("typescriptType Transformer", () => {
     nill,
     dictionary,
   } = matches;
-  it("zero", () => {
-    expect(
+  test("typescriptType Transformer: zero", () => {
+    assertSnapshot(
+      `"{\\"literals\\":(\\"a\\" | true | 5 | 6), \\"string\\":string, \\"number\\":number, \\"boolean\\":boolean, \\"array\\":Array<unknown>, \\"arrayOfString5\\":Array<(string & (\\"5\\"))>, \\"object\\":object, \\"any\\":any, \\"unknown\\":unknown, \\"partial\\":Partial<{\\"someValue\\":string}>, \\"some\\":(number | string), \\"every\\":(number & number), \\"named\\":Date, \\"function\\":Function, \\"nill\\":null, \\"maybeLiterals\\":null | (\\"a\\" | true | 5 | 6), \\"maybeString\\":null | string, \\"maybeNumber\\":null | number, \\"maybeBoolean\\":null | boolean, \\"maybeArray\\":null | Array<unknown>, \\"mapped\\":number, \\"default\\":null | null | number, \\"dictionary\\":(object & {[keyT0 in (\\"a\\" | 5)]:number}&{[keyT1 in string]:string}), \\"tuple\\":[string, number]}"`,
       parserAsTypescriptString(
         shape({
           literals: literals("a", true, 5, 6.0),
@@ -141,11 +147,9 @@ describe("typescriptType Transformer", () => {
           tuple: tuple(string, number),
         })
       )
-    ).toMatchInlineSnapshot(
-      `"{\\"literals\\":(\\"a\\" | true | 5 | 6), \\"string\\":string, \\"number\\":number, \\"boolean\\":boolean, \\"array\\":Array<unknown>, \\"arrayOfString5\\":Array<(string & (\\"5\\"))>, \\"object\\":object, \\"any\\":any, \\"unknown\\":unknown, \\"partial\\":Partial<{\\"someValue\\":string}>, \\"some\\":(number | string), \\"every\\":(number & number), \\"named\\":Date, \\"function\\":Function, \\"nill\\":null, \\"maybeLiterals\\":null | (\\"a\\" | true | 5 | 6), \\"maybeString\\":null | string, \\"maybeNumber\\":null | number, \\"maybeBoolean\\":null | boolean, \\"maybeArray\\":null | Array<unknown>, \\"mapped\\":number, \\"default\\":null | null | number, \\"dictionary\\":(object & {[keyT0 in (\\"a\\" | 5)]:number}&{[keyT1 in string]:string}), \\"tuple\\":[string, number]}"`
     );
   });
-  it("Should be able to compile output", () => {
+  test("typescriptType Transformer: Should be able to compile output", () => {
     let compileCode = parserAsTypescriptString(
       shape({
         literals: literals("a", true, 5, 6.0),
@@ -258,7 +262,7 @@ describe("typescriptType Transformer", () => {
       );
     }
   });
-  it("Testing nothing passed", () => {
-    expect(parserAsTypescriptString()).toMatchInlineSnapshot(`"unknown"`);
+  test("typescriptType Transformer: Testing nothing passed", () => {
+    assertSnapshot(`"unknown"`, parserAsTypescriptString());
   });
-});
+}

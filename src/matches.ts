@@ -22,12 +22,13 @@ import {
   ValidatorError,
   dictionary,
   literals,
-} from "./parsers/index";
-import { parserName } from "./parsers/named";
-import { unknown } from "./parsers/simpleParsers";
-export { ParserNames, IParser } from "./parsers/interfaces";
+} from "./parsers/index.ts";
+import { parserName } from "./parsers/named.ts";
+import { unknown } from "./parsers/simple-parsers.ts";
+export type { ParserNames, IParser } from "./parsers/interfaces.ts";
 
-export { Parser as Validator, ValidatorError };
+export { Parser as Validator };
+export type { ValidatorError };
 
 // prettier-ignore
 export type ValueOrFunction<In, Out> =
@@ -64,6 +65,7 @@ class Matched<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   when<A, B>(
     ..._args: WhenArgs<A, B>
   ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
+    // deno-lint-ignore no-explicit-any
     return this as unknown as any;
   }
   defaultTo<B>(_defaultValue: B) {
@@ -84,9 +86,11 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     ...args: WhenArgs<A, B>
   ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
     const [outcome, ...matchers] = args.reverse();
+    // deno-lint-ignore no-this-alias
     const me = this;
     const parser = matches.some(
       ...matchers.map((matcher) =>
+        // deno-lint-ignore no-explicit-any
         matcher instanceof Parser ? matcher : literal(matcher as any)
       )
     );
@@ -98,6 +102,7 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     if (outcome instanceof Function) {
       return new Matched(outcome(value));
     }
+    // deno-lint-ignore no-explicit-any
     return new Matched(outcome) as any;
   }
 

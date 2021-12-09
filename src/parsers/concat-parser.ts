@@ -1,5 +1,5 @@
-import { any, Parser } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { any, Parser } from "./index.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
   private constructor(

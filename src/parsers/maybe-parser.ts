@@ -1,5 +1,5 @@
-import { Parser } from "./index";
-import { IParser, Optional, OnParse } from "./interfaces";
+import { Parser } from "./index.ts";
+import { IParser, Optional, OnParse } from "./interfaces.ts";
 export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
   constructor(
     readonly parent: Parser<A, B>,

@@ -1,5 +1,5 @@
-import { Parser } from "./index";
-import { IParser, Optional, NonNull, OnParse } from "./interfaces";
+import { Parser } from "./index.ts";
+import { IParser, Optional, NonNull, OnParse } from "./interfaces.ts";
 
 export class DefaultParser<A, B, B2>
   implements IParser<Optional<A>, NonNull<B, B2>>

@@ -1,6 +1,6 @@
-import { Parser, object } from "./index";
-import { saferStringify } from "../utils";
-import { IParser, OnParse } from "./interfaces";
+import { Parser, object } from "./index.ts";
+import { saferStringify } from "../utils.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on
