@@ -1,5 +1,5 @@
 import { IParser, OnParse } from "./interfaces";
-import { Parser } from "./Parser";
+import { Parser } from "./parser";
 import { OneOf } from "./utils";
 
 export class LiteralsParser<B extends unknown[]>

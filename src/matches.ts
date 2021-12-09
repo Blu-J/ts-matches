@@ -23,8 +23,8 @@ import {
   dictionary,
   literals,
 } from "./parsers/index";
-import { parserName } from "./parsers/Named";
-import { unknown } from "./parsers/SimpleParsers";
+import { parserName } from "./parsers/named";
+import { unknown } from "./parsers/simpleParsers";
 export { ParserNames, IParser } from "./parsers/interfaces";
 
 export { Parser as Validator, ValidatorError };
@@ -62,9 +62,9 @@ export interface ChainMatches<In, OutcomeType = never> {
 class Matched<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private value: OutcomeType) {}
   when<A, B>(
-    ...args: WhenArgs<A, B>
+    ..._args: WhenArgs<A, B>
   ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
-    return this as any;
+    return this as unknown as any;
   }
   defaultTo<B>(_defaultValue: B) {
     return this.value;

@@ -1,13 +1,13 @@
 import { Parser } from "./index";
-import { AnyParser } from "./AnyParser";
-import { ArrayParser } from "./ArrayParser";
-import { BoolParser } from "./BoolParser";
-import { FunctionParser } from "./FunctionParser";
-import { NilParser } from "./NillParser";
-import { NumberParser } from "./NumberParser";
-import { ObjectParser } from "./ObjectParser";
-import { StringParser } from "./StringParser";
-import { UnknownParser } from "./UnknownParser";
+import { AnyParser } from "./anyParser";
+import { ArrayParser } from "./arrayParser";
+import { BoolParser } from "./boolParser";
+import { FunctionParser } from "./functionParser";
+import { NilParser } from "./nillParser";
+import { NumberParser } from "./numberParser";
+import { ObjectParser } from "./objectParser";
+import { StringParser } from "./stringParser";
+import { UnknownParser } from "./unknownParser";
 /**
  * Create a custom type guard
  * @param test A function that will determine runtime if the value matches
