@@ -1,12 +1,12 @@
 import { IsAParser } from "./index";
 import { saferStringify } from "../utils";
-import { AnyParser } from "./AnyParser";
-import { ArrayParser } from "./ArrayParser";
-import { BoolParser } from "./BoolParser";
-import { ConcatParsers } from "./ConcatParser";
-import { DefaultParser } from "./DefaultParser";
-import { FunctionParser } from "./FunctionParser";
-import { GuardParser } from "./GuardParser";
+import { AnyParser } from "./anyParser";
+import { ArrayParser } from "./arrayParser";
+import { BoolParser } from "./boolParser";
+import { ConcatParsers } from "./concatParser";
+import { DefaultParser } from "./defaultParser";
+import { FunctionParser } from "./functionParser";
+import { GuardParser } from "./guardParser";
 import {
   IParser,
   OnParse,
@@ -14,15 +14,15 @@ import {
   Optional,
   NonNull,
 } from "./interfaces";
-import { MappedAParser } from "./MappedAParser";
-import { MaybeParser } from "./MaybeParser";
-import { parserName } from "./Named";
-import { NilParser } from "./NillParser";
-import { NumberParser } from "./NumberParser";
-import { ObjectParser } from "./ObjectParser";
-import { OrParsers } from "./OrParser";
-import { ShapeParser } from "./ShapeParser";
-import { StringParser } from "./StringParser";
+import { MappedAParser } from "./mappedAParser";
+import { MaybeParser } from "./maybeParser";
+import { parserName } from "./named";
+import { NilParser } from "./nillParser";
+import { NumberParser } from "./numberParser";
+import { ObjectParser } from "./objectParser";
+import { OrParsers } from "./orParser";
+import { ShapeParser } from "./shapeParser";
+import { StringParser } from "./stringParser";
 import { booleanOnParse } from "./utils";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);

@@ -1,7 +1,7 @@
 import { _, ValidatorError } from "./interfaces";
 import { isNumber } from "./utils";
-import { GuardParser } from "./GuardParser";
-import { Parser } from "./Parser";
+import { GuardParser } from "./guardParser";
+import { Parser } from "./parser";
 import {
   guard,
   any,
@@ -15,14 +15,14 @@ import {
   regex,
   isNill,
   natural,
-} from "./SimpleParsers";
-import { some } from "./SomeParser";
-import { every } from "./EveryParser";
-import { dictionary } from "./DictionaryParser";
-import { partial, shape } from "./ShapeParser";
-import { tuple } from "./TupleParser";
-import { arrayOf } from "./ArrayOfParser";
-import { literal, literals } from "./LiteralParser";
+} from "./simpleParsers";
+import { some } from "./someParser";
+import { every } from "./everyParser";
+import { dictionary } from "./dictionaryParser";
+import { partial, shape } from "./shapeParser";
+import { tuple } from "./tupleParser";
+import { arrayOf } from "./arrayOfParser";
+import { literal, literals } from "./literalParser";
 
 export {
   ValidatorError,
