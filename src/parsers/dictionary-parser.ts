@@ -1,5 +1,5 @@
-import { object, Parser } from "./index";
-import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces";
+import { object, Parser } from "./index.ts";
+import { IParser, OnParse, ISimpleParsedError, _ } from "./interfaces.ts";
 
 export type DictionaryTuple<A> = A extends [
   Parser<unknown, infer Keys>,

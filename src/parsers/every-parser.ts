@@ -1,5 +1,5 @@
-import { any, Parser } from "./index";
-import { EnsureParser, AndParser, IParser } from "./interfaces";
+import { any, Parser } from "./index.ts";
+import { EnsureParser, AndParser, IParser } from "./interfaces.ts";
 
 // prettier-ignore
 export type EveryParser<T> =

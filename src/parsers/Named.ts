@@ -1,5 +1,5 @@
-import { Parser } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { Parser } from "./index.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class NamedParser<A, B> implements IParser<A, B> {
   constructor(

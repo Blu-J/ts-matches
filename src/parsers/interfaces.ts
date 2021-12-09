@@ -1,4 +1,4 @@
-import { Parser } from "./index";
+import { Parser } from "./index.ts";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
 export type EnsureParser<P> = P extends IParser<any, any> ? P : never;

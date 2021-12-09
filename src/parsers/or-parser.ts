@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces";
-import { Parser } from "./parser";
+import { IParser, OnParse } from "./interfaces.ts";
+import { Parser } from "./parser.ts";
 
 export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
   constructor(

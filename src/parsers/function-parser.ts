@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces";
-import { isFunctionTest } from "./utils";
+import { IParser, OnParse } from "./interfaces.ts";
+import { isFunctionTest } from "./utils.ts";
 
 export class FunctionParser implements IParser<unknown, Function> {
   constructor(

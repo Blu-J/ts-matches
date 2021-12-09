@@ -1,4 +1,4 @@
-import { IParser } from "../matches";
+import { IParser } from "../matches.ts";
 
 export function parserAsTypescriptString(
   validator?: IParser<unknown, unknown>

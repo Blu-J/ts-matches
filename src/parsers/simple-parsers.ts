@@ -1,13 +1,13 @@
-import { Parser } from "./index";
-import { AnyParser } from "./any-parser";
-import { ArrayParser } from "./array-parser";
-import { BoolParser } from "./bool-parser";
-import { FunctionParser } from "./function-parser";
-import { NilParser } from "./nill-parser";
-import { NumberParser } from "./number-parser";
-import { ObjectParser } from "./object-parser";
-import { StringParser } from "./stringParser";
-import { UnknownParser } from "./unknownParser";
+import { Parser } from "./index.ts";
+import { AnyParser } from "./any-parser.ts";
+import { ArrayParser } from "./array-parser.ts";
+import { BoolParser } from "./bool-parser.ts";
+import { FunctionParser } from "./function-parser.ts";
+import { NilParser } from "./nill-parser.ts";
+import { NumberParser } from "./number-parser.ts";
+import { ObjectParser } from "./object-parser.ts";
+import { StringParser } from "./string-parser.ts";
+import { UnknownParser } from "./unknown-parser.ts";
 /**
  * Create a custom type guard
  * @param test A function that will determine runtime if the value matches
