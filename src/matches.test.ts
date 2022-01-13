@@ -809,3 +809,5 @@ test("should be able to map validation with name", () => {
     expect(output.projected).toEqual("value");
   });
 }
+
+export {};
