@@ -14,6 +14,8 @@ export const validatorError = every(
     value: any,
   })
 );
+
+export function isType<T>(x: T) {}
 type AssertNever<A> = A extends string | number | boolean | object | Function
   ? A
   : never;
@@ -218,6 +220,103 @@ test("should be able to test partial shape failure smaller", () => {
     validator.parse(testValue, unFold)
   );
 });
+
+{
+  const validator = matches.shape(
+    { a: matches.literal("c"), b: matches.literal("d") },
+    ["b"]
+  );
+  isType<Parser<unknown, { a: "c"; b?: "d" | undefined }>>(validator);
+  // @ts-expect-error
+  isType<Parser<unknown, { a: "c"; b: "d" | undefined }>>(validator);
+  type Valid = { a: "c"; b?: "d" | null };
+  test("should be able to test shape with partial not included", () => {
+    const testValue = { a: "c" };
+    const value = validator.unsafeCast(testValue);
+    expect(value).toEqual(testValue);
+    expect(value.b).toEqual(undefined);
+    isType<Valid>(value);
+    // @ts-expect-error
+    isType<number>(value);
+  });
+  test("should be able to test shape with partial correct", () => {
+    const testValue = { a: "c", b: "d" };
+    const value = validator.unsafeCast(testValue);
+    expect(value).toEqual(testValue);
+    isType<Valid>(value);
+    // @ts-expect-error
+    isType<number>(value);
+  });
+  test("should be able to test shape with partial and main not included", () => {
+    const testValue = { b: "d" };
+
+    try {
+      validator.unsafeCast(testValue);
+    } catch (e) {
+      assertSnapshot(
+        '"[\\"a\\"]Shape<{a:Literal<\\"c\\">}>(\\"missingProperty\\")"',
+        validator.parse(testValue, unFold)
+      );
+      return;
+    }
+    throw new Error("should be invalid");
+  });
+  test("should be able to test shape with partial is wrong", () => {
+    const testValue = { a: "c", b: "e" };
+
+    try {
+      validator.unsafeCast(testValue);
+    } catch (e) {
+      assertSnapshot(
+        '"[\\"b\\"]Literal<\\"d\\">(\\"e\\")"',
+        validator.parse(testValue, unFold)
+      );
+      return;
+    }
+    throw new Error("should be invalid");
+  });
+  test("should be able to shape with partials and fill in defaults", () => {
+    const validator = matches.shape(
+      {
+        a: matches.literal("c"),
+        b: matches.literal("d"),
+        f: matches.literal("f"),
+      },
+      ["b", "f"],
+      { b: "d" } as const
+    );
+    isType<
+      Parser<
+        unknown,
+        {
+          a: "c";
+          f?: "f" | undefined;
+          b: "d";
+        }
+      >
+    >(validator);
+    isType<
+      Parser<
+        unknown,
+        {
+          a: "c";
+          f: "f" | undefined;
+          b: "d";
+        }
+      >
+      // @ts-expect-error
+    >(validator);
+    type Valid = { a: "c"; b?: "d" | null };
+    const testValue = { a: "c" };
+
+    const value = validator.unsafeCast(testValue);
+    expect(value).toEqual({ a: "c", b: "d" });
+    expect(value.b).toEqual("d");
+    isType<Valid>(value);
+    // @ts-expect-error
+    isType<number>(value);
+  });
+}
 
 test("should be able to test literal", () => {
   const testValue = "a";

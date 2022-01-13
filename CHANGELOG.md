@@ -25,6 +25,10 @@ Feat: Make the build include deno first, then compile to mjs and umd
 
 Feature: Bringing in the recursive types
 
+Feature: Bringing in the deferred types
+
+Feature: Optionals added to the shape function, so we can have one function to declare optionals
+
 ## [4.2.0] - 2021-04-03
 
 Adding in better matching capabilities.

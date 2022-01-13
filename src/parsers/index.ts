@@ -24,6 +24,7 @@ import { tuple } from "./tuple-parser.ts";
 import { arrayOf } from "./array-of-parser.ts";
 import { literal, literals } from "./literal-parser.ts";
 import { recursive } from "./recursive-parser.ts";
+import { deferred } from "./deferred-parser.ts";
 export type { ValidatorError };
 export {
   GuardParser as IsAParser,
@@ -48,6 +49,7 @@ export {
   every,
   some,
   dictionary,
+  deferred,
   partial,
   tuple,
   shape,

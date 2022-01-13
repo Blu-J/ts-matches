@@ -40,22 +40,7 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
   }
 }
 
-interface INext<
-  P extends Parser<unknown, unknown>,
-  P2 extends Parser<unknown, unknown>
-> {
-  readonly prev: P;
-  next(): P2;
-}
-class Next<P extends Parser<unknown, unknown>>
-  implements INext<P, Parser<unknown, string | [ParserInto<P>]>>
-{
-  constructor(readonly prev: P) {}
-  next() {
-    return matches.some(matches.string, matches.tuple(this.prev));
-  }
-}
-type Test<A, B = A> = (A extends never ? never : unknown) &
+type EnsurredType<A, B = A> = (A extends never ? never : unknown) &
   ((parser: Parser<unknown, any>) => Parser<unknown, B>);
 
 /**
@@ -65,7 +50,7 @@ type Test<A, B = A> = (A extends never ? never : unknown) &
  * return a parser that is the combination of the recursion.
  * @returns
  */
-export function recursive<B = never>(fn: Test<B>) {
+export function recursive<B = never>(fn: EnsurredType<B>) {
   let value = fn(any);
   const created: RecursiveParser<ParserInto<typeof value>> =
     RecursiveParser.create<B>(fn);

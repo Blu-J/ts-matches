@@ -26,5 +26,4 @@ await build({
 });
 
 // post build steps
-// Deno.copyFileSync("LICENSE", "npm/LICENSE");
 Deno.copyFileSync("./README.md", "lib/README.md");
