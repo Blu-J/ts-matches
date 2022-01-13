@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class GuardParser<A, B> implements IParser<A, B> {
   constructor(

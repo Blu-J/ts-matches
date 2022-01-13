@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class UnknownParser implements IParser<unknown, unknown> {
   constructor(

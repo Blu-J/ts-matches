@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces";
-import { isObject } from "./utils";
+import { IParser, OnParse } from "./interfaces.ts";
+import { isObject } from "./utils.ts";
 
 export class ArrayParser implements IParser<unknown, Array<unknown>> {
   constructor(

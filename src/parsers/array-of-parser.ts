@@ -1,5 +1,5 @@
-import { Parser, isArray } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { Parser, isArray } from "./index.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on

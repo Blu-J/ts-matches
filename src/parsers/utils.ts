@@ -1,4 +1,4 @@
-import { ISimpleParsedError, OnParse } from "./interfaces";
+import { ISimpleParsedError, OnParse } from "./interfaces.ts";
 
 export const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;

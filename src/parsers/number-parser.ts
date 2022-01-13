@@ -1,5 +1,5 @@
-import { isNumber } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { isNumber } from "./index.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class NumberParser implements IParser<unknown, number> {
   constructor(
