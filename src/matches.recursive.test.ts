@@ -63,3 +63,23 @@ test("simple recursive shape with invalid", () => {
   }
   throw new Error("should be invalid");
 });
+test("simple recursive shape with invalid", () => {
+  type Recursive = {
+    test: string | Recursive;
+  };
+  const testValue = { test: "test" };
+  const validator = matches.recursive<Recursive>((self) =>
+    matches.shape({ test: matches.some(matches.string, self) })
+  );
+  (validator.parser as any).parser = null;
+  try {
+    validator.unsafeCast(testValue);
+  } catch (e) {
+    assertSnapshot(
+      '"Recursive<>(\\"Recursive Invalid State\\")"',
+      validator.parse(testValue, unFold)
+    );
+    return;
+  }
+  throw new Error("should be invalid");
+});

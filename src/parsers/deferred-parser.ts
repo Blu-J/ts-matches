@@ -27,7 +27,7 @@ export class DeferredParser<B> implements IParser<unknown, B> {
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     if (!this.parser) {
       return onParse.invalid({
-        value: a,
+        value: "Not Set Up",
         keys: [],
         parser: this,
       });

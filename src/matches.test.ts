@@ -332,7 +332,32 @@ test("should be able to test literal with failure", () => {
     validator.parse(testValue, unFold)
   );
 });
+test("should be able to test unknown", () => {
+  const testValue = 4;
+  const validator = matches.unknown;
+  expect(validator.parse(testValue, unFold)).toEqual(testValue);
+});
 
+test("should be able to test nill invalid", () => {
+  const testValue = 4;
+  const validator = matches.nill;
+  expect(validator.parse(testValue, unFold)).toEqual("null(4)");
+});
+test("should be able to test nill valid", () => {
+  const testValue = null;
+  const validator = matches.nill;
+  expect(validator.parse(testValue, unFold)).toEqual(testValue);
+});
+test("should be able to test array valid", () => {
+  const testValue = ["test"];
+  const validator = matches.array;
+  expect(validator.parse(testValue, unFold)).toEqual(testValue);
+});
+test("should be able to test array invalid", () => {
+  const testValue = "test";
+  const validator = matches.array;
+  expect(validator.parse(testValue, unFold)).toEqual('Array<unknown>("test")');
+});
 test("should be able to test number", () => {
   const testValue = 4;
   const validator = matches.number;
