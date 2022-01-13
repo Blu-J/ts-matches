@@ -22,6 +22,7 @@ import {
   ValidatorError,
   dictionary,
   literals,
+  recursive,
 } from "./parsers/index.ts";
 import { parserName } from "./parsers/named.ts";
 import { unknown } from "./parsers/simple-parsers.ts";
@@ -158,6 +159,7 @@ export const matches = Object.assign(
     instanceOf,
     Parse: Parser,
     parserName,
+    recursive,
   }
 );
 export default matches;

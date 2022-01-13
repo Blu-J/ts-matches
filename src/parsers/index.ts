@@ -23,6 +23,7 @@ import { partial, shape } from "./shape-parser.ts";
 import { tuple } from "./tuple-parser.ts";
 import { arrayOf } from "./array-of-parser.ts";
 import { literal, literals } from "./literal-parser.ts";
+import { recursive } from "./recursive-parser.ts";
 export type { ValidatorError };
 export {
   GuardParser as IsAParser,
@@ -42,6 +43,7 @@ export {
   regex,
   arrayOf,
   natural,
+  recursive,
   isNill,
   every,
   some,
