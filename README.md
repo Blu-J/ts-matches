@@ -24,7 +24,7 @@ Also useful for casting and boundary verifications. So using this as a json vali
 This is useful on a boundary layer, like fetching a value. In that case we have no idea what the shape is, so we should do a check on that.
 
 ```typescript
-import matches from "matches";
+import matches from 'https://deno.land/x/ts_matches/mod.ts'
 fetch("fishes.com/gold-fishes/12")
   .then((x) => x.json())
   .then(
