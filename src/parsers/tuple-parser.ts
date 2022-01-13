@@ -1,6 +1,6 @@
-import { Parser, isArray, literal } from "./index";
-import { saferStringify } from "../utils";
-import { IParser, OnParse, ParserInto } from "./interfaces";
+import { Parser, isArray, literal } from "./index.ts";
+import { saferStringify } from "../utils.ts";
+import { IParser, OnParse, ParserInto } from "./interfaces.ts";
 
 // prettier-ignore
 export type TupleParserInto<T> =

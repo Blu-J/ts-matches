@@ -1,5 +1,5 @@
-import { Parser } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { Parser } from "./index.ts";
+import { IParser, OnParse } from "./interfaces.ts";
 
 export class MappedAParser<A, B, B2> implements IParser<A, B2> {
   constructor(

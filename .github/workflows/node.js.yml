@@ -3,38 +3,19 @@ name: Testing
 on: [push, pull_request]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 13.x, 14.x, 15.x]
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
-
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Build
-      run: npm run build
-
-    - name: Run tests
-      run: npm run test -- --coverage
-
-    - name: Run Prettier Check
-      run: npm run pretty-check
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
+      - uses: actions/checkout@v2
+      - uses: denolib/setup-deno@v2
+        with:
+          deno-version: v1.8
+      - name: Create coverage files
+        run: deno test --unstable --coverage=coverage # create coverage files
+      - name: Create coverage report
+        run: deno --unstable coverage ./coverage --lcov > coverage.lcov # create coverage report
+      - name: Collect coverage
+        uses: codecov/codecov-action@v1.0.10 # upload the report on Codecov
+        with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.lcov

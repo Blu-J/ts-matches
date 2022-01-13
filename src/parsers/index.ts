@@ -1,7 +1,7 @@
-import { _, ValidatorError } from "./interfaces";
-import { isNumber } from "./utils";
-import { GuardParser } from "./guardParser";
-import { Parser } from "./parser";
+import { _, ValidatorError } from "./interfaces.ts";
+import { isNumber } from "./utils.ts";
+import { GuardParser } from "./guard-parser.ts";
+import { Parser } from "./parser.ts";
 import {
   guard,
   any,
@@ -15,17 +15,18 @@ import {
   regex,
   isNill,
   natural,
-} from "./simpleParsers";
-import { some } from "./someParser";
-import { every } from "./everyParser";
-import { dictionary } from "./dictionaryParser";
-import { partial, shape } from "./shapeParser";
-import { tuple } from "./tupleParser";
-import { arrayOf } from "./arrayOfParser";
-import { literal, literals } from "./literalParser";
-
+} from "./simple-parsers.ts";
+import { some } from "./some-parser.ts";
+import { every } from "./every-parser.ts";
+import { dictionary } from "./dictionary-parser.ts";
+import { partial, shape } from "./shape-parser.ts";
+import { tuple } from "./tuple-parser.ts";
+import { arrayOf } from "./array-of-parser.ts";
+import { literal, literals } from "./literal-parser.ts";
+import { recursive } from "./recursive-parser.ts";
+import { deferred } from "./deferred-parser.ts";
+export type { ValidatorError };
 export {
-  ValidatorError,
   GuardParser as IsAParser,
   Parser,
   literal,
@@ -43,10 +44,12 @@ export {
   regex,
   arrayOf,
   natural,
+  recursive,
   isNill,
   every,
   some,
   dictionary,
+  deferred,
   partial,
   tuple,
   shape,

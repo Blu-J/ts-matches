@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces";
-import { isString } from "./utils";
+import { IParser, OnParse } from "./interfaces.ts";
+import { isString } from "./utils.ts";
 
 export class StringParser implements IParser<unknown, string> {
   constructor(

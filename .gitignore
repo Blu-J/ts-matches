@@ -8,3 +8,5 @@ reports/
 coverage
 .stryker-tmp
 package-lock.json
+cov_profile/
+coverage.lcov

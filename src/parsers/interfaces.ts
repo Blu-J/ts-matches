@@ -1,4 +1,4 @@
-import { Parser } from "./index";
+import { Parser } from "./index.ts";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
 export type EnsureParser<P> = P extends IParser<any, any> ? P : never;
@@ -56,6 +56,11 @@ export type Description = {
       readonly extras: readonly [];
     }
   | {
+      readonly name: "Deferred";
+      readonly children: readonly [];
+      readonly extras: readonly [];
+    }
+  | {
       readonly name: "Guard";
       readonly children: readonly [];
       readonly extras: readonly [unknown];
@@ -74,6 +79,11 @@ export type Description = {
       readonly name: "Maybe";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Recursive";
+      readonly children: readonly [];
+      readonly extras: readonly [Function];
     }
   | {
       readonly name: "Or";
@@ -113,6 +123,7 @@ export type ParserNames =
   | "Boolean"
   | "Concat"
   | "Default"
+  | "Deferred"
   | "Named"
   | "Dictionary"
   | "Function"
@@ -126,6 +137,7 @@ export type ParserNames =
   | "Partial"
   | "Object"
   | "Or"
+  | "Recursive"
   | "Shape"
   | "String"
   | "Tuple"
