@@ -31,7 +31,7 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     if (!this.parser) {
       return onParse.invalid({
-        value: a,
+        value: "Recursive Invalid State",
         keys: [],
         parser: this,
       });

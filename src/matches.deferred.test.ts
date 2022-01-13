@@ -63,3 +63,22 @@ const unFold = {
     throw new Error("should be invalid");
   });
 }
+test("deferred failed because we failed to complete ", () => {
+  type Things = string | [OtherThings];
+  type OtherThings = { type: "other"; value: Things };
+  const [matchThings, setMatchThings] = deferred<Things>();
+  const testValue = [
+    { type: "other", value: [{ type: "ot2her", value: "test" }] },
+  ];
+
+  try {
+    const parsed = matchThings.unsafeCast(testValue);
+  } catch (e) {
+    assertSnapshot(
+      '"Deferred<>(\\"Not Set Up\\")"',
+      matchThings.parse(testValue, unFold)
+    );
+    return;
+  }
+  throw new Error("should be invalid");
+});
