@@ -76,6 +76,11 @@ export type Description = {
       readonly extras: readonly [];
     }
   | {
+      readonly name: "Recursive";
+      readonly children: readonly [];
+      readonly extras: readonly [Function];
+    }
+  | {
       readonly name: "Or";
       readonly children: readonly [SomeParser, SomeParser];
       readonly extras: readonly [];
@@ -126,6 +131,7 @@ export type ParserNames =
   | "Partial"
   | "Object"
   | "Or"
+  | "Recursive"
   | "Shape"
   | "String"
   | "Tuple"

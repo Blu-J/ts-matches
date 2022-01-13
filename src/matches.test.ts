@@ -20,7 +20,7 @@ type AssertNever<A> = A extends string | number | boolean | object | Function
 function assertNeverUnknown<A>(a: AssertNever<A>): A {
   return a;
 }
-function assertSnapshot(expected: string, actual: any) {
+export function assertSnapshot(expected: string, actual: any) {
   expect(saferStringify(actual)).toEqual(expected);
 }
 
