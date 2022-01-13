@@ -21,6 +21,10 @@ Moving several simple parsers into their own description and parsers. Useful for
 
 Changed the tuples to use the style of variadic instead of arrays, needed for typescript inference.
 
+Feat: Make the build include deno first, then compile to mjs and umd
+
+Feature: Bringing in the recursive types
+
 ## [4.2.0] - 2021-04-03
 
 Adding in better matching capabilities.
