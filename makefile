@@ -1,5 +1,5 @@
 version = $(shell cat ./VERSION)
-bundle:
+bundle: test
 	echo $(version)
 	deno run --allow-write --allow-env --allow-run --allow-read build.ts $(version)
 test:

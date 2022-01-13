@@ -23,6 +23,7 @@ import {
   dictionary,
   literals,
   recursive,
+  deferred,
 } from "./parsers/index.ts";
 import { parserName } from "./parsers/named.ts";
 import { unknown } from "./parsers/simple-parsers.ts";
@@ -160,6 +161,47 @@ export const matches = Object.assign(
     Parse: Parser,
     parserName,
     recursive,
+    deferred,
   }
 );
+
+const array = isArray;
+const nill = isNill;
+const Parse = Parser;
+const oneOf = some;
+const anyOf = some;
+const allOf = every;
+
+export {
+  array,
+  arrayOf,
+  some,
+  tuple,
+  regex,
+  number,
+  natural,
+  isFunction,
+  object,
+  string,
+  shape,
+  partial,
+  literal,
+  every,
+  guard,
+  unknown,
+  any,
+  boolean,
+  dictionary,
+  literals,
+  nill,
+  instanceOf,
+  Parse,
+  parserName,
+  recursive,
+  deferred,
+  oneOf,
+  anyOf,
+  allOf,
+  Parser,
+};
 export default matches;
