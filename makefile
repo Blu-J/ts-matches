@@ -1,4 +1,4 @@
-version = $(shell cat ./VERSION)
+version = $$(git tag --sort=committerdate | tail -1)
 bundle: test
 	echo $(version)
 	deno run --allow-write --allow-env --allow-run --allow-read build.ts $(version)
