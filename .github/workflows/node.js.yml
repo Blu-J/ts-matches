@@ -15,7 +15,7 @@ jobs:
       - name: Create coverage report
         run: deno --unstable coverage ./coverage --lcov > coverage.lcov # create coverage report
       - name: Collect coverage
-        uses: codecov/codecov-action@v1.0.10 # upload the report on Codecov
+        uses: coverallsapp/github-action@master # upload the report on Codecov
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.lcov
