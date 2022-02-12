@@ -38,7 +38,18 @@ const enumParsed = {
   },
 };
 
+/**
+ * A Parser is usually a function that takes a value and returns a Parsed value.
+ * For this class we have that as our main reason but we want to be able to have other methods
+ * including testing and showing text representations.
+ *
+ * The main function unsafeCast which will take in a value A (usually unknown) and will always return a B. If it cannot
+ * it will throw an error.
+ *
+ * The parse function is the lower level function that will take in a value and a dictionary of what to do with success and failure.
+ */
 export class Parser<A, B> implements IParser<A, B> {
+  /// This is a hack to get the type of what the parser is going to return.
   public readonly _TYPE: B = null as any;
   constructor(
     readonly parser: IParser<A, B>,
@@ -48,9 +59,23 @@ export class Parser<A, B> implements IParser<A, B> {
       extras: [],
     } as const
   ) {}
+  /**
+   * Use this when you want to decide what happens on the succes and failure cases of parsing
+   * @param a
+   * @param onParse
+   * @returns
+   */
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     return this.parser.parse(a, onParse);
   }
+  /**
+   * This is a constructor helper that can use a predicate tester in the form of a guard function,
+   * and will return a parser that will only parse if the predicate returns true.
+   * https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
+   * @param checkIsA
+   * @param name
+   * @returns
+   */
   public static isA<A, B extends A>(
     checkIsA: (value: A) => value is B,
     name: string
@@ -80,6 +105,11 @@ export class Parser<A, B> implements IParser<A, B> {
     )})`;
   };
 
+  /**
+   * Trying to convert the parser into a string representation
+   * @param parserComingIn
+   * @returns
+   */
   public static parserAsString(
     parserComingIn: IParser<unknown, unknown>
   ): string {
@@ -134,6 +164,12 @@ export class Parser<A, B> implements IParser<A, B> {
 
     return `${name}${specifiersString}`;
   }
+
+  /**
+   * This is the most useful parser, it assumes the happy path and will throw an error if it fails.
+   * @param value
+   * @returns
+   */
   unsafeCast(value: A): B {
     const state = this.enumParsed(value);
     if ("value" in state) return state.value;
@@ -144,6 +180,11 @@ export class Parser<A, B> implements IParser<A, B> {
       )} given input ${saferStringify(value)}`
     );
   }
+  /**
+   * This is the like the unsafe parser, it assumes the happy path and will throw and return a failed promise during failure.
+   * @param value
+   * @returns
+   */
   castPromise(value: A): Promise<B> {
     const state = this.enumParsed(value);
     if ("value" in state) return Promise.resolve(state.value);
@@ -157,18 +198,41 @@ export class Parser<A, B> implements IParser<A, B> {
     );
   }
 
+  /**
+   * Use this that we want to do transformations after the value is valid and parsed.
+   * A use case would be parsing a string, making sure it can be parsed to a number, and then convert to a number
+   * @param fn
+   * @param mappingName
+   * @returns
+   */
   map<C>(fn: (apply: B) => C, mappingName?: string): Parser<A, C> {
     return new Parser(new MappedAParser(this, fn, mappingName));
   }
 
+  /**
+   * Use this when you want to combine two parsers into one. This will make sure that both parsers will run against the same value.
+   * @param otherParser
+   * @returns
+   */
   concat<C>(otherParser: IParser<B, C>): Parser<A, C> {
     return new Parser(ConcatParsers.of(this, new Parser(otherParser)) as any);
   }
 
+  /**
+   * Use this to combine parsers into one. This will make sure that one or the other parsers will run against the value.
+   * @param otherParser
+   * @returns
+   */
   orParser<C>(otherParser: IParser<A, C>): Parser<A, B | C> {
     return new Parser(new OrParsers(this, new Parser(otherParser)));
   }
 
+  /**
+   * Use this as a guard clause, useful for escaping during the error cases.
+   * https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-guards-and-differentiating-types
+   * @param value
+   * @returns
+   */
   test = (value: A): value is A & B => {
     return this.parse(value, booleanOnParse);
   };
@@ -176,6 +240,7 @@ export class Parser<A, B> implements IParser<A, B> {
   /**
    * When we want to make sure that we handle the null later on in a monoid fashion,
    * and this ensures we deal with the value
+   * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
    */
   optional(name?: string): Parser<Optional<A>, Optional<B>> {
     return new Parser(new MaybeParser(this));
@@ -218,14 +283,29 @@ export class Parser<A, B> implements IParser<A, B> {
     );
   }
 
-  name(nameString: string) {
+  /**
+   * Use this when we want to give the parser a name, and we want to be able to use the name in the error messages.
+   * @param nameString
+   * @returns
+   */
+  name(nameString: string): Parser<A, B> {
     return parserName(nameString, this);
   }
 
+  /**
+   * This is another type of parsing that will return a value that is a discriminated union of the success and failure cases.
+   * https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions
+   * @param value
+   * @returns
+   */
   enumParsed(value: A): { value: B } | { error: ISimpleParsedError } {
     return this.parse(value, enumParsed) as any;
   }
 
+  /**
+   * Return the unwrapped parser/ IParser
+   * @returns
+   */
   unwrappedParser() {
     let answer: Parser<any, any> = this;
     while (true) {
