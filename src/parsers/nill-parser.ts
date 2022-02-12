@@ -5,11 +5,11 @@ export class NilParser implements IParser<unknown, null | undefined> {
       name: "Null",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: unknown,
-    onParse: OnParse<unknown, null | undefined, C, D>
+    onParse: OnParse<unknown, null | undefined, C, D>,
   ): C | D {
     if (a === null || a === undefined) return onParse.parsed(a);
 

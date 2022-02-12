@@ -1,9 +1,11 @@
 version = $$(git tag --sort=committerdate | tail -1)
-bundle: test
+bundle: test fmt
 	echo $(version)
 	deno run --allow-write --allow-env --allow-run --allow-read build.ts $(version)
-test:
+test: fmt
 	deno test --allow-write --allow-read --unstable src/tests.ts
+fmt:
+	deno fmt
 
 publish: bundle
 	cd lib

@@ -15,7 +15,7 @@ import { UnknownParser } from "./unknown-parser.ts";
  */
 export function guard<A, B extends A>(
   test: (value: A) => value is B,
-  testName?: string
+  testName?: string,
 ): Parser<A, B> {
   return Parser.isA(test, testName || test.name);
 }
@@ -29,7 +29,7 @@ export const number = new Parser(new NumberParser());
 export const isNill = new Parser(new NilParser());
 
 export const natural = number.refine(
-  (x: number): x is number => x >= 0 && x === Math.floor(x)
+  (x: number): x is number => x >= 0 && x === Math.floor(x),
 );
 
 export const isFunction = new Parser(new FunctionParser());

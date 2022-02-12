@@ -1,4 +1,4 @@
-import { Parser, isArray } from "./index.ts";
+import { isArray, Parser } from "./index.ts";
 import { IParser, OnParse } from "./interfaces.ts";
 
 /**
@@ -13,15 +13,16 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
       name: "ArrayOf",
       children: [parser],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B[], C, D>): C | D {
-    if (!Array.isArray(a))
+    if (!Array.isArray(a)) {
       return onParse.invalid({
         value: a,
         keys: [],
         parser: this,
       });
+    }
     const values = [...a];
     for (let index = 0; index < values.length; index++) {
       const result = this.parser.enumParsed(values[index]);
@@ -40,7 +41,7 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
  * @param validator What is the validator for the values in the array
  */
 export function arrayOf<A>(
-  validator: Parser<unknown, A>
+  validator: Parser<unknown, A>,
 ): Parser<unknown, A[]> {
   return new Parser(new ArrayOfParser(validator));
 }

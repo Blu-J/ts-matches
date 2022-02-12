@@ -3,6 +3,7 @@ import { EnsureParser, IParser, OrParser } from "./interfaces.ts";
 import { any } from "./simple-parsers.ts";
 
 // prettier-ignore
+// deno-fmt-ignore
 export type SomeParsers<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>

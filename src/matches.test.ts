@@ -1,5 +1,5 @@
 import matches from "./matches.ts";
-import { Parser, any, every, shape } from "./parsers/index.ts";
+import { any, every, Parser, shape } from "./parsers/index.ts";
 import { saferStringify } from "./utils.ts";
 import { expect } from "https://deno.land/x/expect/mod.ts";
 const { test } = Deno;
@@ -12,7 +12,7 @@ export const validatorError = every(
     parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
-  })
+  }),
 );
 
 export function isType<T>(x: T) {}
@@ -148,7 +148,7 @@ test("should fail for missing key", () => {
   const validator = matches.shape({ a: matches.any });
   assertSnapshot(
     '"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 
@@ -157,7 +157,7 @@ test("should be able to test shape with failure", () => {
   const validator = matches.shape({ a: matches.literal("b") });
   assertSnapshot(
     '"[\\"a\\"]Literal<\\"b\\">(\\"c\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 
@@ -165,7 +165,7 @@ test("should be able to test shape with failure: not object", () => {
   const testValue = 5;
   const validator = matches.shape({ a: matches.literal("b") });
   expect(validator.parse(testValue, unFold)).toEqual(
-    `Shape<{a:Literal<\"b\">}>(${saferStringify(testValue)})`
+    `Shape<{a:Literal<\"b\">}>(${saferStringify(testValue)})`,
   );
 });
 
@@ -177,7 +177,7 @@ test("should be able to test shape with failure", () => {
   });
   assertSnapshot(
     '"[\\"a\\"]Shape<{a:Literal<\\"b\\">,b:Literal<\\"b\\">}>(\\"missingProperty\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 test("should be able to test shape with failure smaller", () => {
@@ -188,7 +188,7 @@ test("should be able to test shape with failure smaller", () => {
   });
   assertSnapshot(
     '"[\\"b\\"]Shape<{a:Literal<\\"b\\">,b:Literal<\\"b\\">}>(\\"missingProperty\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 
@@ -206,7 +206,7 @@ test("should be able to test partial shape failure", () => {
   });
   assertSnapshot(
     '"[\\"a\\"]Literal<\\"c\\">(\\"a\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 test("should be able to test partial shape failure smaller", () => {
@@ -217,14 +217,14 @@ test("should be able to test partial shape failure smaller", () => {
   });
   assertSnapshot(
     '"[\\"b\\"]Literal<\\"c\\">(\\"b\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 
 {
   const validator = matches.shape(
     { a: matches.literal("c"), b: matches.literal("d") },
-    ["b"]
+    ["b"],
   );
   isType<Parser<unknown, { a: "c"; b?: "d" | undefined }>>(validator);
   // @ts-expect-error
@@ -255,7 +255,7 @@ test("should be able to test partial shape failure smaller", () => {
     } catch (e) {
       assertSnapshot(
         '"[\\"a\\"]Shape<{a:Literal<\\"c\\">}>(\\"missingProperty\\")"',
-        validator.parse(testValue, unFold)
+        validator.parse(testValue, unFold),
       );
       return;
     }
@@ -269,7 +269,7 @@ test("should be able to test partial shape failure smaller", () => {
     } catch (e) {
       assertSnapshot(
         '"[\\"b\\"]Literal<\\"d\\">(\\"e\\")"',
-        validator.parse(testValue, unFold)
+        validator.parse(testValue, unFold),
       );
       return;
     }
@@ -283,7 +283,7 @@ test("should be able to test partial shape failure smaller", () => {
         f: matches.literal("f"),
       },
       ["b", "f"],
-      { b: "d" } as const
+      { b: "d" } as const,
     );
     isType<
       Parser<
@@ -304,8 +304,8 @@ test("should be able to test partial shape failure smaller", () => {
           b: "d";
         }
       >
-      // @ts-expect-error
-    >(validator);
+    > // @ts-expect-error
+    (validator);
     type Valid = { a: "c"; b?: "d" | null };
     const testValue = { a: "c" };
 
@@ -329,7 +329,7 @@ test("should be able to test literal with failure", () => {
   const validator = matches.literal("b");
   assertSnapshot(
     '"Literal<\\"b\\">(\\"a\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 test("should be able to test unknown", () => {
@@ -465,7 +465,7 @@ test("should be able to test tuple(number, string) with failure", () => {
   const validator = matches.tuple(matches.number, matches.string);
   assertSnapshot(
     '"[\\"0\\"]number(\\"bad\\")"',
-    validator.parse(testValue, unFold)
+    validator.parse(testValue, unFold),
   );
 });
 
@@ -475,7 +475,7 @@ test("should be able to use matches.when", () => {
   expect(
     matches(testValue)
       .when(validator, () => true)
-      .defaultTo(false)
+      .defaultTo(false),
   ).toEqual(true);
 });
 
@@ -485,7 +485,7 @@ test("should be able to use matches.when fallback for the default to", () => {
   expect(
     matches(testValue)
       .when(validator, () => true)
-      .defaultTo(false)
+      .defaultTo(false),
   ).toEqual(false);
 });
 
@@ -505,7 +505,7 @@ test("should intersection several matchers", () => {
   const testValue = 4;
   const isEven = matches.guard(
     (x: unknown): x is number => isNumber(x) && x % 2 === 0,
-    "isEven"
+    "isEven",
   );
   const validator = matches.every(matches.number, isEven);
   expect(validator.parse(testValue, unFold)).toEqual(testValue);
@@ -531,11 +531,11 @@ test("should be fallible union several matchers", () => {
   const testValue = 5;
   const isEven = matches.guard(
     (x: unknown): x is number => isNumber(x) && x % 2 === 0,
-    "isEven"
+    "isEven",
   );
   const isGt6 = matches.guard(
     (x: unknown): x is number => isNumber(x) && x > 6,
-    "isGt6"
+    "isGt6",
   );
   const validator = matches.every(matches.number, isEven, isGt6);
   assertSnapshot('"isEven(5)"', validator.parse(testValue, unFold));
@@ -551,7 +551,7 @@ test("should have array of test negative", () => {
   const arrayOf = matches.arrayOf(matches.literal(5));
   assertSnapshot(
     '"ArrayOf<Literal<5>>(\\"bad\\")"',
-    arrayOf.parse(testValue, unFold)
+    arrayOf.parse(testValue, unFold),
   );
 });
 test("should be able to get the value of an array of", () => {
@@ -606,7 +606,7 @@ test("should refinement matchers fail", () => {
   const testValue = 4;
   const isEven = matches.number.refine(
     (num: number): num is number => num % 2 === 0,
-    "isEven"
+    "isEven",
   );
   assertSnapshot('"parsed(4)"', isEven.parse(testValue, stringFold));
 });
@@ -614,7 +614,7 @@ test("should refinement matchers fail", () => {
   const testValue = 5;
   const isEven = matches.number.refine(
     (num: number): num is number => num % 2 === 0,
-    "isEven"
+    "isEven",
   );
   assertSnapshot('"isEven(5)"', isEven.parse(testValue, unFold));
 });
@@ -623,7 +623,7 @@ test("should refinement matchers fail cleanup any", () => {
   const testValue = 5;
   const isEven = matches.any.refine(
     (num: any): num is number => num % 2 === 0,
-    "isEven"
+    "isEven",
   );
   try {
     isEven.unsafeCast(testValue);
@@ -658,25 +658,25 @@ test("some should only return the unique", () => {
     '"Or<number,...>(\\"hello\\")"',
     matches
       .some(matches.number, matches.literal("test"), matches.number)
-      .parse("hello", unFold)
+      .parse("hello", unFold),
   );
 });
 test("some should only return the unique", () => {
   assertSnapshot(
     '"Or<number,...>(\\"hello\\")"',
-    matches.some(matches.number, matches.number).parse("hello", unFold)
+    matches.some(matches.number, matches.number).parse("hello", unFold),
   );
 });
 
 test("should guard without a name", () => {
   expect(matches.guard((x): x is number => Number(x) > 3).unsafeCast(6)).toBe(
-    6
+    6,
   );
 });
 test("should guard without a name failure", () => {
   assertSnapshot(
     '"invalid({\\"value\\":2,\\"keys\\":[],\\"parser\\":{\\"typeName\\":\\"\\",\\"description\\":{\\"name\\":\\"Guard\\",\\"children\\":[],\\"extras\\":[\\"\\"]}}})"',
-    matches.guard((x): x is number => Number(x) > 3).parse(2, stringFold)
+    matches.guard((x): x is number => Number(x) > 3).parse(2, stringFold),
   );
 });
 
@@ -701,7 +701,7 @@ test("should be able to test is object for event", () => {
     expect(matches.instanceOf(Fake).test(value)).toEqual(false);
     assertSnapshot(
       '"isFake({\\"value\\":4})"',
-      matches.instanceOf(Fake).parse(value, unFold)
+      matches.instanceOf(Fake).parse(value, unFold),
     );
   });
 }
@@ -711,7 +711,7 @@ test("should fail on a circular object", () => {
   o.o = o;
   assertSnapshot(
     '"Function([object Object])"',
-    matches.isFunction.parse(o, unFold)
+    matches.isFunction.parse(o, unFold),
   );
 });
 
@@ -720,7 +720,7 @@ test("should be able to map validation", () => {
   const event = new Event(testString);
   const isEvent = matches.guard(
     (x: unknown): x is Event => x instanceof Event,
-    "isEvent"
+    "isEvent",
   );
   expect(
     isEvent
@@ -732,7 +732,7 @@ test("should be able to map validation", () => {
         let _test2: number = x;
         return x.type;
       })
-      .parse(event, unFold)
+      .parse(event, unFold),
   ).toBe(testString);
 });
 test("should be able to map validation with name", () => {
@@ -740,14 +740,14 @@ test("should be able to map validation with name", () => {
   const event = new Event(testString);
   const isEvent = matches.guard(
     (x: unknown): x is Event => x instanceof Event,
-    "isEvent"
+    "isEvent",
   );
   expect(
     isEvent
       .map(function asType(x) {
         return x.type;
       })
-      .parse(event, unFold)
+      .parse(event, unFold),
   ).toBe(testString);
 });
 
@@ -771,7 +771,7 @@ test("should be able to map validation with name", () => {
     const input = {};
     assertSnapshot(
       '"\\"Maybe<number>({})\\""',
-      saferStringify(maybeNumber.parse(input, unFold))
+      saferStringify(maybeNumber.parse(input, unFold)),
     );
   });
 }
@@ -798,7 +798,7 @@ test("should be able to map validation with name", () => {
     const input = {};
     assertSnapshot(
       '"Default<0,Maybe<number>>({})"',
-      maybeNumber.parse(input, unFold)
+      maybeNumber.parse(input, unFold),
     );
   });
 }
@@ -822,7 +822,7 @@ test("should be able to map validation with name", () => {
     const output = enumTest.parse(input, unFold);
     assertSnapshot(
       `"Named<\\"enumTest\\",Literal<\\"A\\",\\"B\\">>(\\"bad\\")"`,
-      output
+      output,
     );
   });
 }
@@ -830,7 +830,7 @@ test("should be able to map validation with name", () => {
 {
   const testMatcher = matches.dictionary(
     [matches.literal("test"), matches.literal("value")],
-    [matches.literal("test2"), matches.literal("value2")]
+    [matches.literal("test2"), matches.literal("value2")],
   );
   test("Testing dictionaries: should be able to check correct shape", () => {
     const input = { test: "value", test2: "value2" };
@@ -870,12 +870,12 @@ test("should be able to map validation with name", () => {
       .tuple(
         matches.shape({
           second: matches.literal("valid"),
-        })
+        }),
       )
       .parse(input, unFold);
     assertSnapshot(
       `"[\\"0\\"][\\"second\\"]Literal<\\"valid\\">(\\"invalid\\")"`,
-      output
+      output,
     );
   });
 
@@ -884,15 +884,16 @@ test("should be able to map validation with name", () => {
     const matcher = matches.tuple(
       matches.number,
       matches.literal(2),
-      matches.number
+      matches.number,
     );
     // @ts-expect-error
     const outputWrong: [number, number] = matcher.unsafeCast(input);
     // @ts-expect-error
     const outputWrong2: [number, 3, number] = matcher.unsafeCast(input);
     // @ts-expect-error
-    const outputWrong3: [number, number, number, number] =
-      matcher.unsafeCast(input);
+    const outputWrong3: [number, number, number, number] = matcher.unsafeCast(
+      input,
+    );
     const outputRight1: [number, number, number] = matcher.unsafeCast(input);
     const outputRight2: [number, 2, number] = matcher.unsafeCast(input);
     // expected type: Validator<unknown, [number,number,number]>

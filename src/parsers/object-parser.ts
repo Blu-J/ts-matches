@@ -7,7 +7,7 @@ export class ObjectParser implements IParser<unknown, object> {
       name: "Object",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, object, C, D>): C | D {
     if (isObject(a)) return onParse.parsed(a);

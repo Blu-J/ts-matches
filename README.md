@@ -17,14 +17,18 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 
 [Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
 
-Also useful for casting and boundary verifications. So using this as a json validator. The benefit comes that the parser becomes a validator, also the types are given back to typescript, where something like ajv cannot do or alot of validators.
+Also useful for casting and boundary verifications. So using this as a json
+validator. The benefit comes that the parser becomes a validator, also the types
+are given back to typescript, where something like ajv cannot do or alot of
+validators.
 
 ## Examples
 
-This is useful on a boundary layer, like fetching a value. In that case we have no idea what the shape is, so we should do a check on that.
+This is useful on a boundary layer, like fetching a value. In that case we have
+no idea what the shape is, so we should do a check on that.
 
 ```typescript
-import matches from 'https://deno.land/x/ts_matches/mod.ts'
+import matches from "https://deno.land/x/ts_matches/mod.ts";
 fetch("fishes.com/gold-fishes/12")
   .then((x) => x.json())
   .then(
@@ -33,11 +37,12 @@ fetch("fishes.com/gold-fishes/12")
       position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
-    }).unsafeCast
+    }).unsafeCast,
   );
 ```
 
-And when we get the value out it will either be the type that we want, or it will throw an error. The other use case is a pattern matching.
+And when we get the value out it will either be the type that we want, or it
+will throw an error. The other use case is a pattern matching.
 
 ```typescript
 import matches from "matches";
@@ -48,7 +53,8 @@ const getText = (x: unknown): string =>
     .defaultTo("no found type yet");
 ```
 
-And here we can use the type checking and what do in that case. With destructuring, lots of abilities are there
+And here we can use the type checking and what do in that case. With
+destructuring, lots of abilities are there
 
 ```typescript
 import matches from "matches";
@@ -57,7 +63,7 @@ const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple(matches.any, matches.number)
+  matches.tuple(matches.any, matches.number),
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)
@@ -78,9 +84,9 @@ const currentValue = matches("5" as const)
 
 ## API
 
-Given that the default export is `matches`
-Then the type of `matches` is `unkown -> matcherChain`, and also has the properties
-on that function that return a `parser` or a function that creates a `parser`
+Given that the default export is `matches` Then the type of `matches` is
+`unkown -> matcherChain`, and also has the properties on that function that
+return a `parser` or a function that creates a `parser`
 
 | Attribute  | Description                                                                                                                                                                                                                           |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -127,13 +133,13 @@ on that function that return a `parser` or a function that creates a `parser`
 | refine      | we want to add more tests to value, could change type to sub |
 | validate    | we want to add more tests to value                           |
 
-`Parser.parserErrorAsString` (
-validationError: parserError
-): string
-This is the exposed transform of the parserError to a string. Override this if you want to make the errors different.
+`Parser.parserErrorAsString` ( validationError: parserError ): string This is
+the exposed transform of the parserError to a string. Override this if you want
+to make the errors different.
 
-And of of any matcher we two functions, refine and unsafe cast. Refine is useful when we want to check a condition, like is even.
-And the matcher is also a function which creates an either of our value as well.
+And of of any matcher we two functions, refine and unsafe cast. Refine is useful
+when we want to check a condition, like is even. And the matcher is also a
+function which creates an either of our value as well.
 
 ## Deploying
 

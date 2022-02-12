@@ -6,7 +6,7 @@ export class AnyParser implements IParser<unknown, any> {
       name: "Any",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, any, C, D>): C | D {
     return onParse.parsed(a);
