@@ -2,7 +2,7 @@
 import { build } from "https://deno.land/x/dnt/mod.ts";
 
 await build({
-  entryPoints: ["./src/matches.ts"],
+  entryPoints: ["./mod.ts"],
   outDir: "./lib",
   shims: {
     // see JS docs for overview and more options
