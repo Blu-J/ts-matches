@@ -1,16 +1,17 @@
-import { Parser, isArray, literal } from "./index.ts";
+import { isArray, literal, Parser } from "./index.ts";
 import { saferStringify } from "../utils.ts";
 import { IParser, OnParse, ParserInto } from "./interfaces.ts";
 
 // prettier-ignore
-export type TupleParserInto<T> =
-  T extends [infer A] | readonly [infer A] ? [ParserInto<A>]
-  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? [ParserInto<A>, ...TupleParserInto<B>]
-  : never
+// deno-fmt-ignores
+export type TupleParserInto<T> = T extends [infer A] | readonly [infer A]
+  ? [ParserInto<A>]
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B]
+    ? [ParserInto<A>, ...TupleParserInto<B>]
+  : never;
 
 export class TupleParser<A extends Parser<unknown, unknown>[]>
-  implements IParser<unknown, TupleParserInto<A>>
-{
+  implements IParser<unknown, TupleParserInto<A>> {
   constructor(
     readonly parsers: A,
     readonly lengthMatcher = literal(parsers.length),
@@ -18,11 +19,11 @@ export class TupleParser<A extends Parser<unknown, unknown>[]>
       name: "Tuple",
       children: parsers,
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     input: unknown,
-    onParse: OnParse<unknown, TupleParserInto<A>, C, D>
+    onParse: OnParse<unknown, TupleParserInto<A>, C, D>,
   ): C | D {
     const tupleError = isArray.enumParsed(input);
     if ("error" in tupleError) return onParse.invalid(tupleError.error);

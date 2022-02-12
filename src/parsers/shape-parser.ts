@@ -1,8 +1,9 @@
-import { Parser, object, some, every } from "./index.ts";
+import { every, object, Parser, some } from "./index.ts";
 import { saferStringify } from "../utils.ts";
 import { IParser, OnParse } from "./interfaces.ts";
 type _<T> = T;
 // prettier-ignore
+// deno-fmt-ignore
 export type MergeAll<T> = 
   T extends ReadonlyArray<infer U> ? ReadonlyArray<MergeAll<U>> :
   T extends object ? 
@@ -16,9 +17,8 @@ export type MergeAll<T> =
 export class ShapeParser<
   A extends unknown,
   Key extends string | number | symbol,
-  B
-> implements IParser<A, B>
-{
+  B,
+> implements IParser<A, B> {
   constructor(
     readonly parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
     readonly isPartial: boolean,
@@ -29,11 +29,11 @@ export class ShapeParser<
       name: isPartial ? "Partial" : "Shape",
       children: parserKeys.map((key) => parserMap[key]),
       extras: parserKeys,
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: unknown,
-    onParse: OnParse<A, { [key in Key]?: B }, C, D>
+    onParse: OnParse<A, { [key in Key]?: B }, C, D>,
   ): C | D {
     const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
@@ -71,9 +71,11 @@ export class ShapeParser<
     return onParse.parsed(value);
   }
 }
-export const isPartial = <A extends {}>(testShape: {
-  [key in keyof A]: Parser<unknown, A[key]>;
-}): Parser<unknown, Partial<A>> => {
+export const isPartial = <A extends {}>(
+  testShape: {
+    [key in keyof A]: Parser<unknown, A[key]>;
+  },
+): Parser<unknown, Partial<A>> => {
   return new Parser(new ShapeParser(testShape, true)) as any;
 };
 
@@ -87,9 +89,11 @@ export const partial = isPartial;
  * @param testShape Shape of validators, to ensure we match the shape
  */
 
-export const isShape = <A extends {}>(testShape: {
-  [key in keyof A]: Parser<unknown, A[key]>;
-}): Parser<unknown, A> => {
+export const isShape = <A extends {}>(
+  testShape: {
+    [key in keyof A]: Parser<unknown, A[key]>;
+  },
+): Parser<unknown, A> => {
   return new Parser(new ShapeParser(testShape, false)) as any;
 };
 
@@ -97,11 +101,12 @@ export function shape<A extends {}, Overwrites extends keyof A>(
   testShape: {
     [key in keyof A]: Parser<unknown, A[key]>;
   },
-  optionals: Overwrites[]
+  optionals: Overwrites[],
 ): Parser<
   unknown,
   MergeAll<
-    { [K in keyof Omit<A, Overwrites>]: A[K] } & {
+    & { [K in keyof Omit<A, Overwrites>]: A[K] }
+    & {
       [K in keyof Pick<A, Overwrites>]?: A[K];
     }
   >
@@ -109,36 +114,40 @@ export function shape<A extends {}, Overwrites extends keyof A>(
 export function shape<
   A extends {},
   Overwrites extends keyof A,
-  Defaults extends { [K in Overwrites]?: A[K] }
+  Defaults extends { [K in Overwrites]?: A[K] },
 >(
   testShape: {
     [key in keyof A]: Parser<unknown, A[key]>;
   },
   optionals: Overwrites[],
-  defaults: Defaults
+  defaults: Defaults,
 ): Parser<
   unknown,
   MergeAll<
-    { [K in keyof Omit<A, Overwrites>]: A[K] } & {
+    & { [K in keyof Omit<A, Overwrites>]: A[K] }
+    & {
       [K in keyof Omit<Pick<A, Overwrites>, keyof Defaults>]?: A[K];
-    } & {
+    }
+    & {
       [K in keyof Pick<Pick<A, Overwrites>, keyof Defaults & Overwrites>]: A[K];
     }
   >
 >;
-export function shape<A extends {}>(testShape: {
-  [key in keyof A]: Parser<unknown, A[key]>;
-}): Parser<unknown, A>;
+export function shape<A extends {}>(
+  testShape: {
+    [key in keyof A]: Parser<unknown, A[key]>;
+  },
+): Parser<unknown, A>;
 export function shape<
   A extends {},
   Overwrites extends keyof A,
-  OptionalDefaults extends { [K in Overwrites]: A[K] }
+  OptionalDefaults extends { [K in Overwrites]: A[K] },
 >(
   testShape: {
     [key in keyof A]: Parser<unknown, A[key]>;
   },
   optionals?: Overwrites[],
-  optionalAndDefaults?: OptionalDefaults
+  optionalAndDefaults?: OptionalDefaults,
 ) {
   if (optionals) {
     const defaults = optionalAndDefaults || {};
@@ -152,14 +161,14 @@ export function shape<
         Object.fromEntries(
           entries
             .filter(([key, _]) => optionalSet.has(key as any))
-            .map(([key, parser]) => [key, parser])
-        )
+            .map(([key, parser]) => [key, parser]),
+        ),
       ),
       isShape(
         Object.fromEntries(
-          entries.filter(([key, _]) => !optionalSet.has(key as any))
-        )
-      )
+          entries.filter(([key, _]) => !optionalSet.has(key as any)),
+        ),
+      ),
     ).map((ret) => {
       for (const key of optionalSet) {
         const keyAny = key as any;

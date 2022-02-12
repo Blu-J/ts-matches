@@ -7,11 +7,11 @@ export class ArrayParser implements IParser<unknown, Array<unknown>> {
       name: "Array",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: unknown,
-    onParse: OnParse<unknown, Array<unknown>, C, D>
+    onParse: OnParse<unknown, Array<unknown>, C, D>,
   ): C | D {
     if (Array.isArray(a)) return onParse.parsed(a);
 

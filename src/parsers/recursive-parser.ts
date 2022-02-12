@@ -12,7 +12,7 @@ import { any } from "./simple-parsers.ts";
 export class RecursiveParser<B> implements IParser<unknown, B> {
   private parser?: Parser<unknown, B>;
   static create<B>(
-    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>
+    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>,
   ): RecursiveParser<B> {
     const parser = new RecursiveParser<any>(fn);
     parser.parser = fn(new Parser(parser));
@@ -20,13 +20,13 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
   }
   private constructor(
     readonly recursive: (
-      parser: Parser<unknown, any>
+      parser: Parser<unknown, any>,
     ) => Parser<unknown, unknown>,
     readonly description = {
       name: "Recursive",
       children: [],
       extras: [recursive],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     if (!this.parser) {
@@ -40,8 +40,9 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
   }
 }
 
-type EnsurredType<A, B = A> = (A extends never ? never : unknown) &
-  ((parser: Parser<unknown, any>) => Parser<unknown, B>);
+type EnsurredType<A, B = A> =
+  & (A extends never ? never : unknown)
+  & ((parser: Parser<unknown, any>) => Parser<unknown, B>);
 
 /**
  * Must pass the shape that we expect since typescript as of this point
@@ -52,7 +53,7 @@ type EnsurredType<A, B = A> = (A extends never ? never : unknown) &
  */
 export function recursive<B = never>(fn: EnsurredType<B>) {
   let value = fn(any);
-  const created: RecursiveParser<ParserInto<typeof value>> =
-    RecursiveParser.create<B>(fn);
+  const created: RecursiveParser<ParserInto<typeof value>> = RecursiveParser
+    .create<B>(fn);
   return new Parser(created);
 }

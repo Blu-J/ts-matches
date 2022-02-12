@@ -18,7 +18,7 @@ export class DeferredParser<B> implements IParser<unknown, B> {
       name: "Deferred",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   setParser(parser: IParser<unknown, B>) {
     this.parser = new Parser(parser);

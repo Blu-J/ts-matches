@@ -1,52 +1,53 @@
 import {
-  Parser,
-  isArray,
+  any,
   arrayOf,
-  some,
-  regex,
-  number,
-  natural,
-  isFunction,
-  shape,
-  partial,
-  literal,
+  boolean,
+  deferred,
+  dictionary,
   every,
   guard,
-  any,
-  isNill,
-  tuple,
-  object,
-  string,
-  boolean,
   instanceOf,
-  ValidatorError,
-  dictionary,
+  isArray,
+  isFunction,
+  isNill,
+  literal,
   literals,
+  natural,
+  number,
+  object,
+  Parser,
+  partial,
   recursive,
-  deferred,
+  regex,
+  shape,
+  some,
+  string,
+  tuple,
+  ValidatorError,
 } from "./parsers/index.ts";
 import { parserName } from "./parsers/named.ts";
 import { unknown } from "./parsers/simple-parsers.ts";
-export type { ParserNames, IParser } from "./parsers/interfaces.ts";
+export type { IParser, ParserNames } from "./parsers/interfaces.ts";
 
 export { Parser as Validator };
 export type { ValidatorError };
 
 // prettier-ignore
+
 export type ValueOrFunction<In, Out> =
- | ((a: In) => Out)
- | (() => Out)
- | Out
+  | ((a: In) => Out)
+  | (() => Out)
+  | Out;
 
 // prettier-ignore
+// deno-fmt-ignore
 export type ParserOrLiteral<A> = ExtendsSimple<A> | Parser<unknown, A>
 export type ExtendsSimple<A> = A extends
   | string
   | number
   | boolean
   | null
-  | undefined
-  ? A
+  | undefined ? A
   : never;
 
 export type WhenArgs<In, Out> =
@@ -94,7 +95,7 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
       ...matchers.map((matcher) =>
         // deno-lint-ignore no-explicit-any
         matcher instanceof Parser ? matcher : literal(matcher as any)
-      )
+      ),
     );
     const result = parser.enumParsed(this.a);
     if ("error" in result) {
@@ -162,7 +163,7 @@ export const matches = Object.assign(
     parserName,
     recursive,
     deferred,
-  }
+  },
 );
 
 const array = isArray;
@@ -173,35 +174,35 @@ const anyOf = some;
 const allOf = every;
 
 export {
+  allOf,
+  any,
+  anyOf,
   array,
   arrayOf,
-  some,
-  tuple,
-  regex,
-  number,
-  natural,
-  isFunction,
-  object,
-  string,
-  shape,
-  partial,
-  literal,
+  boolean,
+  deferred,
+  dictionary,
   every,
   guard,
-  unknown,
-  any,
-  boolean,
-  dictionary,
-  literals,
-  nill,
   instanceOf,
-  Parse,
-  parserName,
-  recursive,
-  deferred,
+  isFunction,
+  literal,
+  literals,
+  natural,
+  nill,
+  number,
+  object,
   oneOf,
-  anyOf,
-  allOf,
+  Parse,
   Parser,
+  parserName,
+  partial,
+  recursive,
+  regex,
+  shape,
+  some,
+  string,
+  tuple,
+  unknown,
 };
 export default matches;

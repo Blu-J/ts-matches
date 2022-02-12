@@ -1,14 +1,14 @@
 import matches from "./matches.ts";
 import {
-  Parser,
   any,
-  every,
-  shape,
   deferred,
+  every,
   literal,
-  tuple,
+  Parser,
+  shape,
   some,
   string,
+  tuple,
 } from "./parsers/index.ts";
 import { saferStringify } from "./utils.ts";
 import { expect } from "https://deno.land/x/expect/mod.ts";

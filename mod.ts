@@ -16,4 +16,5 @@ export { NamedParser } from "./src/parsers/named.ts";
 export { ArrayOfParser } from "./src/parsers/array-of-parser.ts";
 export { LiteralsParser } from "./src/parsers/literal-parser.ts";
 export { ConcatParsers } from "./src/parsers/concat-parser.ts";
+export { MappedAParser } from "./src/parsers/mapped-parser.ts";
 export default matches;

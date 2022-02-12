@@ -1,5 +1,5 @@
 import matches from "./matches.ts";
-import { Parser, any, every, shape } from "./parsers/index.ts";
+import { any, every, Parser, shape } from "./parsers/index.ts";
 import { saferStringify } from "./utils.ts";
 import { expect } from "https://deno.land/x/expect/mod.ts";
 import { assertSnapshot, isType } from "./matches.test.ts";
@@ -10,7 +10,7 @@ export const validatorError = every(
     parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
-  })
+  }),
 );
 
 const unFold = {
@@ -57,7 +57,7 @@ test("simple recursive shape with invalid", () => {
   } catch (e) {
     assertSnapshot(
       '"[\\"test\\"]Shape<{test:Or<string,...>}>(\\"missingProperty\\")"',
-      validator.parse(testValue, unFold)
+      validator.parse(testValue, unFold),
     );
     return;
   }
@@ -77,7 +77,7 @@ test("simple recursive shape with invalid", () => {
   } catch (e) {
     assertSnapshot(
       '"Recursive<>(\\"Recursive Invalid State\\")"',
-      validator.parse(testValue, unFold)
+      validator.parse(testValue, unFold),
     );
     return;
   }

@@ -1,7 +1,8 @@
 import { any, Parser } from "./index.ts";
-import { EnsureParser, AndParser, IParser } from "./interfaces.ts";
+import { AndParser, EnsureParser, IParser } from "./interfaces.ts";
 
 // prettier-ignore
+// deno-fmt-ignore
 export type EveryParser<T> =
   T extends [] | readonly [] ? IParser<unknown, any> 
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
