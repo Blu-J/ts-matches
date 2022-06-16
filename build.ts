@@ -1,5 +1,5 @@
 // ex. scripts/build_npm.ts
-import { build } from "https://deno.land/x/dnt/mod.ts";
+import { build } from "https://deno.land/x/dnt@0.25.3/mod.ts";
 
 await build({
   entryPoints: ["./mod.ts"],

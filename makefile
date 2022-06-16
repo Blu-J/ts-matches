@@ -5,15 +5,15 @@ lc_ts = $(src:.md=.ts)
 version = $$(git tag --sort=committerdate | tail -1)
 bundle: test fmt
 	echo $(version)
-	deno run --allow-write --allow-env --allow-run --allow-read build.ts $(version)
+	deno run --allow-net --allow-write --allow-env --allow-run --allow-read build.ts $(version)
 test: fmt test_living_code
 	deno test --allow-write --allow-read --unstable src/tests.ts
+	if grep -E "console.log" src/**/*.ts ; then echo 'console.log found'; exit 1; fi
 fmt:
 	deno fmt
 
-publish: bundle
-	cd lib
-	npm publish
+publish: bundle	
+	cd lib && npm publish
 
 human_coverage:
 	rm -rf coverage || true
