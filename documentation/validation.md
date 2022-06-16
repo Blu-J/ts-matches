@@ -19,7 +19,8 @@ First we will need to import our library.
 
 -->
 
-The easiest and most useful feature is using the matcher as a validation. Here I want to validate that the shape is correct or throw an error.
+The easiest and most useful feature is using the matcher as a validation. Here I
+want to validate that the shape is correct or throw an error.
 
 ```ts
 {
@@ -50,7 +51,7 @@ The easiest and most useful feature is using the matcher as a validation. Here I
   // Though it will give an error message on failure
   assertThrow(
     () => goldFishMatcher.unsafeCast(invalid_gold_fish),
-    'Failed type: ["type"]Literal<"gold-fish">("god-fish") given input {"type":"god-fish","position":[2,3],"age":5,"name":"Nemo"}'
+    'Failed type: ["type"]Literal<"gold-fish">("god-fish") given input {"type":"god-fish","position":[2,3],"age":5,"name":"Nemo"}',
   );
 }
 ```
@@ -63,7 +64,7 @@ A variation is to use the guard version.
 {
   if (!goldFishMatcher.test(valid_gold_fish)) {
     throw new Error(
-      "You could return from a function, break, or throw an error"
+      "You could return from a function, break, or throw an error",
     );
   }
   {
