@@ -24,46 +24,45 @@ validators.
 
 ## Examples
 
-The easiest and most useful feature is using the matcher as a validation. Here I want to validate that the shape is correct or throw an error
+The easiest and most useful feature is using the matcher as a validation. Here I
+want to validate that the shape is correct or throw an error
 
 ```typescript
-
 import matches from "https://deno.land/x/ts_matches/mod.ts";
 const goldFishMatcher = matches.shape({
-    type: t.literal("gold-fish"),
-    position: t.tuple(t.number, t.number),
-    age: t.natural,
-    name: t.string,
-  });
+  type: t.literal("gold-fish"),
+  position: t.tuple(t.number, t.number),
+  age: t.natural,
+  name: t.string,
+});
 // For this example I'm making the shape less known
-const input: object = { 
+const input: object = {
   type: "gold-fish",
-  position: [2,3],
+  position: [2, 3],
   age: 5,
-  name: "Nemo"
-}
+  name: "Nemo",
+};
 // The matcher will know that the type returned is always the correct shape, and the type will reflect that
-const checkedInput = goldFishMatcher.unsafeCast(input)
+const checkedInput = goldFishMatcher.unsafeCast(input);
 ```
 
 A variation is to use the guard version.
 
 ```typescript
-
 import matches from "ts-matches";
 const goldFishMatcher = matches.shape({
-    type: t.literal("gold-fish"),
-    position: t.tuple(t.number, t.number),
-    age: t.natural,
-    name: t.string,
-  });
+  type: t.literal("gold-fish"),
+  position: t.tuple(t.number, t.number),
+  age: t.natural,
+  name: t.string,
+});
 // For this example I'm making the shape less known
-const input: object = { 
+const input: object = {
   type: "gold-fish",
-  position: [2,3],
+  position: [2, 3],
   age: 5,
-  name: "Nemo"
-}
+  name: "Nemo",
+};
 if (!goldFishMatcher.test(input)) {
   return;
 }

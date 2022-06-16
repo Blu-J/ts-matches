@@ -151,7 +151,6 @@ export function shape<
 ) {
   if (optionals) {
     const defaults = optionalAndDefaults || {};
-    console.log("test");
     const entries = Object.entries(testShape) as Array<
       [keyof A, Parser<unknown, A[keyof A]>]
     >;
