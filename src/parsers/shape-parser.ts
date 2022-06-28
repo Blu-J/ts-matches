@@ -4,12 +4,12 @@ import { IParser, OnParse } from "./interfaces.ts";
 type _<T> = T;
 // prettier-ignore
 // deno-fmt-ignore
-export type MergeAll<T> = 
+export type MergeAll<T> =
   T extends ReadonlyArray<infer U> ? ReadonlyArray<MergeAll<U>> :
-  T extends object ? 
-    T extends null | undefined | never ? T :
-        _<{ [k in keyof T]: MergeAll<T[k]> }> 
-    : T;
+  T extends object ?
+  T extends null | undefined | never ? T :
+  _<{ [k in keyof T]: MergeAll<T[k]> }>
+  : T;
 /**
  * Given an object, we want to make sure the key exists and that the value on
  * the key matches the parser
@@ -160,7 +160,7 @@ export function shape<
         Object.fromEntries(
           entries
             .filter(([key, _]) => optionalSet.has(key as any))
-            .map(([key, parser]) => [key, parser]),
+            .map(([key, parser]) => [key, parser.optional()]),
         ),
       ),
       isShape(

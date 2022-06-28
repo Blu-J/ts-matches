@@ -261,6 +261,11 @@ test("should be able to test partial shape failure smaller", () => {
     }
     throw new Error("should be invalid");
   });
+  test("should be able to test shape with value `b` as null", () => {
+    const testValue = { b: null, a: "c" };
+
+    validator.unsafeCast(testValue);
+  });
   test("should be able to test shape with partial is wrong", () => {
     const testValue = { a: "c", b: "e" };
 
@@ -268,7 +273,7 @@ test("should be able to test partial shape failure smaller", () => {
       validator.unsafeCast(testValue);
     } catch (e) {
       assertSnapshot(
-        '"[\\"b\\"]Literal<\\"d\\">(\\"e\\")"',
+        '"[\\"b\\"]Maybe<Literal<\\"d\\">>(\\"e\\")"',
         validator.parse(testValue, unFold),
       );
       return;
