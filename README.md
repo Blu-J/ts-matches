@@ -82,7 +82,7 @@ fetch("fishes.com/gold-fishes/12")
       position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
-    }).unsafeCast,
+    }).unsafeCast
   );
 ```
 
@@ -108,7 +108,7 @@ const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple(matches.any, matches.number),
+  matches.tuple(matches.any, matches.number)
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)
@@ -168,15 +168,16 @@ return a `parser` or a function that creates a `parser`
 
 `Parser` api
 
-| Attribute   | Description                                                  |
-| ----------- | ------------------------------------------------------------ |
-| parse       | Use this to turn a value into an either                      |
-| usafeCast   | Use this to get the value or throw an error                  |
-| castPromise | Cast into a promise                                          |
-| optional    | output type is now a null of value                           |
-| defaultTo   | instead of creating a optional we fallback to a value        |
-| refine      | we want to add more tests to value, could change type to sub |
-| validate    | we want to add more tests to value                           |
+| Attribute    | Description                                                            |
+| ------------ | ---------------------------------------------------------------------- |
+| parse        | Use this to turn a value into an either                                |
+| usafeCast    | Use this to get the value or throw an error                            |
+| castPromise  | Cast into a promise                                                    |
+| optional     | output type is now a null of value                                     |
+| defaultTo    | instead of creating a optional we fallback to a value                  |
+| refine       | we want to add more tests to value, could change type to sub           |
+| validate     | we want to add more tests to value                                     |
+| errorMessage | If validation would create an error, return error as string, else void |
 
 `Parser.parserErrorAsString` ( validationError: parserError ): string This is
 the exposed transform of the parserError to a string. Override this if you want

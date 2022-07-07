@@ -143,12 +143,28 @@ test("should be able to test shape", () => {
   const validator = matches.shape({ a: matches.literal("c") });
   expect(validator.parse(testValue, unFold)).toEqual(testValue);
 });
+test("should not get an error message for missing key", () => {
+  const testValue = { a: "c" };
+  const validator = matches.shape({ a: matches.any });
+  const message = validator.errorMessage(testValue);
+  expect(message).toEqual(undefined);
+});
+
 test("should fail for missing key", () => {
   const testValue = {};
   const validator = matches.shape({ a: matches.any });
   assertSnapshot(
     '"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"',
     validator.parse(testValue, unFold),
+  );
+});
+test("should get an error message for missing key", () => {
+  const testValue = {};
+  const validator = matches.shape({ a: matches.any });
+  const message = validator.errorMessage(testValue);
+  assertSnapshot(
+    '"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"',
+    message,
   );
 });
 
