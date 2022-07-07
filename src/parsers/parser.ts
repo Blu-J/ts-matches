@@ -205,6 +205,19 @@ export class Parser<A, B> implements IParser<A, B> {
   }
 
   /**
+   * When we want to get the error message from the input, to know what is wrong
+   * @param input
+   * @returns Null if there is no error
+   */
+  errorMessage(input: A): void | string {
+    const parsed = this.parse(input, enumParsed);
+    if ("value" in parsed) return;
+    return Parser.validatorErrorAsString(
+      parsed.error,
+    );
+  }
+
+  /**
    * Use this that we want to do transformations after the value is valid and parsed.
    * A use case would be parsing a string, making sure it can be parsed to a number, and then convert to a number
    * @param fn
