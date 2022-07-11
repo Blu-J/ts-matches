@@ -178,6 +178,7 @@ return a `parser` or a function that creates a `parser`
 | refine       | we want to add more tests to value, could change type to sub           |
 | validate     | we want to add more tests to value                                     |
 | errorMessage | If validation would create an error, return error as string, else void |
+| test         | A guard for the type, returns true if type is valid (as a `x is type`) |
 
 `Parser.parserErrorAsString` ( validationError: parserError ): string This is
 the exposed transform of the parserError to a string. Override this if you want
