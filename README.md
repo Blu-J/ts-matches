@@ -13,6 +13,10 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 - Pattern matching
 - Switches as expressions
 
+# Related Libs
+
+- https://github.com/Blu-J/ts-matches-json-schema/ A library to be able to serialize + deserialize the types from json schema <-> ts-matches
+
 ## Tech Used
 
 [Wiki Pattern Matching](https://en.wikipedia.org/wiki/Pattern_matching)
