@@ -162,10 +162,7 @@ test("should get an error message for missing key", () => {
   const testValue = {};
   const validator = matches.shape({ a: matches.any });
   const message = validator.errorMessage(testValue);
-  assertSnapshot(
-    '"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"',
-    message,
-  );
+  assertSnapshot('"[\\"a\\"]Shape<{a:any}>(\\"missingProperty\\")"', message);
 });
 
 test("should be able to test shape with failure", () => {
@@ -953,6 +950,25 @@ test("should be able to map validation with name", () => {
     const incorrectOutput: { test: "value" } = matcher.unsafeCast(input);
     const output: { projected: "value" } = matcher.unsafeCast(input);
     expect(output.projected).toEqual("value");
+  });
+}
+
+{
+  test("Issue where dictionary reordered", () => {
+    const dataIn = {
+      "A": 1,
+      "B": 1,
+      "C": 1,
+    };
+    const expectedKeys = JSON.stringify(Object.keys(dataIn));
+    const newShape = matches(dataIn)
+      .when(matches.dictionary([matches.string, matches.unknown]), (x) => x)
+      .defaultToLazy(() => {
+        throw new Error("Should match");
+      });
+    const actualKeys = JSON.stringify(Object.keys(newShape));
+
+    expect(actualKeys).toEqual(expectedKeys);
   });
 }
 
