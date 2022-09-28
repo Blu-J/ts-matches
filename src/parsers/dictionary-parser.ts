@@ -1,6 +1,8 @@
 import { object, Parser } from "./index.ts";
 import { _, IParser, ISimpleParsedError, OnParse } from "./interfaces.ts";
 
+// prettier-ignore
+// deno-fmt-ignore
 export type DictionaryTuple<A> = A extends [
   Parser<unknown, infer Keys>,
   Parser<unknown, infer Values>
@@ -18,9 +20,8 @@ export type DictionaryShaped<T> =
     : never
 export class DictionaryParser<
   A extends object | {},
-  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
-> implements IParser<A, DictionaryShaped<Parsers>>
-{
+  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
+> implements IParser<A, DictionaryShaped<Parsers>> {
   constructor(
     readonly parsers: Parsers,
     readonly description = {
@@ -30,19 +31,20 @@ export class DictionaryParser<
           acc.push(k, v);
           return acc;
         },
-        []
+        [],
       ),
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: A,
-    onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>
+    onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>,
   ): C | D {
     const { parsers } = this;
     const entries: Array<[string | number, unknown]> = Object.entries(a);
 
-    outer: for (const entry of entries) {
+    outer:
+    for (const entry of entries) {
       const [key, value] = entry;
       const parseError: Array<ISimpleParsedError> = [];
       for (const [keyParser, valueParser] of parsers) {
@@ -76,7 +78,7 @@ export class DictionaryParser<
   }
 }
 export const dictionary = <
-  ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
+  ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][],
 >(
   ...parsers: ParserSets
 ): Parser<unknown, _<DictionaryShaped<[...ParserSets]>>> => {
