@@ -15,7 +15,8 @@ Living Documentation https://runkit.com/blu-j/ts-matches
 
 # Related Libs
 
-- https://github.com/Blu-J/ts-matches-json-schema/ A library to be able to serialize + deserialize the types from json schema <-> ts-matches
+- https://github.com/Blu-J/ts-matches-json-schema/ A library to be able to
+  serialize + deserialize the types from json schema <-> ts-matches
 
 ## Tech Used
 
@@ -86,7 +87,7 @@ fetch("fishes.com/gold-fishes/12")
       position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
-    }).unsafeCast
+    }).unsafeCast,
   );
 ```
 
@@ -112,7 +113,7 @@ const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple(matches.any, matches.number)
+  matches.tuple(matches.any, matches.number),
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)
