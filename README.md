@@ -170,6 +170,7 @@ return a `parser` or a function that creates a `parser`
 | when          | Create a matching case, when match return value           |
 | defaultTo     | Fall through case, ensures all are caught                 |
 | defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
+| unwrap        | This assumes that all cases are matched (TS tries to throw errors for this) |
 
 `Parser` api
 
