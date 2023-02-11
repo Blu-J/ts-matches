@@ -1,3 +1,4 @@
+// deno-lint-ignore-file ban-types
 import { IParser, OnParse } from "./interfaces.ts";
 import { isFunctionTest } from "./utils.ts";
 

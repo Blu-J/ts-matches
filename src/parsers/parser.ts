@@ -29,6 +29,14 @@ function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   return a;
 }
 
+export type EnumType<A> =
+  | {
+    error: ISimpleParsedError;
+  }
+  | {
+    value: A;
+  };
+
 const enumParsed = {
   parsed<A>(value: A) {
     return { value };
@@ -50,6 +58,7 @@ const enumParsed = {
  */
 export class Parser<A, B> implements IParser<A, B> {
   /// This is a hack to get the type of what the parser is going to return.
+  // deno-lint-ignore no-explicit-any
   public readonly _TYPE: B = null as any;
   constructor(
     readonly parser: IParser<A, B>,
@@ -162,7 +171,6 @@ export class Parser<A, B> implements IParser<A, B> {
       ...children.map(Parser.parserAsString),
     ];
     const specifiersString = `<${specifiers.join(",")}>`;
-    const childrenString = !children.length ? "" : `<>`;
 
     return `${name}${specifiersString}`;
   }
@@ -212,9 +220,7 @@ export class Parser<A, B> implements IParser<A, B> {
   errorMessage(input: A): void | string {
     const parsed = this.parse(input, enumParsed);
     if ("value" in parsed) return;
-    return Parser.validatorErrorAsString(
-      parsed.error,
-    );
+    return Parser.validatorErrorAsString(parsed.error);
   }
 
   /**
@@ -234,6 +240,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   concat<C>(otherParser: IParser<B, C>): Parser<A, C> {
+    // deno-lint-ignore no-explicit-any
     return new Parser(ConcatParsers.of(this, new Parser(otherParser)) as any);
   }
 
@@ -261,7 +268,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * and this ensures we deal with the value
    * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
    */
-  optional(name?: string): Parser<Optional<A>, Optional<B>> {
+  optional(_name?: string): Parser<Optional<A>, Optional<B>> {
     return new Parser(new MaybeParser(this));
   }
   /**
@@ -283,6 +290,7 @@ export class Parser<A, B> implements IParser<A, B> {
         new Parser(
           new IsAParser(isValid as (value: B) => value is B, otherName),
         ),
+        // deno-lint-ignore no-explicit-any
       ) as any,
     );
   }
@@ -298,6 +306,7 @@ export class Parser<A, B> implements IParser<A, B> {
       ConcatParsers.of(
         this,
         new Parser(new IsAParser(refinementTest, otherName)),
+        // deno-lint-ignore no-explicit-any
       ) as any,
     );
   }
@@ -317,7 +326,8 @@ export class Parser<A, B> implements IParser<A, B> {
    * @param value
    * @returns
    */
-  enumParsed(value: A): { value: B } | { error: ISimpleParsedError } {
+  enumParsed(value: A): EnumType<B> {
+    // deno-lint-ignore no-explicit-any
     return this.parse(value, enumParsed) as any;
   }
 
@@ -326,6 +336,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   unwrappedParser() {
+    // deno-lint-ignore no-this-alias no-explicit-any
     let answer: Parser<any, any> = this;
     while (true) {
       const next = answer.parser;

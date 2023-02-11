@@ -13,6 +13,7 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
     if (a == null) {
       return onParse.parsed(null);
     }
+    // deno-lint-ignore no-this-alias
     const parser = this;
     const parentState = this.parent.enumParsed(a);
     if ("error" in parentState) {

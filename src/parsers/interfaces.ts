@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any ban-types
 import { Parser } from "./index.ts";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;

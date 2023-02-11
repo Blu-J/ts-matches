@@ -1,4 +1,4 @@
-import matches from "../matches.ts";
+// deno-lint-ignore-file no-explicit-any
 import { IParser, OnParse, ParserInto } from "./interfaces.ts";
 import { Parser } from "./parser.ts";
 import { any } from "./simple-parsers.ts";
@@ -52,7 +52,7 @@ type EnsurredType<A, B = A> =
  * @returns
  */
 export function recursive<B = never>(fn: EnsurredType<B>) {
-  let value = fn(any);
+  const value = fn(any);
   const created: RecursiveParser<ParserInto<typeof value>> = RecursiveParser
     .create<B>(fn);
   return new Parser(created);

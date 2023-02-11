@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { Parser } from "./index.ts";
 import { IParser, NonNull, OnParse, Optional } from "./interfaces.ts";
 
@@ -16,6 +17,7 @@ export class DefaultParser<A, B, B2>
     a: A,
     onParse: OnParse<Optional<A>, NonNull<B, B2>, C, D>,
   ): C | D {
+    // deno-lint-ignore no-this-alias
     const parser = this;
     const defaultValue = this.defaultValue;
     if (a == null) {

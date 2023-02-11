@@ -1,7 +1,7 @@
 import matches from "./matches.ts";
 import { any, every, Parser, shape } from "./parsers/index.ts";
 import { saferStringify } from "./utils.ts";
-import { expect } from "https://deno.land/x/expect/mod.ts";
+import { expect } from "https://deno.land/x/expect@v0.3.0/mod.ts";
 const { test } = Deno;
 const isNumber = (x: unknown): x is number => typeof x === "number";
 class Event {
@@ -15,23 +15,28 @@ export const validatorError = every(
   }),
 );
 
-export function isType<T>(x: T) {}
+export function isType<T>(_x: T) {}
+// deno-lint-ignore ban-types
 type AssertNever<A> = A extends string | number | boolean | object | Function
   ? A
   : never;
 function assertNeverUnknown<A>(a: AssertNever<A>): A {
   return a;
 }
+// deno-lint-ignore no-explicit-any
 export function assertSnapshot(expected: string, actual: any) {
   expect(saferStringify(actual)).toEqual(expected);
 }
 
 const unFold = {
   invalid: Parser.validatorErrorAsString,
+  // deno-lint-ignore no-explicit-any
   parsed: (x: any): any => x,
 };
 const stringFold = {
+  // deno-lint-ignore no-explicit-any
   invalid: (x: any): any => `invalid(${saferStringify(x)})`,
+  // deno-lint-ignore no-explicit-any
   parsed: (x: any): any => `parsed(${saferStringify(x)})`,
 };
 test("testing catches", () => {
@@ -100,8 +105,9 @@ test("unwrap when not matched will throw", () => {
   try {
     matches(testValue)
       .when(2, () => 2 as const)
+      // @ts-expect-error We are expecting that unwrap should not be callable
       .unwrap();
-  } catch (e) {
+  } catch (_e) {
     return;
   }
   throw new Error("should have thrown");
@@ -109,20 +115,32 @@ test("unwrap when not matched will throw", () => {
 test("default literal", () => {
   expect(matches(5).when("5").unwrap()).toEqual("5");
 });
+test("default literal for object", () => {
+  // prettier-ignore
+  // deno-fmt-ignore
+  expect(() => 
+    matches({})
+    .when(matches.shape({testing: matches.unknown}), 6)
+    // @ts-expect-error I'm expecting that unwrap is not guarenteed
+    .unwrap()).toThrow();
+});
 test("testing type inferencing of matching", () => {
   matches(5 as const)
     // @ts-expect-error Error is that 6 is not a subset 2
-    .when(2, (a: 6) => 1 as const)
+    .when(2 as const, (_a: 6) => 1 as const)
+    .defaultTo(4);
+  matches(5 as const)
     // @ts-expect-error Error is that 6 is not a subset 2
-    .when(matches.literal(2), (a: 6) => 2 as const)
-    .when(matches.literal(6), (a: 6) => 3 as const)
+    .when(matches.literal(2), (_a: 6) => 2 as const);
+  matches(5 as const)
+    .when(matches.literal(6), (_a: 6) => 3 as const)
     .when(2, 5, (a: 5 | 2) => a)
     // @ts-expect-error Should be never since all cases are covered
     .when(2, 5, (a: 5 | 2) => a)
     .defaultTo(0);
-  matches("test")
-    .when("string", "a")
-    .when(matches.string, "b")
+  matches("test" as const)
+    .when("string" as const, "a" as const)
+    .when(matches.string, "b" as const)
     // @ts-expect-error Should be never since all cases are covered
     .when(matches.string, "c")
     .defaultTo(0);
@@ -240,7 +258,7 @@ test("should be able to test partial shape failure smaller", () => {
     ["b"],
   );
   isType<Parser<unknown, { a: "c"; b?: "d" | undefined }>>(validator);
-  // @ts-expect-error
+  // @ts-expect-error Not type
   isType<Parser<unknown, { a: "c"; b: "d" | undefined }>>(validator);
   type Valid = { a: "c"; b?: "d" | null };
   test("should be able to test shape with partial not included", () => {
@@ -249,7 +267,7 @@ test("should be able to test partial shape failure smaller", () => {
     expect(value).toEqual(testValue);
     expect(value.b).toEqual(undefined);
     isType<Valid>(value);
-    // @ts-expect-error
+    // @ts-expect-error Is not a number
     isType<number>(value);
   });
   test("should be able to test shape with partial correct", () => {
@@ -257,7 +275,7 @@ test("should be able to test partial shape failure smaller", () => {
     const value = validator.unsafeCast(testValue);
     expect(value).toEqual(testValue);
     isType<Valid>(value);
-    // @ts-expect-error
+    // @ts-expect-error Is not a number
     isType<number>(value);
   });
   test("should be able to test shape with partial and main not included", () => {
@@ -265,7 +283,7 @@ test("should be able to test partial shape failure smaller", () => {
 
     try {
       validator.unsafeCast(testValue);
-    } catch (e) {
+    } catch (_e) {
       assertSnapshot(
         '"[\\"a\\"]Shape<{a:Literal<\\"c\\">}>(\\"missingProperty\\")"',
         validator.parse(testValue, unFold),
@@ -284,7 +302,7 @@ test("should be able to test partial shape failure smaller", () => {
 
     try {
       validator.unsafeCast(testValue);
-    } catch (e) {
+    } catch (_e) {
       assertSnapshot(
         '"[\\"b\\"]Maybe<Literal<\\"d\\">>(\\"e\\")"',
         validator.parse(testValue, unFold),
@@ -321,9 +339,8 @@ test("should be able to test partial shape failure smaller", () => {
           f: "f" | undefined;
           b: "d";
         }
-      >
-    > // @ts-expect-error
-    (validator);
+      > // @ts-expect-error Expecting that this is the wrong shape
+    >(validator);
     type Valid = { a: "c"; b?: "d" | null };
     const testValue = { a: "c" };
 
@@ -331,7 +348,7 @@ test("should be able to test partial shape failure smaller", () => {
     expect(value).toEqual({ a: "c", b: "d" });
     expect(value.b).toEqual("d");
     isType<Valid>(value);
-    // @ts-expect-error
+    // @ts-expect-error Value should not be type
     isType<number>(value);
   });
 }
@@ -469,11 +486,11 @@ test("should be able to test object with failure", () => {
 test("should be able to test tuple(number, string)", () => {
   const testValue = [4, "test"];
   const validator = matches.tuple(matches.number, matches.string);
-  // @ts-expect-error
-  const badOutput: [string, number] = validator.unsafeCast(testValue);
+  // @ts-expect-error Invalid tuple, inverted
+  const _badOutput: [string, number] = validator.unsafeCast(testValue);
   // @ts-expect-error Type '[number, string]' is not assignable to type '[]'.\n  Source has 2 element(s) but target allows only 0.
-  const badOutput2: [] = validator.unsafeCast(testValue);
-  const goodOutput: [number, string] = validator.unsafeCast(testValue);
+  const _badOutput2: [] = validator.unsafeCast(testValue);
+  const _goodOutput: [number, string] = validator.unsafeCast(testValue);
   const output: [number, string] = validator.parse(testValue, unFold);
   expect(output).toEqual(testValue);
 });
@@ -599,10 +616,10 @@ test("should refinement matchers", () => {
   const testValue = 4;
   const isEven = matches.number.refine((num): num is number => {
     // Make sure that the refine types pass down the number
-    let _test: number = num;
+    const _test: number = num;
     // Asserting to typescript that the infered type not something else
-    // @ts-expect-error
-    let _test2: string = num;
+    // @ts-expect-error Type mismatch
+    const _test2: string = num;
     return num % 2 === 0;
   }, "isEven");
   expect(isEven.parse(testValue, unFold)).toEqual(testValue);
@@ -611,10 +628,10 @@ test("should valid matchers", () => {
   const testValue = 4;
   const isEven = matches.number.validate((num) => {
     // Make sure that the refine types pass down the number
-    let _test: number = num;
+    const _test: number = num;
     // Asserting to typescript that the infered type not something else
-    // @ts-expect-error
-    let _test2: string = num;
+    // @ts-expect-error Type mismatch
+    const _test2: string = num;
     return num % 2 === 0;
   }, "isEven");
   expect(isEven.parse(testValue, unFold)).toEqual(testValue);
@@ -640,6 +657,7 @@ test("should refinement matchers fail", () => {
 test("should refinement matchers fail cleanup any", () => {
   const testValue = 5;
   const isEven = matches.any.refine(
+    // deno-lint-ignore no-explicit-any
     (num: any): num is number => num % 2 === 0,
     "isEven",
   );
@@ -725,6 +743,7 @@ test("should be able to test is object for event", () => {
 }
 
 test("should fail on a circular object", () => {
+  // deno-lint-ignore no-explicit-any
   const o: any = {};
   o.o = o;
   assertSnapshot(
@@ -744,10 +763,9 @@ test("should be able to map validation", () => {
     isEvent
       .map((x) => {
         // Asserting to typescript that the infered type is event
-        let _test: Event = x;
-        // Asserting to typescript that the infered type not something else
-        // @ts-expect-error
-        let _test2: number = x;
+        const _test: Event = x;
+        // @ts-expect-error Asserting to typescript that the infered type not something else
+        const _test2: number = x;
         return x.type;
       })
       .parse(event, unFold),
@@ -831,9 +849,9 @@ test("should be able to map validation with name", () => {
   type EnumTest = typeof enumTest._TYPE;
   test("Testing named: should be able to test valid should be the same", () => {
     const input = "A";
-    // @ts-expect-error
-    const output: "B" = enumTest.unsafeCast(input);
-    const correctType: EnumTest = enumTest.unsafeCast(input);
+    // @ts-expect-error A is not b
+    const _output: "B" = enumTest.unsafeCast(input);
+    const _correctType: EnumTest = enumTest.unsafeCast(input);
   });
   test("Testing named: should be able to test invalid with wrapped name", () => {
     const input = "bad";
@@ -857,12 +875,12 @@ test("should be able to map validation with name", () => {
       test2: "value2";
     } = testMatcher.unsafeCast(input);
     expect(output).toEqual(input);
-    //@ts-expect-error
-    const incorrectCast: {
+    //@ts-expect-error Wrong shape in test
+    const _incorrectCast: {
       test: "valueWrong";
       test2: "value2";
     } = testMatcher.unsafeCast(input);
-    const correctCast: {
+    const _correctCast: {
       test: "value";
       test2: "value2";
     } = testMatcher.unsafeCast(input);
@@ -904,16 +922,16 @@ test("should be able to map validation with name", () => {
       matches.literal(2),
       matches.number,
     );
-    // @ts-expect-error
+    // @ts-expect-error Wrong shape
     const outputWrong: [number, number] = matcher.unsafeCast(input);
-    // @ts-expect-error
-    const outputWrong2: [number, 3, number] = matcher.unsafeCast(input);
-    // @ts-expect-error
-    const outputWrong3: [number, number, number, number] = matcher.unsafeCast(
+    // @ts-expect-error Wrong shape
+    const _outputWrong2: [number, 3, number] = matcher.unsafeCast(input);
+    // @ts-expect-error Wrong shape
+    const _outputWrong3: [number, number, number, number] = matcher.unsafeCast(
       input,
     );
     const outputRight1: [number, number, number] = matcher.unsafeCast(input);
-    const outputRight2: [number, 2, number] = matcher.unsafeCast(input);
+    const _outputRight2: [number, 2, number] = matcher.unsafeCast(input);
     // expected type: Validator<unknown, [number,number,number]>
     // actual type: Validator<unknown, never>;
     expect(outputRight1).toEqual(input);
@@ -923,11 +941,11 @@ test("should be able to map validation with name", () => {
     const input = { test: "value" };
     const matcher = matches.dictionary([
       matches.literal("test"),
-      matches.literal("value").map((x) => `value2` as const),
+      matches.literal("value").map((_x) => `value2` as const),
     ]);
-    // @ts-expect-error
-    const outputWrong: { test: "value" } = matcher.unsafeCast(input);
-    const outputOk: { test: string } = matcher.unsafeCast(input);
+    // @ts-expect-error Test missing
+    const _outputWrong: { test: "value" } = matcher.unsafeCast(input);
+    const _outputOk: { test: string } = matcher.unsafeCast(input);
     const outputMostCorrect: { test: "value2" } = matcher.unsafeCast(input);
     expect(outputMostCorrect.test).toEqual("value2");
   });
@@ -935,7 +953,7 @@ test("should be able to map validation with name", () => {
     const input = { test: "value2" };
     const matcher = matches.dictionary([
       matches.literal("test"),
-      matches.literal("value").map((x) => `value2` as const),
+      matches.literal("value").map((_x) => `value2` as const),
     ]);
     const output = matcher.parse(input, unFold);
     assertSnapshot(`"[test]Literal<\\"value\\">(\\"value2\\")"`, output);
@@ -943,11 +961,11 @@ test("should be able to map validation with name", () => {
   test("Testing dictionaries: should be able to project keys", () => {
     const input = { test: "value" };
     const matcher = matches.dictionary([
-      matches.literal("test").map((x) => "projected" as const),
+      matches.literal("test").map((_x) => "projected" as const),
       matches.literal("value"),
     ]);
-    // @ts-expect-error
-    const incorrectOutput: { test: "value" } = matcher.unsafeCast(input);
+    // @ts-expect-error Property 'test' is missing in type
+    const _incorrectOutput: { test: "value" } = matcher.unsafeCast(input);
     const output: { projected: "value" } = matcher.unsafeCast(input);
     expect(output.projected).toEqual("value");
   });
@@ -956,9 +974,9 @@ test("should be able to map validation with name", () => {
 {
   test("Issue where dictionary reordered", () => {
     const dataIn = {
-      "A": 1,
-      "B": 1,
-      "C": 1,
+      A: 1,
+      B: 1,
+      C: 1,
     };
     const expectedKeys = JSON.stringify(Object.keys(dataIn));
     const newShape = matches(dataIn)
