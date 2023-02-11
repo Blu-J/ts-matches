@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { Parser } from "./index.ts";
 import { EnsureParser, IParser, OrParser } from "./interfaces.ts";
 import { any } from "./simple-parsers.ts";

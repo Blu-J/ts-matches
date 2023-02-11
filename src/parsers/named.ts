@@ -12,6 +12,7 @@ export class NamedParser<A, B> implements IParser<A, B> {
     } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
+    // deno-lint-ignore no-this-alias
     const parser = this;
     const parent = this.parent.enumParsed(a);
     if ("error" in parent) {

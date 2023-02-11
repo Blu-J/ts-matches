@@ -33,15 +33,14 @@ export { Parser as Validator };
 export type { ValidatorError };
 
 // prettier-ignore
-
-export type ValueOrFunction<In, Out> =
-  | ((a: In) => Out)
-  | (() => Out)
-  | Out;
+export type Fn<A, B> = (a: A) => B;
+export type ValueOrFunction<In, Out> = ((a: In) => Out) | Out;
 
 // prettier-ignore
 // deno-fmt-ignore
 export type ParserOrLiteral<A> = ExtendsSimple<A> | Parser<unknown, A>
+
+export type Primative = string | number | boolean | null | undefined;
 export type ExtendsSimple<A> = A extends
   | string
   | number
@@ -50,44 +49,73 @@ export type ExtendsSimple<A> = A extends
   | undefined ? A
   : never;
 
+// prettier-ignore
+// deno-fmt-ignore
+export type WhenArgsExclude<A> = 
+ 
+  A extends [ValueOrFunction<infer T, infer V>] ? (
+     // deno-lint-ignore no-explicit-any
+    T extends unknown ? any : T
+  ) :
+  A extends [...ParserOrLiteral<infer In>[], ValueOrFunction<infer In, infer Out>] ? In :
+  never
+
+type _<A> = A;
+type ExcludePrimative<A, B> = Exclude<A, Exclude<B, Exclude<A, B>>>;
+
+type ValidWhenArg<A = never> =
+  | Primative
+  | Parser<unknown, unknown>
+  | ValueOrFunction<A, unknown>;
 export type WhenArgs<In, Out> =
   | [ValueOrFunction<In, Out>]
   | [...ParserOrLiteral<In>[], ValueOrFunction<In, Out>];
 
+interface _WhenFn<In, Out> {
+  <A, B>(...args: WhenArgs<A, B>): _<
+    ChainMatches<ExcludePrimative<In, A>, Out | B>
+  >;
+}
+
+export type WhenFn<In, Out> = [In] extends [never] ? never : _WhenFn<In, Out>;
+// prettier-ignore
+// deno-fmt-ignore
+export type WhenArgsOutput<A> =  
+  A extends [ValueOrFunction<infer T, infer V>] ? V :
+  A extends [...ParserOrLiteral<infer In>[], ValueOrFunction<infer In, infer Out>] ? Out :
+  never
+export type UnwrapFn<In, OutcomeType> = [In] extends [never] ? () => OutcomeType
+  : never;
+
 export interface ChainMatches<In, OutcomeType = never> {
-  when<A, B>(
-    ...args: In extends never ? never : WhenArgs<A, B>
-  ): ChainMatches<Exclude<In, A>, OutcomeType | B>;
+  when: WhenFn<In, OutcomeType>;
   defaultTo<B>(value: B): B | OutcomeType;
   defaultToLazy<B>(getValue: () => B): B | OutcomeType;
-  unwrap(): OutcomeType;
+  unwrap: UnwrapFn<In, OutcomeType>;
 }
 
 class Matched<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private value: OutcomeType) {}
-  when<A, B>(
-    ..._args: WhenArgs<A, B>
-  ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
+  when: WhenFn<Ins, OutcomeType> = ((..._args: unknown[]) => {
     // deno-lint-ignore no-explicit-any
     return this as unknown as any;
-  }
+    // deno-lint-ignore no-explicit-any
+  }) as any;
   defaultTo<B>(_defaultValue: B) {
     return this.value;
   }
   defaultToLazy<B>(_getValue: () => B) {
     return this.value;
   }
-  unwrap(): OutcomeType {
+  unwrap: UnwrapFn<Ins, OutcomeType> = ((): OutcomeType => {
     return this.value;
-  }
+    // deno-lint-ignore no-explicit-any
+  }) as any;
 }
 
 class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
   constructor(private a: unknown) {}
-
-  when<A, B>(
-    ...args: WhenArgs<A, B>
-  ): ChainMatches<Exclude<Ins, A>, OutcomeType | B> {
+  when: WhenFn<Ins, OutcomeType> = ((...args: unknown[]) => {
     const [outcome, ...matchers] = args.reverse();
     // deno-lint-ignore no-this-alias
     const me = this;
@@ -99,15 +127,18 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     );
     const result = parser.enumParsed(this.a);
     if ("error" in result) {
-      return me;
+      // deno-lint-ignore no-explicit-any
+      return me as any;
     }
     const { value } = result;
     if (outcome instanceof Function) {
-      return new Matched(outcome(value));
+      // deno-lint-ignore no-explicit-any
+      return new Matched(outcome(value)) as any;
     }
     // deno-lint-ignore no-explicit-any
     return new Matched(outcome) as any;
-  }
+    // deno-lint-ignore no-explicit-any
+  }) as any;
 
   defaultTo<B>(value: B) {
     return value;
@@ -117,9 +148,10 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     return getValue();
   }
 
-  unwrap(): OutcomeType {
+  unwrap: UnwrapFn<Ins, OutcomeType> = ((): OutcomeType => {
     throw new Error("Expecting that value is matched");
-  }
+    // deno-lint-ignore no-explicit-any
+  }) as any;
 }
 
 /**

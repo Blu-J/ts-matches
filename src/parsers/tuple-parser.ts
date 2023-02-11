@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { isArray, literal, Parser } from "./index.ts";
 import { saferStringify } from "../utils.ts";
 import { IParser, OnParse, ParserInto } from "./interfaces.ts";

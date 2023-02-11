@@ -1,4 +1,5 @@
-import { every, object, Parser, some } from "./index.ts";
+// deno-lint-ignore-file no-explicit-any ban-types
+import { every, object, Parser } from "./index.ts";
 import { saferStringify } from "../utils.ts";
 import { IParser, OnParse } from "./interfaces.ts";
 type _<T> = T;
@@ -31,10 +32,8 @@ export class ShapeParser<
       extras: parserKeys,
     } as const,
   ) {}
-  parse<C, D>(
-    a: unknown,
-    onParse: OnParse<A, { [key in Key]?: B }, C, D>,
-  ): C | D {
+  parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
+    // deno-lint-ignore no-this-alias
     const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
       return onParse.invalid({

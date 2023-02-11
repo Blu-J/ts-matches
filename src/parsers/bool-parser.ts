@@ -1,4 +1,3 @@
-import { isNumber } from "./index.ts";
 import { IParser, OnParse } from "./interfaces.ts";
 
 export class BoolParser implements IParser<unknown, boolean> {

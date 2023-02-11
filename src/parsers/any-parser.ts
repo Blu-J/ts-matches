@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { IParser, OnParse } from "./interfaces.ts";
 
 export class AnyParser implements IParser<unknown, any> {

@@ -1,4 +1,5 @@
-import { isArray, Parser } from "./index.ts";
+// deno-lint-ignore-file no-explicit-any
+import { Parser } from "./index.ts";
 import { IParser, OnParse } from "./interfaces.ts";
 
 /**

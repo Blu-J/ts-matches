@@ -1,4 +1,5 @@
-import { ISimpleParsedError, OnParse } from "./interfaces.ts";
+// deno-lint-ignore-file no-explicit-any ban-types
+import { OnParse } from "./interfaces.ts";
 
 export const isObject = (x: unknown): x is object =>
   typeof x === "object" && x != null;

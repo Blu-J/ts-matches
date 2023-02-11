@@ -42,6 +42,7 @@ export const isArray = new Parser(new ArrayParser());
 
 export const string = new Parser(new StringParser());
 export const instanceOf = <C>(classCreator: {
+  // deno-lint-ignore no-explicit-any
   new (...args: any[]): C;
 }): Parser<unknown, C> =>
   guard((x): x is C => x instanceof classCreator, `is${classCreator.name}`);
