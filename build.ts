@@ -15,6 +15,7 @@ await build({
     description:
       "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
     license: "MIT",
+    sideEffects: false,
     repository: {
       type: "git",
       url: "git+https://github.com/blu-j/ts-matches.git",
