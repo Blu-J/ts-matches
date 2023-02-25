@@ -87,7 +87,7 @@ fetch("fishes.com/gold-fishes/12")
       position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
-    }).unsafeCast,
+    }).unsafeCast
   );
 ```
 
@@ -113,7 +113,7 @@ const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple(matches.any, matches.number),
+  matches.tuple(matches.any, matches.number)
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)
@@ -165,11 +165,11 @@ return a `parser` or a function that creates a `parser`
 
 `MatcherChain` api
 
-| Attribute     | Description                                               |
-| ------------- | --------------------------------------------------------- |
-| when          | Create a matching case, when match return value           |
-| defaultTo     | Fall through case, ensures all are caught                 |
-| defaultToLazy | Fall through case, ensures all are caught in lazy fashion |
+| Attribute     | Description                                                                 |
+| ------------- | --------------------------------------------------------------------------- |
+| when          | Create a matching case, when match return value                             |
+| defaultTo     | Fall through case, ensures all are caught                                   |
+| defaultToLazy | Fall through case, ensures all are caught in lazy fashion                   |
 | unwrap        | This assumes that all cases are matched (TS tries to throw errors for this) |
 
 `Parser` api
@@ -185,6 +185,7 @@ return a `parser` or a function that creates a `parser`
 | validate     | we want to add more tests to value                                     |
 | errorMessage | If validation would create an error, return error as string, else void |
 | test         | A guard for the type, returns true if type is valid (as a `x is type`) |
+| rename       | Set to a new name for the parser                                       |
 
 `Parser.parserErrorAsString` ( validationError: parserError ): string This is
 the exposed transform of the parserError to a string. Override this if you want

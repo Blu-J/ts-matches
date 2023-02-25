@@ -59,10 +59,10 @@ const enumParsed = {
 export class Parser<A, B> implements IParser<A, B> {
   /// This is a hack to get the type of what the parser is going to return.
   // deno-lint-ignore no-explicit-any
-  public readonly _TYPE: B = null as any;
+  public _TYPE: B = null as any;
   constructor(
-    readonly parser: IParser<A, B>,
-    readonly description = {
+    public parser: IParser<A, B>,
+    public description = {
       name: "Wrapper",
       children: [parser],
       extras: [],
@@ -74,9 +74,9 @@ export class Parser<A, B> implements IParser<A, B> {
    * @param onParse
    * @returns
    */
-  parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
+  parse = <C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D => {
     return this.parser.parse(a, onParse);
-  }
+  };
   /**
    * This is a constructor helper that can use a predicate tester in the form of a guard function,
    * and will return a parser that will only parse if the predicate returns true.
@@ -180,7 +180,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @param value
    * @returns
    */
-  unsafeCast(value: A): B {
+  unsafeCast = (value: A): B => {
     const state = this.enumParsed(value);
     if ("value" in state) return state.value;
     const { error } = state;
@@ -191,13 +191,14 @@ export class Parser<A, B> implements IParser<A, B> {
         )
       } given input ${saferStringify(value)}`,
     );
-  }
+  };
+
   /**
    * This is the like the unsafe parser, it assumes the happy path and will throw and return a failed promise during failure.
    * @param value
    * @returns
    */
-  castPromise(value: A): Promise<B> {
+  castPromise = (value: A): Promise<B> => {
     const state = this.enumParsed(value);
     if ("value" in state) return Promise.resolve(state.value);
     const { error } = state;
@@ -210,18 +211,18 @@ export class Parser<A, B> implements IParser<A, B> {
         } given input ${saferStringify(value)}`,
       ),
     );
-  }
+  };
 
   /**
    * When we want to get the error message from the input, to know what is wrong
    * @param input
    * @returns Null if there is no error
    */
-  errorMessage(input: A): void | string {
+  errorMessage = (input: A): void | string => {
     const parsed = this.parse(input, enumParsed);
     if ("value" in parsed) return;
     return Parser.validatorErrorAsString(parsed.error);
-  }
+  };
 
   /**
    * Use this that we want to do transformations after the value is valid and parsed.
@@ -230,28 +231,28 @@ export class Parser<A, B> implements IParser<A, B> {
    * @param mappingName
    * @returns
    */
-  map<C>(fn: (apply: B) => C, mappingName?: string): Parser<A, C> {
+  map = <C>(fn: (apply: B) => C, mappingName?: string): Parser<A, C> => {
     return new Parser(new MappedAParser(this, fn, mappingName));
-  }
+  };
 
   /**
    * Use this when you want to combine two parsers into one. This will make sure that both parsers will run against the same value.
    * @param otherParser
    * @returns
    */
-  concat<C>(otherParser: IParser<B, C>): Parser<A, C> {
+  concat = <C>(otherParser: IParser<B, C>): Parser<A, C> => {
     // deno-lint-ignore no-explicit-any
     return new Parser(ConcatParsers.of(this, new Parser(otherParser)) as any);
-  }
+  };
 
   /**
    * Use this to combine parsers into one. This will make sure that one or the other parsers will run against the value.
    * @param otherParser
    * @returns
    */
-  orParser<C>(otherParser: IParser<A, C>): Parser<A, B | C> {
+  orParser = <C>(otherParser: IParser<A, C>): Parser<A, B | C> => {
     return new Parser(new OrParsers(this, new Parser(otherParser)));
-  }
+  };
 
   /**
    * Use this as a guard clause, useful for escaping during the error cases.
@@ -268,22 +269,25 @@ export class Parser<A, B> implements IParser<A, B> {
    * and this ensures we deal with the value
    * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
    */
-  optional(_name?: string): Parser<Optional<A>, Optional<B>> {
+  optional = (_name?: string): Parser<Optional<A>, Optional<B>> => {
     return new Parser(new MaybeParser(this));
-  }
+  };
   /**
    * There are times that we would like to bring in a value that we know as null or undefined
    * and want it to go to a default value
    */
-  defaultTo<C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> {
+  defaultTo = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
     return new Parser(
       new DefaultParser(new Parser(new MaybeParser(this)), defaultValue),
     );
-  }
+  };
   /**
    * We want to test value with a test eg isEven
    */
-  validate(isValid: (value: B) => boolean, otherName: string): Parser<A, B> {
+  validate = (
+    isValid: (value: B) => boolean,
+    otherName: string,
+  ): Parser<A, B> => {
     return new Parser(
       ConcatParsers.of(
         this,
@@ -293,15 +297,15 @@ export class Parser<A, B> implements IParser<A, B> {
         // deno-lint-ignore no-explicit-any
       ) as any,
     );
-  }
+  };
   /**
    * We want to refine to a new type given an original type, like isEven, or casting to a more
    * specific type
    */
-  refine<C = B>(
+  refine = <C = B>(
     refinementTest: (value: B) => value is B & C,
     otherName: string = refinementTest.name,
-  ): Parser<A, B & C> {
+  ): Parser<A, B & C> => {
     return new Parser(
       ConcatParsers.of(
         this,
@@ -309,16 +313,16 @@ export class Parser<A, B> implements IParser<A, B> {
         // deno-lint-ignore no-explicit-any
       ) as any,
     );
-  }
+  };
 
   /**
    * Use this when we want to give the parser a name, and we want to be able to use the name in the error messages.
    * @param nameString
    * @returns
    */
-  name(nameString: string): Parser<A, B> {
+  rename = (nameString: string): Parser<A, B> => {
     return parserName(nameString, this);
-  }
+  };
 
   /**
    * This is another type of parsing that will return a value that is a discriminated union of the success and failure cases.
@@ -326,16 +330,16 @@ export class Parser<A, B> implements IParser<A, B> {
    * @param value
    * @returns
    */
-  enumParsed(value: A): EnumType<B> {
+  enumParsed = (value: A): EnumType<B> => {
     // deno-lint-ignore no-explicit-any
     return this.parse(value, enumParsed) as any;
-  }
+  };
 
   /**
    * Return the unwrapped parser/ IParser
    * @returns
    */
-  unwrappedParser() {
+  unwrappedParser = () => {
     // deno-lint-ignore no-this-alias no-explicit-any
     let answer: Parser<any, any> = this;
     while (true) {
@@ -346,5 +350,5 @@ export class Parser<A, B> implements IParser<A, B> {
         return next;
       }
     }
-  }
+  };
 }
