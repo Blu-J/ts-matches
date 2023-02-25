@@ -598,6 +598,15 @@ test("should be able to get the value of an array of", () => {
   const testValuesGood: Test = arrayOf.unsafeCast(testValue)[0];
   expect(testValuesGood).toEqual(testValue[0]);
 });
+test("should be able to get the value of an array of using (object, array) instead of (shape, arrayOf)", () => {
+  const testValue = [{ test: 5 }];
+  const matchTest = matches.object({ test: matches.number });
+  type Test = typeof matchTest._TYPE;
+  const arrayOf = matches.array(matchTest);
+  const _testValue = assertNeverUnknown(arrayOf.unsafeCast(testValue)[0]);
+  const testValuesGood: Test = arrayOf.unsafeCast(testValue)[0];
+  expect(testValuesGood).toEqual(testValue[0]);
+});
 test("should be able to match literals", () => {
   const matcher = matches.literals(4, "3");
   const firstExpectedOutcome: 4 | "3" = matcher.parse(4, unFold);
@@ -845,7 +854,7 @@ test("should be able to map validation with name", () => {
   });
 }
 {
-  const enumTest = matches.literals("A", "B").name("enumTest");
+  const enumTest = matches.literals("A", "B").rename("enumTest");
   type EnumTest = typeof enumTest._TYPE;
   test("Testing named: should be able to test valid should be the same", () => {
     const input = "A";

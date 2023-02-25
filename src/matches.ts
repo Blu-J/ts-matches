@@ -153,6 +153,15 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     // deno-lint-ignore no-explicit-any
   }) as any;
 }
+const array: (typeof arrayOf) & (Parser<unknown, unknown[]>) = Object.assign(
+  // deno-lint-ignore no-explicit-any
+  function arrayOfWrapper(...args: any) {
+    // deno-lint-ignore no-explicit-any
+    return (arrayOf as any)(...args);
+  },
+  isArray,
+  // deno-lint-ignore no-explicit-any
+) as any;
 
 /**
  * Want to be able to bring in the declarative nature that a functional programming
@@ -163,13 +172,12 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
  *
  * Use: matches('a value').when(matches.isNumber, (aNumber) => aNumber + 4).defaultTo('fallback value')
  */
-
 export const matches = Object.assign(
   function matchesFn<Ins extends unknown>(value: Ins) {
     return new MatchMore<Ins, never>(value);
   },
   {
-    array: isArray,
+    array,
     arrayOf,
     some,
     tuple,
@@ -198,7 +206,6 @@ export const matches = Object.assign(
   },
 );
 
-const array = isArray;
 const nill = isNill;
 const Parse = Parser;
 const oneOf = some;
