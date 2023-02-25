@@ -34,7 +34,8 @@ want to validate that the shape is correct or throw an error
 
 ```typescript
 import matches from "https://deno.land/x/ts_matches/mod.ts";
-const goldFishMatcher = matches.shape({
+// could also use matches.shape here as well
+const goldFishMatcher = matches.object({
   type: t.literal("gold-fish"),
   position: t.tuple(t.number, t.number),
   age: t.natural,
@@ -55,7 +56,7 @@ A variation is to use the guard version.
 
 ```typescript
 import matches from "ts-matches";
-const goldFishMatcher = matches.shape({
+const goldFishMatcher = matches.object({
   type: t.literal("gold-fish"),
   position: t.tuple(t.number, t.number),
   age: t.natural,
@@ -82,7 +83,7 @@ import matches from "https://deno.land/x/ts_matches/mod.ts";
 fetch("fishes.com/gold-fishes/12")
   .then((x) => x.json())
   .then(
-    matches.shape({
+    matches.object({
       type: t.literal("gold-fish"),
       position: t.tuple(t.number, t.number),
       age: t.natural,
