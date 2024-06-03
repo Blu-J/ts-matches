@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces.ts";
-import { Parser } from "./parser.ts";
+import { IParser, OnParse } from "./interfaces";
+import { Parser } from "./parser";
 
 /**
  * This is needed when the typescript has a recursive, mutual types
@@ -16,7 +16,7 @@ export class DeferredParser<B> implements IParser<unknown, B> {
       name: "Deferred",
       children: [],
       extras: [],
-    } as const,
+    } as const
   ) {}
   setParser(parser: IParser<unknown, B>) {
     this.parser = new Parser(parser);

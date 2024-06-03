@@ -1,6 +1,6 @@
 // deno-lint-ignore-file ban-types
-import { IParser, OnParse } from "./interfaces.ts";
-import { isObject } from "./utils.ts";
+import { IParser, OnParse } from "./interfaces";
+import { isObject } from "./utils";
 
 export class ObjectParser implements IParser<unknown, object> {
   constructor(
@@ -8,7 +8,7 @@ export class ObjectParser implements IParser<unknown, object> {
       name: "Object",
       children: [],
       extras: [],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, object, C, D>): C | D {
     if (isObject(a)) return onParse.parsed(a);

@@ -15,5 +15,5 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.spec.ts", "src/**/*.gen.ts", "list", "node_modules"]
+  "exclude": ["src/**/*.spec", "src/**/*.gen", "list", "node_modules"]
 }

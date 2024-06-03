@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces.ts";
+import { IParser, OnParse } from "./interfaces";
 
 export class GuardParser<A, B> implements IParser<A, B> {
   constructor(
@@ -8,7 +8,7 @@ export class GuardParser<A, B> implements IParser<A, B> {
       name: "Guard",
       children: [],
       extras: [typeName],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     if (this.checkIsA(a)) {
