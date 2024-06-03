@@ -4,7 +4,7 @@
   "description": "We want to bring in some pattern matching into the typescript land. We want to be able to type guard a whole bunch of conditions and get the type back.",
   "license": "MIT",
   "sideEffects": false,
-  "main": "lib/index.js",
+  "main": "lib/matches.js",
   "scripts": {
     "build": "tsc",
     "test": "jest **/*.test.ts"
