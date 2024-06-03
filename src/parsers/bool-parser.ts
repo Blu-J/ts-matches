@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces.ts";
+import { IParser, OnParse } from "./interfaces";
 
 export class BoolParser implements IParser<unknown, boolean> {
   constructor(
@@ -6,7 +6,7 @@ export class BoolParser implements IParser<unknown, boolean> {
       name: "Boolean",
       children: [],
       extras: [],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, boolean, C, D>): C | D {
     if (a === true || a === false) return onParse.parsed(a);

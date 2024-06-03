@@ -1,5 +1,5 @@
-import { IParser, OnParse } from "./interfaces.ts";
-import { Parser } from "./parser.ts";
+import { IParser, OnParse } from "./interfaces";
+import { Parser } from "./parser";
 
 export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
   constructor(
@@ -9,7 +9,7 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
       name: "Or",
       children: [parent, otherParser],
       extras: [],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: A & A2, onParse: OnParse<A | A2, B | B2, C, D>): C | D {
     // deno-lint-ignore no-this-alias

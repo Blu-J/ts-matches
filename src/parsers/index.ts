@@ -1,7 +1,7 @@
-import { _, ValidatorError } from "./interfaces.ts";
-import { isNumber } from "./utils.ts";
-import { GuardParser } from "./guard-parser.ts";
-import { Parser } from "./parser.ts";
+import { _, ValidatorError } from "./interfaces";
+import { isNumber } from "./utils";
+import { GuardParser } from "./guard-parser";
+import { Parser } from "./parser";
 import {
   any,
   boolean,
@@ -15,16 +15,16 @@ import {
   object,
   regex,
   string,
-} from "./simple-parsers.ts";
-import { some } from "./some-parser.ts";
-import { every } from "./every-parser.ts";
-import { dictionary } from "./dictionary-parser.ts";
-import { partial, shape } from "./shape-parser.ts";
-import { tuple } from "./tuple-parser.ts";
-import { arrayOf } from "./array-of-parser.ts";
-import { literal, literals } from "./literal-parser.ts";
-import { recursive } from "./recursive-parser.ts";
-import { deferred } from "./deferred-parser.ts";
+} from "./simple-parsers";
+import { some } from "./some-parser";
+import { every } from "./every-parser";
+import { dictionary } from "./dictionary-parser";
+import { partial, shape } from "./shape-parser";
+import { tuple } from "./tuple-parser";
+import { arrayOf } from "./array-of-parser";
+import { literal, literals } from "./literal-parser";
+import { recursive } from "./recursive-parser";
+import { deferred } from "./deferred-parser";
 export type { ValidatorError };
 export {
   any,

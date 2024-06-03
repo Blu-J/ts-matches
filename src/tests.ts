@@ -1,3 +1,3 @@
-import "./matches.test.ts";
-import "./matches.recursive.test.ts";
-import "./matches.deferred.test.ts";
+import "./matches.test";
+import "./matches.recursive.test";
+import "./matches.deferred.test";

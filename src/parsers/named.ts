@@ -1,5 +1,5 @@
-import { Parser } from "./index.ts";
-import { IParser, OnParse } from "./interfaces.ts";
+import { Parser } from "./index";
+import { IParser, OnParse } from "./interfaces";
 
 export class NamedParser<A, B> implements IParser<A, B> {
   constructor(
@@ -9,7 +9,7 @@ export class NamedParser<A, B> implements IParser<A, B> {
       name: "Named",
       children: [parent],
       extras: [name],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     // deno-lint-ignore no-this-alias
@@ -26,7 +26,7 @@ export class NamedParser<A, B> implements IParser<A, B> {
 
 export function parserName<A, B>(
   name: string,
-  parent: Parser<A, B>,
+  parent: Parser<A, B>
 ): Parser<A, B> {
   return new Parser(new NamedParser(parent, name));
 }

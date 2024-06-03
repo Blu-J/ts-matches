@@ -33,7 +33,7 @@ The easiest and most useful feature is using the matcher as a validation. Here I
 want to validate that the shape is correct or throw an error
 
 ```typescript
-import matches from "https://deno.land/x/ts_matches/mod.ts";
+import matches from "https://deno.land/x/ts_matches/mod";
 // could also use matches.shape here as well
 const goldFishMatcher = matches.object({
   type: t.literal("gold-fish"),
@@ -79,7 +79,7 @@ This is useful on a boundary layer, like fetching a value. In that case we have
 no idea what the shape is, so we should do a check on that.
 
 ```typescript
-import matches from "https://deno.land/x/ts_matches/mod.ts";
+import matches from "https://deno.land/x/ts_matches/mod";
 fetch("fishes.com/gold-fishes/12")
   .then((x) => x.json())
   .then(

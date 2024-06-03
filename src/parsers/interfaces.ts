@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any ban-types
-import { Parser } from "./index.ts";
+import { Parser } from "./index";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
 export type EnsureParser<P> = P extends IParser<any, any> ? P : never;
@@ -21,89 +21,87 @@ export type IParser<A, B> = {
   readonly description: Readonly<Description & {}>;
   parse<C, D>(this: IParser<A, B>, a: A, onParse: OnParse<A, B, C, D>): C | D;
 };
-export type Description =
-  & {
-    readonly name: ParserNames;
-    readonly extras: ReadonlyArray<unknown>;
-    readonly children: ReadonlyArray<SomeParser>;
-  }
-  & (
-    | {
+export type Description = {
+  readonly name: ParserNames;
+  readonly extras: ReadonlyArray<unknown>;
+  readonly children: ReadonlyArray<SomeParser>;
+} & (
+  | {
       readonly name: "ArrayOf";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Named";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [string];
     }
-    | {
+  | {
       readonly name: "Concat";
       readonly children: readonly [SomeParser, SomeParser];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Default";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [unknown];
     }
-    | {
+  | {
       readonly name: "Tuple";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Dictionary";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Deferred";
       readonly children: readonly [];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Guard";
       readonly children: readonly [];
       readonly extras: readonly [unknown];
     }
-    | {
+  | {
       readonly name: "Literal";
       readonly children: readonly [];
       readonly extras: ReadonlyArray<unknown>;
     }
-    | {
+  | {
       readonly name: "Mapped";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [string];
     }
-    | {
+  | {
       readonly name: "Maybe";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Recursive";
       readonly children: readonly [];
       readonly extras: readonly [Function];
     }
-    | {
+  | {
       readonly name: "Or";
       readonly children: readonly [SomeParser, SomeParser];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Wrapper";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
     }
-    | {
+  | {
       readonly name: "Shape" | "Partial";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: ReadonlyArray<string | number>;
     }
-    | {
+  | {
       readonly name:
         | "Any"
         | "Unknown"
@@ -117,7 +115,7 @@ export type Description =
       readonly children: readonly [];
       readonly extras: readonly [];
     }
-  );
+);
 
 export type ParserNames =
   | "Any"
@@ -154,12 +152,14 @@ export type OnParse<A, B, C, D> = {
 
 export type AndParser<P1, P2> = [P1, P2] extends [
   Parser<infer A1, infer B1>,
-  Parser<infer A2, infer B2>,
-] ? Parser<A1 & A2, B1 & B2>
+  Parser<infer A2, infer B2>
+]
+  ? Parser<A1 & A2, B1 & B2>
   : never;
 
 export type OrParser<P1, P2> = [P1, P2] extends [
   Parser<infer A1, infer B1>,
-  Parser<infer A2, infer B2>,
-] ? Parser<A1 | A2, B1 | B2>
+  Parser<infer A2, infer B2>
+]
+  ? Parser<A1 | A2, B1 | B2>
   : never;

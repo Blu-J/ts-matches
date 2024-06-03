@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { Parser } from "./index.ts";
-import { IParser, OnParse } from "./interfaces.ts";
+import { Parser } from "./index";
+import { IParser, OnParse } from "./interfaces";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on
@@ -14,7 +14,7 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
       name: "ArrayOf",
       children: [parser],
       extras: [],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B[], C, D>): C | D {
     if (!Array.isArray(a)) {
@@ -42,7 +42,7 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
  * @param validator What is the validator for the values in the array
  */
 export function arrayOf<A>(
-  validator: Parser<unknown, A>,
+  validator: Parser<unknown, A>
 ): Parser<unknown, A[]> {
   return new Parser(new ArrayOfParser(validator));
 }

@@ -1,5 +1,5 @@
-import { Parser } from "./index.ts";
-import { IParser, OnParse } from "./interfaces.ts";
+import { Parser } from "./index";
+import { IParser, OnParse } from "./interfaces";
 
 export class MappedAParser<A, B, B2> implements IParser<A, B2> {
   constructor(
@@ -10,7 +10,7 @@ export class MappedAParser<A, B, B2> implements IParser<A, B2> {
       name: "Mapped",
       children: [parent],
       extras: [mappingName],
-    } as const,
+    } as const
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B2, C, D>): C | D {
     const map = this.map;
