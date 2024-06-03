@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { any, Parser } from "./index.ts";
-import { AndParser, EnsureParser, IParser } from "./interfaces.ts";
+import { any, Parser } from "./index";
+import { AndParser, EnsureParser, IParser } from "./interfaces";
 
 // prettier-ignore
 // deno-fmt-ignore

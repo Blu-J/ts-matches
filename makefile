@@ -29,7 +29,7 @@ test_living_code: documentation/living_code/*.ts make_living_code
 make_living_code: documentation/*.md
 	{\
 		name=$$(echo "$<" | sed "s/documentation\///" | sed "s/\.md//") ;\
-		to="documentation/living_code/$$name.ts";\
+		to="documentation/living_code/$$name";\
 		echo "Making ts from $< to $$to ";\
 		grep '  ' $< | sed -e 's/  //' > $$to ;\
 	}

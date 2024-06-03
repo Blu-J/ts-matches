@@ -1,29 +1,29 @@
-import { IsAParser } from "./index.ts";
-import { saferStringify } from "../utils.ts";
-import { AnyParser } from "./any-parser.ts";
-import { ArrayParser } from "./array-parser.ts";
-import { BoolParser } from "./bool-parser.ts";
-import { ConcatParsers } from "./concat-parser.ts";
-import { DefaultParser } from "./default-parser.ts";
-import { FunctionParser } from "./function-parser.ts";
-import { GuardParser } from "./guard-parser.ts";
+import { IsAParser } from "./index";
+import { saferStringify } from "../utils";
+import { AnyParser } from "./any-parser";
+import { ArrayParser } from "./array-parser";
+import { BoolParser } from "./bool-parser";
+import { ConcatParsers } from "./concat-parser";
+import { DefaultParser } from "./default-parser";
+import { FunctionParser } from "./function-parser";
+import { GuardParser } from "./guard-parser";
 import {
   IParser,
   ISimpleParsedError,
   NonNull,
   OnParse,
   Optional,
-} from "./interfaces.ts";
-import { MappedAParser } from "./mapped-parser.ts";
-import { MaybeParser } from "./maybe-parser.ts";
-import { parserName } from "./named.ts";
-import { NilParser } from "./nill-parser.ts";
-import { NumberParser } from "./number-parser.ts";
-import { ObjectParser } from "./object-parser.ts";
-import { OrParsers } from "./or-parser.ts";
-import { ShapeParser } from "./shape-parser.ts";
-import { StringParser } from "./string-parser.ts";
-import { booleanOnParse } from "./utils.ts";
+} from "./interfaces";
+import { MappedAParser } from "./mapped-parser";
+import { MaybeParser } from "./maybe-parser";
+import { parserName } from "./named";
+import { NilParser } from "./nill-parser";
+import { NumberParser } from "./number-parser";
+import { ObjectParser } from "./object-parser";
+import { OrParsers } from "./or-parser";
+import { ShapeParser } from "./shape-parser";
+import { StringParser } from "./string-parser";
+import { booleanOnParse } from "./utils";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;
@@ -31,11 +31,11 @@ function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
 
 export type EnumType<A> =
   | {
-    error: ISimpleParsedError;
-  }
+      error: ISimpleParsedError;
+    }
   | {
-    value: A;
-  };
+      value: A;
+    };
 
 const enumParsed = {
   parsed<A>(value: A) {
@@ -66,7 +66,7 @@ export class Parser<A, B> implements IParser<A, B> {
       name: "Wrapper",
       children: [parser],
       extras: [],
-    } as const,
+    } as const
   ) {}
   /**
    * Use this when you want to decide what happens on the succes and failure cases of parsing
@@ -87,7 +87,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   public static isA<A, B extends A>(
     checkIsA: (value: A) => value is B,
-    name: string,
+    name: string
   ): Parser<A, B> {
     return new Parser(new IsAParser(checkIsA, name));
   }
@@ -98,20 +98,20 @@ export class Parser<A, B> implements IParser<A, B> {
    */
 
   public static validatorErrorAsString = <A, B>(
-    error: ISimpleParsedError,
+    error: ISimpleParsedError
   ): string => {
     const { parser, value, keys } = error;
 
-    const keysString = !keys.length ? "" : keys
-      .map((x) => `[${x}]`)
-      .reverse()
-      .join("");
+    const keysString = !keys.length
+      ? ""
+      : keys
+          .map((x) => `[${x}]`)
+          .reverse()
+          .join("");
 
-    return `${keysString}${Parser.parserAsString(parser)}(${
-      saferStringify(
-        value,
-      )
-    })`;
+    return `${keysString}${Parser.parserAsString(parser)}(${saferStringify(
+      value
+    )})`;
   };
 
   /**
@@ -120,23 +120,21 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   public static parserAsString(
-    parserComingIn: IParser<unknown, unknown>,
+    parserComingIn: IParser<unknown, unknown>
   ): string {
     const parser = unwrapParser(parserComingIn);
     const {
       description: { name, extras, children },
     } = parser;
     if (parser instanceof ShapeParser) {
-      return `${name}<{${
-        parser.description.children
-          .map(
-            (subParser, i) =>
-              `${String(parser.description.extras[i]) || "?"}:${
-                Parser.parserAsString(subParser)
-              }`,
-          )
-          .join(",")
-      }}>`;
+      return `${name}<{${parser.description.children
+        .map(
+          (subParser, i) =>
+            `${
+              String(parser.description.extras[i]) || "?"
+            }:${Parser.parserAsString(subParser)}`
+        )
+        .join(",")}}>`;
     }
     if (parser instanceof OrParsers) {
       const parent = unwrapParser(parser.parent);
@@ -185,11 +183,9 @@ export class Parser<A, B> implements IParser<A, B> {
     if ("value" in state) return state.value;
     const { error } = state;
     throw new TypeError(
-      `Failed type: ${
-        Parser.validatorErrorAsString(
-          error,
-        )
-      } given input ${saferStringify(value)}`,
+      `Failed type: ${Parser.validatorErrorAsString(
+        error
+      )} given input ${saferStringify(value)}`
     );
   };
 
@@ -204,12 +200,10 @@ export class Parser<A, B> implements IParser<A, B> {
     const { error } = state;
     return Promise.reject(
       new TypeError(
-        `Failed type: ${
-          Parser.validatorErrorAsString(
-            error,
-          )
-        } given input ${saferStringify(value)}`,
-      ),
+        `Failed type: ${Parser.validatorErrorAsString(
+          error
+        )} given input ${saferStringify(value)}`
+      )
     );
   };
 
@@ -278,7 +272,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   defaultTo = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
     return new Parser(
-      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue),
+      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue)
     );
   };
   /**
@@ -286,16 +280,16 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   validate = (
     isValid: (value: B) => boolean,
-    otherName: string,
+    otherName: string
   ): Parser<A, B> => {
     return new Parser(
       ConcatParsers.of(
         this,
         new Parser(
-          new IsAParser(isValid as (value: B) => value is B, otherName),
-        ),
+          new IsAParser(isValid as (value: B) => value is B, otherName)
+        )
         // deno-lint-ignore no-explicit-any
-      ) as any,
+      ) as any
     );
   };
   /**
@@ -304,14 +298,14 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   refine = <C = B>(
     refinementTest: (value: B) => value is B & C,
-    otherName: string = refinementTest.name,
+    otherName: string = refinementTest.name
   ): Parser<A, B & C> => {
     return new Parser(
       ConcatParsers.of(
         this,
-        new Parser(new IsAParser(refinementTest, otherName)),
+        new Parser(new IsAParser(refinementTest, otherName))
         // deno-lint-ignore no-explicit-any
-      ) as any,
+      ) as any
     );
   };
 

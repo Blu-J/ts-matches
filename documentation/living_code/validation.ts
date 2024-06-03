@@ -1,8 +1,15 @@
 /// Pulling in the library, normally you could pull from
-import matches from "https://deno.land/x/ts_matches/src/matches.ts";
+import matches from "https://deno.land/x/ts_matches/src/matches";
 /// The rest is for testing documentation
-import { assert, assertEquals } from "https://deno.land/std@0.133.0/testing/asserts.ts";
-function assertThrow(fn: Function, expectedMessage: string, testMessage = `but ${fn.name} did not throw`) {
+import {
+  assert,
+  assertEquals,
+} from "https://deno.land/std@0.133.0/testing/asserts";
+function assertThrow(
+  fn: Function,
+  expectedMessage: string,
+  testMessage = `but ${fn.name} did not throw`
+) {
   try {
     fn();
     throw new Error(testMessage);
@@ -36,12 +43,10 @@ let checkedInput = goldFishMatcher.unsafeCast(valid_gold_fish);
 // Though it will give an error message on failure
 assertThrow(
   () => goldFishMatcher.unsafeCast(invalid_gold_fish),
-  'Failed type: ["type"]Literal<"gold-fish">("god-fish") given input {"type":"god-fish","position":[2,3],"age":5,"name":"Nemo"}',
+  'Failed type: ["type"]Literal<"gold-fish">("god-fish") given input {"type":"god-fish","position":[2,3],"age":5,"name":"Nemo"}'
 );
 if (!goldFishMatcher.test(valid_gold_fish)) {
-  throw new Error(
-    "You could return from a function, break, or throw an error",
-  );
+  throw new Error("You could return from a function, break, or throw an error");
 }
 {
   // And the valid type is known after

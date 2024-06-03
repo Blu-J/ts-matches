@@ -1,4 +1,4 @@
-import matches from "./matches.ts";
+import matches from "./matches";
 import {
   any,
   deferred,
@@ -9,18 +9,16 @@ import {
   some,
   string,
   tuple,
-} from "./parsers/index.ts";
-import { saferStringify } from "./utils.ts";
-import { expect } from "https://deno.land/x/expect/mod.ts";
-import { assertSnapshot, isType } from "./matches.test.ts";
-const { test } = Deno;
+} from "./parsers/index";
+import { saferStringify } from "./utils";
+import { assertSnapshot, isType } from "./matches.test";
 
 export const validatorError = every(
   shape({
     parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
-  }),
+  })
 );
 const unFold = {
   invalid: Parser.validatorErrorAsString,
@@ -56,7 +54,7 @@ const unFold = {
     } catch (e) {
       assertSnapshot(
         '"[\\"0\\"][\\"value\\"][\\"0\\"][\\"type\\"]Or<string,...>(\\"ot2her\\")"',
-        matchThings.parse(testValue, unFold),
+        matchThings.parse(testValue, unFold)
       );
       return;
     }
@@ -76,7 +74,7 @@ test("deferred failed because we failed to complete ", () => {
   } catch (e) {
     assertSnapshot(
       '"Deferred<>(\\"Not Set Up\\")"',
-      matchThings.parse(testValue, unFold),
+      matchThings.parse(testValue, unFold)
     );
     return;
   }
