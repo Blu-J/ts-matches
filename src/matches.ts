@@ -24,10 +24,10 @@ import {
   string,
   tuple,
   ValidatorError,
-} from "./parsers/index.ts";
-import { parserName } from "./parsers/named.ts";
-import { unknown } from "./parsers/simple-parsers.ts";
-export type { IParser, ParserNames } from "./parsers/interfaces.ts";
+} from "./parsers/index";
+import { parserName } from "./parsers/named";
+import { unknown } from "./parsers/simple-parsers";
+export type { IParser, ParserNames } from "./parsers/interfaces";
 
 export { Parser as Validator };
 export type { ValidatorError };
@@ -46,7 +46,8 @@ export type ExtendsSimple<A> = A extends
   | number
   | boolean
   | null
-  | undefined ? A
+  | undefined
+  ? A
   : never;
 
 // prettier-ignore
@@ -84,7 +85,8 @@ export type WhenArgsOutput<A> =
   A extends [ValueOrFunction<infer T, infer V>] ? V :
   A extends [...ParserOrLiteral<infer In>[], ValueOrFunction<infer In, infer Out>] ? Out :
   never
-export type UnwrapFn<In, OutcomeType> = [In] extends [never] ? () => OutcomeType
+export type UnwrapFn<In, OutcomeType> = [In] extends [never]
+  ? () => OutcomeType
   : never;
 
 export interface ChainMatches<In, OutcomeType = never> {
@@ -123,7 +125,7 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
       ...matchers.map((matcher) =>
         // deno-lint-ignore no-explicit-any
         matcher instanceof Parser ? matcher : literal(matcher as any)
-      ),
+      )
     );
     const result = parser.enumParsed(this.a);
     if ("error" in result) {
@@ -153,13 +155,13 @@ class MatchMore<Ins, OutcomeType> implements ChainMatches<Ins, OutcomeType> {
     // deno-lint-ignore no-explicit-any
   }) as any;
 }
-const array: (typeof arrayOf) & (Parser<unknown, unknown[]>) = Object.assign(
+const array: typeof arrayOf & Parser<unknown, unknown[]> = Object.assign(
   // deno-lint-ignore no-explicit-any
   function arrayOfWrapper(...args: any) {
     // deno-lint-ignore no-explicit-any
     return (arrayOf as any)(...args);
   },
-  isArray,
+  isArray
   // deno-lint-ignore no-explicit-any
 ) as any;
 
@@ -203,7 +205,7 @@ export const matches = Object.assign(
     parserName,
     recursive,
     deferred,
-  },
+  }
 );
 
 const nill = isNill;
