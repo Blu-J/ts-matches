@@ -851,6 +851,33 @@ describe("matches", () => {
         );
       });
     });
+    describe("with a number.onMismatch matcher", () => {
+      const maybeNumber = matches.number.onMismatch(0);
+
+      test("a number in", () => {
+        const input = 4;
+        const expected = 4;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a null in", () => {
+        const input = null;
+        const expected = 0;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a undefined in", () => {
+        const input = undefined;
+        const expected = 0;
+        expect(maybeNumber.parse(input, unFold)).toBe(expected);
+      });
+      test("a object in", () => {
+        const input = {};
+        expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(`0`);
+      });
+      test("a string in", () => {
+        const input = "4";
+        expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(`0`);
+      });
+    });
 
     describe("Testing as a filter", () => {
       it("should be able to utilize the test in a filter for typing", () => {

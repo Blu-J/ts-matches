@@ -20,6 +20,7 @@ import { parserName } from "./Named";
 import { NilParser } from "./NillParser";
 import { NumberParser } from "./NumberParser";
 import { ObjectParser } from "./ObjectParser";
+import { OnMismatch } from "./OnMismatch";
 import { OrParsers } from "./OrParser";
 import { ShapeParser } from "./ShapeParser";
 import { StringParser } from "./StringParser";
@@ -188,6 +189,16 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(
       new DefaultParser(new Parser(new MaybeParser(this)), defaultValue)
     );
+  }
+
+  /**
+   * There are times that we would like to bring in a value that we may have as invalid,
+   * and in those cases during the parse we want it to fall back to a value
+   */
+  onMismatch(otherValue: B): Parser<A, B> {
+    return new Parser(
+      new OnMismatch(this, otherValue))
+    ;
   }
   /**
    * We want to test value with a test eg isEven

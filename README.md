@@ -122,6 +122,7 @@ on that function that return a `parser` or a function that creates a `parser`
 | castPromise | Cast into a promise                                          |
 | optional    | output type is now a null of value                           |
 | defaultTo   | instead of creating a optional we fallback to a value        |
+| onMismatch  | On a error of previous parsing fall back to value passed     |
 | refine      | we want to add more tests to value, could change type to sub |
 | validate    | we want to add more tests to value                           |
 

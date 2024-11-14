@@ -56,6 +56,8 @@ function parserAsTypescriptStringDuplicated(
       return `null | ${parserAsTypescriptString(
         validator.description.children[0]
       )}`;
+    case "OnMismatch":
+      return `onMismatch<${JSON.stringify(validator.description.extras[0])}>`;
     case "Tuple":
       return `[${validator.description.children
         .map(parserAsTypescriptStringDuplicated)
