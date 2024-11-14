@@ -178,7 +178,7 @@ return a `parser` or a function that creates a `parser`
 | Attribute   | Description                                                  |
 | ----------- | ------------------------------------------------------------ |
 | parse       | Use this to turn a value into an either                      |
-| usafeCast   | Use this to get the value or throw an error                  |
+| unsafeCast   | Use this to get the value or throw an error                  |
 | castPromise | Cast into a promise                                          |
 | optional    | output type is now a null of value                           |
 | defaultTo   | instead of creating a optional we fallback to a value        |
