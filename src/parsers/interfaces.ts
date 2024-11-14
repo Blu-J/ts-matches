@@ -47,6 +47,11 @@ export type Description = {
       readonly extras: readonly [unknown];
     }
   | {
+    readonly name: "OnMismatch";
+    readonly children: readonly [SomeParser];
+    readonly extras: readonly [unknown];
+  }
+|{
       readonly name: "Tuple";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: readonly [];
@@ -137,6 +142,7 @@ export type ParserNames =
   | "Number"
   | "Partial"
   | "Object"
+  | "OnMismatch"
   | "Or"
   | "Recursive"
   | "Shape"
