@@ -178,10 +178,12 @@ return a `parser` or a function that creates a `parser`
 | Attribute    | Description                                                            |
 | ------------ | ---------------------------------------------------------------------- |
 | parse        | Use this to turn a value into an either                                |
-| usafeCast    | Use this to get the value or throw an error                            |
+| unsafeCast   | Use this to get the value or throw an error                            |
 | castPromise  | Cast into a promise                                                    |
 | optional     | output type is now a null of value                                     |
 | defaultTo    | instead of creating a optional we fallback to a value                  |
+| onMismatch   | On a error of previous parsing fall back to value passed               |
+| withMismatch | On a error of previous parsing fall back to value fn passed            |
 | refine       | we want to add more tests to value, could change type to sub           |
 | validate     | we want to add more tests to value                                     |
 | errorMessage | If validation would create an error, return error as string, else void |
