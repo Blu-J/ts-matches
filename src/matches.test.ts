@@ -873,6 +873,33 @@ test("should be able to map validation with name", () => {
     expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(`0`);
   });
 }
+{
+  const maybeNumber = matches.number.withMismatch(() => 5);
+
+  test("with a number.withMismatch matcher a number in", () => {
+    const input = 4;
+    const expected = 4;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withMismatch matcher a null in", () => {
+    const input = null;
+    const expected = 5;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withMismatch matcher a undefined in", () => {
+    const input = undefined;
+    const expected = 5;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withMismatch matcher a object in", () => {
+    const input = {};
+    expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(`5`);
+  });
+  test("with a number.withMismatch matcher a string in", () => {
+    const input = "4";
+    expect(maybeNumber.parse(input, unFold)).toMatchInlineSnapshot(`5`);
+  });
+}
 
 {
   test("Testing as a filter: should be able to utilize the test in a filter for typing", () => {
