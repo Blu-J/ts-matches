@@ -7,7 +7,7 @@ class Event {
 }
 export const validatorError = every(
   shape({
-    parser: matches.object,
+    parser: matches.object(),
     keys: matches.arrayOf(matches.string),
     value: any,
   })
@@ -118,7 +118,7 @@ test("default literal for object", () => {
   // deno-fmt-ignore
   expect(() => 
     matches({})
-    .when(matches.shape({testing: matches.unknown}), 6)
+    .when(matches.shape({testing: matches.string}), 6)
     // @ts-expect-error I'm expecting that unwrap is not guarenteed
     .unwrap()).toThrow();
 });
@@ -251,11 +251,11 @@ test("should be able to test partial shape failure smaller", () => {
 });
 
 {
-  const validator = matches.shape(
-    { a: matches.literal("c"), b: matches.literal("d") },
-    ["b"]
-  );
-  isType<Parser<unknown, { a: "c"; b?: "d" | undefined }>>(validator);
+  const validator = matches.shape({
+    a: matches.literal("c"),
+    b: matches.literal("d").optional(),
+  });
+  isType<Parser<unknown, { a: "c"; b?: "d" | null | undefined }>>(validator);
   // @ts-expect-error Not type
   isType<Parser<unknown, { a: "c"; b: "d" | undefined }>>(validator);
   type Valid = { a: "c"; b?: "d" | null };
@@ -310,21 +310,17 @@ test("should be able to test partial shape failure smaller", () => {
     throw new Error("should be invalid");
   });
   test("should be able to shape with partials and fill in defaults", () => {
-    const validator = matches.shape(
-      {
-        a: matches.literal("c"),
-        b: matches.literal("d"),
-        f: matches.literal("f"),
-      },
-      ["b", "f"],
-      { b: "d" } as const
-    );
+    const validator = matches.shape({
+      a: matches.literal("c"),
+      b: matches.literal("d").defaultTo("d" as const),
+      f: matches.literal("f").optional(),
+    });
     isType<
       Parser<
         unknown,
         {
           a: "c";
-          f?: "f" | undefined;
+          f?: "f" | null | undefined;
           b: "d";
         }
       >
@@ -334,7 +330,7 @@ test("should be able to test partial shape failure smaller", () => {
         unknown,
         {
           a: "c";
-          f: "f" | undefined;
+          f: "f" | null | undefined;
           b: "d";
         }
       > // @ts-expect-error Expecting that this is the wrong shape
@@ -471,13 +467,13 @@ test("should be able to test any", () => {
 
 test("should be able to test object", () => {
   const testValue = {};
-  const validator = matches.object;
+  const validator = matches.object();
   expect(validator.parse(testValue, unFold)).toEqual(testValue);
 });
 
 test("should be able to test object with failure", () => {
   const testValue = 5;
-  const validator = matches.object;
+  const validator = matches.object();
   expect(validator.parse(testValue, unFold)).toEqual("object(5)");
 });
 
@@ -725,7 +721,7 @@ test("should guard without a name failure", () => {
 
 test("should be able to test is object for event", () => {
   const event = new Event("test");
-  expect(matches.object.parse(event, unFold)).toBe(event);
+  expect(matches.object().parse(event, unFold)).toBe(event);
 });
 
 {

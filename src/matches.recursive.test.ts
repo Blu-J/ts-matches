@@ -5,7 +5,7 @@ import { assertSnapshot, isType } from "./matches.test";
 
 export const validatorError = every(
   shape({
-    parser: matches.object,
+    parser: matches.object(),
     keys: matches.arrayOf(matches.string),
     value: any,
   })

@@ -36,7 +36,7 @@ export class ShapeParser<
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     // deno-lint-ignore no-this-alias
     const parser: IParser<unknown, unknown> = this;
-    if (!object.test(a)) {
+    if (!object().test(a)) {
       return onParse.invalid({
         value: a,
         keys: [],
@@ -93,81 +93,53 @@ export const isShape = <A extends {}>(testShape: {
   return new Parser(new ShapeParser(testShape, false)) as any;
 };
 
-export function shape<A extends {}, Overwrites extends keyof A>(
-  testShape: {
-    [key in keyof A]: Parser<unknown, A[key]>;
-  },
-  optionals: Overwrites[]
-): Parser<
-  unknown,
-  MergeAll<
-    { [K in keyof Omit<A, Overwrites>]: A[K] } & {
-      [K in keyof Pick<A, Overwrites>]?: A[K];
-    }
-  >
+export type OptionalKeys<Obj extends {}> = {
+  [K in keyof Obj]: undefined extends Obj[K] ? K : never;
+}[keyof Obj];
+
+export type WithOptionalKeys<Obj extends {}> = MergeAll<
+  {
+    [K in keyof Omit<Obj, OptionalKeys<Obj>>]: Obj[K];
+  } & {
+    [K in OptionalKeys<Obj>]?: Obj[K];
+  }
 >;
-export function shape<
-  A extends {},
-  Overwrites extends keyof A,
-  Defaults extends { [K in Overwrites]?: A[K] }
->(
-  testShape: {
-    [key in keyof A]: Parser<unknown, A[key]>;
-  },
-  optionals: Overwrites[],
-  defaults: Defaults
-): Parser<
-  unknown,
-  MergeAll<
-    { [K in keyof Omit<A, Overwrites>]: A[K] } & {
-      [K in keyof Omit<Pick<A, Overwrites>, keyof Defaults>]?: A[K];
-    } & {
-      [K in keyof Pick<Pick<A, Overwrites>, keyof Defaults & Overwrites>]: A[K];
-    }
-  >
->;
+
 export function shape<A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
-}): Parser<unknown, A>;
-export function shape<
-  A extends {},
-  Overwrites extends keyof A,
-  OptionalDefaults extends { [K in Overwrites]: A[K] }
->(
-  testShape: {
-    [key in keyof A]: Parser<unknown, A[key]>;
-  },
-  optionals?: Overwrites[],
-  optionalAndDefaults?: OptionalDefaults
-) {
-  if (optionals) {
-    const defaults = optionalAndDefaults || {};
-    const entries = Object.entries(testShape) as Array<
-      [keyof A, Parser<unknown, A[keyof A]>]
-    >;
-    const optionalSet = new Set(Array.from(optionals as Array<Overwrites>));
+}): Parser<unknown, WithOptionalKeys<A>> {
+  const entries = Object.entries(testShape || {}) as Array<
+    [keyof A, Parser<unknown, A[keyof A]>]
+  >;
+  if (entries.length) {
     return every(
       partial(
         Object.fromEntries(
-          entries
-            .filter(([key, _]) => optionalSet.has(key as any))
-            .map(([key, parser]) => [key, parser.optional()])
+          entries.filter(
+            ([key, parser]) => parser.isOptional() || parser.isDefaultTo()
+          )
         )
       ),
       isShape(
         Object.fromEntries(
-          entries.filter(([key, _]) => !optionalSet.has(key as any))
+          entries.filter(
+            ([key, parser]) => !(parser.isOptional() || parser.isDefaultTo())
+          )
         )
       )
     ).map((ret) => {
-      for (const key of optionalSet) {
+      for (const [key, parser] of entries) {
         const keyAny = key as any;
-        if (!(keyAny in ret) && keyAny in defaults) {
-          ret[keyAny] = (defaults as any)[keyAny];
+        if (!(keyAny in ret) && (parser.isOptional() || parser.isDefaultTo())) {
+          ret[keyAny] = parser.unsafeCast(undefined);
         }
       }
+      Parser<unknown, WithOptionalKeys<A>>;
       return ret;
-    });
+    }) as Parser<unknown, WithOptionalKeys<A>>;
   }
-  return isShape(testShape);
+  return isShape(testShape || {}) as any as Parser<
+    unknown,
+    WithOptionalKeys<A>
+  >;
 }
