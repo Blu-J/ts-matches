@@ -15,7 +15,7 @@ import {
   Optional,
 } from "./interfaces";
 import { MappedAParser } from "./mapped-parser";
-import { MaybeParser } from "./maybe-parser";
+import { MaybeParser, NullableParser } from "./maybe-parser";
 import { parserName } from "./named";
 import { NilParser } from "./nill-parser";
 import { NumberParser } from "./number-parser";
@@ -269,6 +269,14 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(new MaybeParser(this));
   };
   /**
+   * When we want to make sure that we handle the null later on in a monoid fashion,
+   * and this ensures we deal with the value
+   * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
+   */
+  nullable = (_name?: string): Parser<A | null, B | null> => {
+    return new Parser(new NullableParser(this));
+  };
+  /**
    * There are times that we would like to bring in a value that we know as null or undefined
    * and want it to go to a default value
    */
@@ -282,28 +290,28 @@ export class Parser<A, B> implements IParser<A, B> {
    * There are times that we would like to bring in a value that we may have as invalid,
    * and in those cases during the parse we want it to fall back to a value
    */
-  onMismatch(otherValue: B): Parser<A, B> {
+  onMismatch = <C extends B>(otherValue: C): Parser<A, B> => {
     return new Parser(new OnMismatch(this, () => otherValue));
-  }
+  };
   /**
    * There are times that we would like to bring in a value that we may have as invalid,
    * and in those cases during the parse we want it to fall back to a value
    */
-  withMismatch(otherValue: (a: A) => B): Parser<A, B> {
+  withMismatch = <C extends B>(otherValue: (a: A) => C): Parser<A, B> => {
     return new Parser(new OnMismatch(this, otherValue));
-  }
+  };
 
-  isOptional() {
+  isOptional = () => {
     return (
       this.parser instanceof MaybeParser || this.parser instanceof UnknownParser
     );
-  }
+  };
 
-  isDefaultTo() {
+  isDefaultTo = () => {
     return (
       this.parser instanceof DefaultParser || this.parser instanceof OnMismatch
     );
-  }
+  };
 
   /**
    * We want to test value with a test eg isEven

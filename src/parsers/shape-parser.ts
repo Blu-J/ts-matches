@@ -36,7 +36,7 @@ export class ShapeParser<
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     // deno-lint-ignore no-this-alias
     const parser: IParser<unknown, unknown> = this;
-    if (!object().test(a)) {
+    if (!object.test(a)) {
       return onParse.invalid({
         value: a,
         keys: [],
@@ -118,11 +118,13 @@ export function shape<A extends {}>(testShape: {
         : [[...full, [key, parser]] as typeof entries, partials],
     [[] as typeof entries, [] as typeof entries]
   );
-  if (partials.length) {
-    return every(
-      partial(Object.fromEntries(partials)),
-      isShape(Object.fromEntries(full))
-    ).map((ret) => {
+  if (!partials.length) {
+    return isShape(testShape || {}) as any as Parser<
+      unknown,
+      WithOptionalKeys<A>
+    >;
+  } else {
+    const partialParser = partial(Object.fromEntries(partials)).map((ret) => {
       for (const [key, parser] of partials) {
         const keyAny = key as any;
         if (!(keyAny in ret)) {
@@ -132,12 +134,15 @@ export function shape<A extends {}>(testShape: {
           }
         }
       }
-      Parser<unknown, WithOptionalKeys<A>>;
       return ret;
-    }) as Parser<unknown, WithOptionalKeys<A>>;
+    });
+    if (!full.length) {
+      return partialParser as any as Parser<unknown, WithOptionalKeys<A>>;
+    } else {
+      return every(
+        partialParser,
+        isShape(Object.fromEntries(full))
+      ) as any as Parser<unknown, WithOptionalKeys<A>>;
+    }
   }
-  return isShape(testShape || {}) as any as Parser<
-    unknown,
-    WithOptionalKeys<A>
-  >;
 }

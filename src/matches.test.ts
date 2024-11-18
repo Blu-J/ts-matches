@@ -7,7 +7,7 @@ class Event {
 }
 export const validatorError = every(
   shape({
-    parser: matches.object(),
+    parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
   })
@@ -345,6 +345,42 @@ test("should be able to test partial shape failure smaller", () => {
     // @ts-expect-error Value should not be type
     isType<number>(value);
   });
+
+  test("should be able to shape with nullable and fill in defaults", () => {
+    const validator = matches.shape({
+      a: matches.literal("c"),
+      b: matches.literal("d").defaultTo("d" as const),
+      f: matches.literal("f").nullable(),
+    });
+    isType<
+      Parser<
+        unknown,
+        {
+          a: "c";
+          f: "f" | null;
+          b: "d";
+        }
+      >
+    >(validator);
+    type Valid = { a: "c"; f: "f" | null; b?: "d" | null };
+    const testValue = { a: "c" };
+
+    const value = validator.parse(testValue, unFold);
+    expect(value).toEqual(
+      '["f"]Shape<{a:Literal<"c">,f:Nullable<Literal<"f">>}>("missingProperty")'
+    );
+
+    const testValueCorrect = { a: "c", f: null };
+    const value2 = validator.unsafeCast(testValueCorrect);
+    expect(value2).toEqual({
+      a: "c",
+      f: null,
+      b: "d",
+    });
+    isType<Valid>(value2);
+    // @ts-expect-error Value should not be type
+    isType<number>(value2);
+  });
 }
 
 test("should be able to test literal", () => {
@@ -467,13 +503,13 @@ test("should be able to test any", () => {
 
 test("should be able to test object", () => {
   const testValue = {};
-  const validator = matches.object();
+  const validator = matches.object;
   expect(validator.parse(testValue, unFold)).toEqual(testValue);
 });
 
 test("should be able to test object with failure", () => {
   const testValue = 5;
-  const validator = matches.object();
+  const validator = matches.object;
   expect(validator.parse(testValue, unFold)).toEqual("object(5)");
 });
 
@@ -721,7 +757,7 @@ test("should guard without a name failure", () => {
 
 test("should be able to test is object for event", () => {
   const event = new Event("test");
-  expect(matches.object().parse(event, unFold)).toBe(event);
+  expect(matches.object.parse(event, unFold)).toBe(event);
 });
 
 {
@@ -811,6 +847,33 @@ test("should be able to map validation with name", () => {
     assertSnapshot(
       '"\\"Maybe<number>({})\\""',
       saferStringify(maybeNumber.parse(input, unFold))
+    );
+  });
+}
+{
+  const nullableNumber = matches.number.nullable();
+
+  test("with a number.nullable matcher: a number in", () => {
+    const input = 4;
+    const expectedAnswer = 4;
+    expect(nullableNumber.parse(input, unFold)).toBe(expectedAnswer);
+  });
+  test("with a number.nullable matcher: a null in", () => {
+    const input = null;
+    expect(nullableNumber.parse(input, unFold)).toBe(null);
+  });
+  test("with a number.nullable matcher: a undefined in", () => {
+    const input = undefined;
+    assertSnapshot(
+      '"Nullable<number>(undefined)"',
+      nullableNumber.parse(input, unFold)
+    );
+  });
+  test("with a number.nullable matcher: a object in", () => {
+    const input = {};
+    assertSnapshot(
+      '"\\"Nullable<number>({})\\""',
+      saferStringify(nullableNumber.parse(input, unFold))
     );
   });
 }
