@@ -118,7 +118,7 @@ test("default literal for object", () => {
   // deno-fmt-ignore
   expect(() => 
     matches({})
-    .when(matches.shape({testing: matches.unknown}), 6)
+    .when(matches.shape({testing: matches.string}), 6)
     // @ts-expect-error I'm expecting that unwrap is not guarenteed
     .unwrap()).toThrow();
 });
@@ -251,11 +251,11 @@ test("should be able to test partial shape failure smaller", () => {
 });
 
 {
-  const validator = matches.shape(
-    { a: matches.literal("c"), b: matches.literal("d") },
-    ["b"]
-  );
-  isType<Parser<unknown, { a: "c"; b?: "d" | undefined }>>(validator);
+  const validator = matches.shape({
+    a: matches.literal("c"),
+    b: matches.literal("d").optional(),
+  });
+  isType<Parser<unknown, { a: "c"; b?: "d" | null | undefined }>>(validator);
   // @ts-expect-error Not type
   isType<Parser<unknown, { a: "c"; b: "d" | undefined }>>(validator);
   type Valid = { a: "c"; b?: "d" | null };
@@ -310,21 +310,17 @@ test("should be able to test partial shape failure smaller", () => {
     throw new Error("should be invalid");
   });
   test("should be able to shape with partials and fill in defaults", () => {
-    const validator = matches.shape(
-      {
-        a: matches.literal("c"),
-        b: matches.literal("d"),
-        f: matches.literal("f"),
-      },
-      ["b", "f"],
-      { b: "d" } as const
-    );
+    const validator = matches.shape({
+      a: matches.literal("c"),
+      b: matches.literal("d").defaultTo("d" as const),
+      f: matches.literal("f").optional(),
+    });
     isType<
       Parser<
         unknown,
         {
           a: "c";
-          f?: "f" | undefined;
+          f?: "f" | null | undefined;
           b: "d";
         }
       >
@@ -334,7 +330,7 @@ test("should be able to test partial shape failure smaller", () => {
         unknown,
         {
           a: "c";
-          f: "f" | undefined;
+          f: "f" | null | undefined;
           b: "d";
         }
       > // @ts-expect-error Expecting that this is the wrong shape
@@ -348,6 +344,42 @@ test("should be able to test partial shape failure smaller", () => {
     isType<Valid>(value);
     // @ts-expect-error Value should not be type
     isType<number>(value);
+  });
+
+  test("should be able to shape with nullable and fill in defaults", () => {
+    const validator = matches.shape({
+      a: matches.literal("c"),
+      b: matches.literal("d").defaultTo("d" as const),
+      f: matches.literal("f").nullable(),
+    });
+    isType<
+      Parser<
+        unknown,
+        {
+          a: "c";
+          f: "f" | null;
+          b: "d";
+        }
+      >
+    >(validator);
+    type Valid = { a: "c"; f: "f" | null; b?: "d" | null };
+    const testValue = { a: "c" };
+
+    const value = validator.parse(testValue, unFold);
+    expect(value).toEqual(
+      '["f"]Shape<{a:Literal<"c">,f:Nullable<Literal<"f">>}>("missingProperty")'
+    );
+
+    const testValueCorrect = { a: "c", f: null };
+    const value2 = validator.unsafeCast(testValueCorrect);
+    expect(value2).toEqual({
+      a: "c",
+      f: null,
+      b: "d",
+    });
+    isType<Valid>(value2);
+    // @ts-expect-error Value should not be type
+    isType<number>(value2);
   });
 }
 
@@ -815,6 +847,33 @@ test("should be able to map validation with name", () => {
     assertSnapshot(
       '"\\"Maybe<number>({})\\""',
       saferStringify(maybeNumber.parse(input, unFold))
+    );
+  });
+}
+{
+  const nullableNumber = matches.number.nullable();
+
+  test("with a number.nullable matcher: a number in", () => {
+    const input = 4;
+    const expectedAnswer = 4;
+    expect(nullableNumber.parse(input, unFold)).toBe(expectedAnswer);
+  });
+  test("with a number.nullable matcher: a null in", () => {
+    const input = null;
+    expect(nullableNumber.parse(input, unFold)).toBe(null);
+  });
+  test("with a number.nullable matcher: a undefined in", () => {
+    const input = undefined;
+    assertSnapshot(
+      '"Nullable<number>(undefined)"',
+      nullableNumber.parse(input, unFold)
+    );
+  });
+  test("with a number.nullable matcher: a object in", () => {
+    const input = {};
+    assertSnapshot(
+      '"\\"Nullable<number>({})\\""',
+      saferStringify(nullableNumber.parse(input, unFold))
     );
   });
 }
