@@ -111,27 +111,25 @@ export function shape<A extends {}>(testShape: {
   const entries = Object.entries(testShape || {}) as Array<
     [keyof A, Parser<unknown, A[keyof A]>]
   >;
-  if (entries.length) {
+  const [full, partials] = entries.reduce(
+    ([full, partials], [key, parser]) =>
+      parser.isOptional() || parser.isDefaultTo()
+        ? [full, [...partials, [key, parser]] as typeof entries]
+        : [[...full, [key, parser]] as typeof entries, partials],
+    [[] as typeof entries, [] as typeof entries]
+  );
+  if (partials.length) {
     return every(
-      partial(
-        Object.fromEntries(
-          entries.filter(
-            ([key, parser]) => parser.isOptional() || parser.isDefaultTo()
-          )
-        )
-      ),
-      isShape(
-        Object.fromEntries(
-          entries.filter(
-            ([key, parser]) => !(parser.isOptional() || parser.isDefaultTo())
-          )
-        )
-      )
+      partial(Object.fromEntries(partials)),
+      isShape(Object.fromEntries(full))
     ).map((ret) => {
-      for (const [key, parser] of entries) {
+      for (const [key, parser] of partials) {
         const keyAny = key as any;
-        if (!(keyAny in ret) && (parser.isOptional() || parser.isDefaultTo())) {
-          ret[keyAny] = parser.unsafeCast(undefined);
+        if (!(keyAny in ret)) {
+          const newValue = parser.unsafeCast(undefined);
+          if (newValue != null) {
+            ret[keyAny] = newValue;
+          }
         }
       }
       Parser<unknown, WithOptionalKeys<A>>;
