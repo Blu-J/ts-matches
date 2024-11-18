@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
+    // "lib": ["es2019"],
     "module": "commonjs",
     "outDir": "lib",
     "target": "es2018"

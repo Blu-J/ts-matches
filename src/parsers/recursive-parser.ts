@@ -41,7 +41,7 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
 }
 
 type EnsurredType<A, B = A> = (A extends never ? never : unknown) &
-  ((parser: Parser<unknown, any>) => Parser<unknown, B>);
+  ((parser: Parser<unknown, B>) => Parser<unknown, B>);
 
 /**
  * Must pass the shape that we expect since typescript as of this point

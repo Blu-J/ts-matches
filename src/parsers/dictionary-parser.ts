@@ -72,7 +72,7 @@ export const dictionary = <
 >(
   ...parsers: ParserSets
 ): Parser<unknown, _<DictionaryShaped<[...ParserSets]>>> => {
-  return object.concat(new DictionaryParser([...parsers])) as any;
+  return object().concat(new DictionaryParser([...parsers])) as any;
 };
 
 function findOrError<

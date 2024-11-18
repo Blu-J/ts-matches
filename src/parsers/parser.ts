@@ -25,6 +25,7 @@ import { ShapeParser } from "./shape-parser";
 import { StringParser } from "./string-parser";
 import { booleanOnParse } from "./utils";
 import { OnMismatch } from "./on-mismatch";
+import { UnknownParser } from "./unknown-parser";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;
@@ -291,6 +292,19 @@ export class Parser<A, B> implements IParser<A, B> {
   withMismatch(otherValue: (a: A) => B): Parser<A, B> {
     return new Parser(new OnMismatch(this, otherValue));
   }
+
+  isOptional() {
+    return (
+      this.parser instanceof MaybeParser || this.parser instanceof UnknownParser
+    );
+  }
+
+  isDefaultTo() {
+    return (
+      this.parser instanceof DefaultParser || this.parser instanceof OnMismatch
+    );
+  }
+
   /**
    * We want to test value with a test eg isEven
    */
