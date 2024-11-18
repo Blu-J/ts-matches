@@ -38,27 +38,13 @@ export const isFunction = new Parser(new FunctionParser());
 export const boolean = new Parser(new BoolParser());
 
 const objectMatcher = new Parser(new ObjectParser());
-// deno-lint-ignore ban-types
-export function object<A extends {}>(testShape: {
-  [key in keyof A]: Parser<unknown, A[key]>;
-}): Parser<unknown, WithOptionalKeys<A>>;
 
-export function object(): typeof objectMatcher;
-export function object(...args: any[]) {
-  if (args.length === 1) return shape(args[0]);
-  return objectMatcher;
-}
-
-// : typeof shape & Parser<unknown, object> = Object.assign(
-//   // deno-lint-ignore no-explicit-any
-//   function objectOf(...args: any[]) {
-
-//     // deno-lint-ignore no-explicit-any
-//     return (shape as any)(...args);
-//   },
-//   objectMatcher
-//   // deno-lint-ignore no-explicit-any
-// ) as any;
+export const object: typeof shape & Parser<unknown, object> = Object.assign(
+  function objectOf(...args: any[]) {
+    return (shape as any)(...args);
+  },
+  objectMatcher
+) as any;
 
 export const isArray = new Parser(new ArrayParser());
 

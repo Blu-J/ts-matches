@@ -139,30 +139,30 @@ Given that the default export is `matches` Then the type of `matches` is
 `unkown -> matcherChain`, and also has the properties on that function that
 return a `parser` or a function that creates a `parser`
 
-| Attribute  | Description                                                                                                                                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| array      | A parser of Parser<\_, unknown[]> or @see arrayOf                                                                                                                                                                                     |
-| arrayOf    | Testing that any array is good and filled with type passed in                                                                                                                                                                         |
-| some       | That one of the matchers pass                                                                                                                                                                                                         |
-| tuple      | That we match a tuple of parsers                                                                                                                                                                                                      |
-| regex      | That we match the passed in regex                                                                                                                                                                                                     |
-| number     | Number                                                                                                                                                                                                                                |
-| natural    | Number > 0 and is integer                                                                                                                                                                                                             |
-| isFunction | is a function                                                                                                                                                                                                                         |
-| object     | is an object paser (Parser<\_, object>) or @see shape                                                                                                                                                                                 |
-| string     | is a string                                                                                                                                                                                                                           |
-| shape      | Matches a shape of an object, `shape({key: parser}, ["key"], {"key": "fallbackValue"} as const)` for optionals default fallbacks,`shape({key: parser}, ["key"])` for optionals no defaults, `shape({key: parser})` for every required |
-| partial    | Matches a shape of maybe attributes                                                                                                                                                                                                   |
-| literal    | Matches an exact match                                                                                                                                                                                                                |
-| every      | Matches every match passed in                                                                                                                                                                                                         |
-| guard      | Custom function for testing                                                                                                                                                                                                           |
-| any        | is something                                                                                                                                                                                                                          |
-| boolean    | is a boolean                                                                                                                                                                                                                          |
-| nill       | is a null or undefined                                                                                                                                                                                                                |
-| dictionary | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type                                                                                                                                                          |
-| recursive  | A way of doing a recursive parser, passing the self. Note this requires the type before while creating, cannot go from creation side.                                                                                                 |
-| deferred   | A way of creating a type that we will be filling in later, will be using the typescript shape first to verify                                                                                                                         |
-| literals   | One the literals passed through                                                                                                                                                                                                       |
+| Attribute  | Description                                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| array      | A parser of Parser<\_, unknown[]> or @see arrayOf                                                                                     |
+| arrayOf    | Testing that any array is good and filled with type passed in                                                                         |
+| some       | That one of the matchers pass                                                                                                         |
+| tuple      | That we match a tuple of parsers                                                                                                      |
+| regex      | That we match the passed in regex                                                                                                     |
+| number     | Number                                                                                                                                |
+| natural    | Number > 0 and is integer                                                                                                             |
+| isFunction | is a function                                                                                                                         |
+| object     | is an object paser (Parser<\_, object>) or @see shape                                                                                 |
+| string     | is a string                                                                                                                           |
+| shape      | Matches a shape of an object, `shape({key: parser})` for optionals use .optional() and fallback use .defaultTo()                      |
+| partial    | Matches a shape of maybe attributes                                                                                                   |
+| literal    | Matches an exact match                                                                                                                |
+| every      | Matches every match passed in                                                                                                         |
+| guard      | Custom function for testing                                                                                                           |
+| any        | is something                                                                                                                          |
+| boolean    | is a boolean                                                                                                                          |
+| nill       | is a null or undefined                                                                                                                |
+| dictionary | sets of [parserForKey, parserForValue] to validate a dictionary/ mapped type                                                          |
+| recursive  | A way of doing a recursive parser, passing the self. Note this requires the type before while creating, cannot go from creation side. |
+| deferred   | A way of creating a type that we will be filling in later, will be using the typescript shape first to verify                         |
+| literals   | One the literals passed through                                                                                                       |
 
 `MatcherChain` api
 
@@ -180,7 +180,8 @@ return a `parser` or a function that creates a `parser`
 | parse        | Use this to turn a value into an either                                |
 | unsafeCast   | Use this to get the value or throw an error                            |
 | castPromise  | Cast into a promise                                                    |
-| optional     | output type is now a null of value                                     |
+| optional     | output type can now be null or undefined                               |
+| nullable     | output type can now be null                                            |
 | defaultTo    | instead of creating a optional we fallback to a value                  |
 | onMismatch   | On a error of previous parsing fall back to value passed               |
 | withMismatch | On a error of previous parsing fall back to value fn passed            |
