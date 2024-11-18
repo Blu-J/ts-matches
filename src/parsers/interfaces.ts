@@ -47,11 +47,11 @@ export type Description = {
       readonly extras: readonly [unknown];
     }
   | {
-    readonly name: "OnMismatch";
-    readonly children: readonly [SomeParser];
-    readonly extras: readonly [unknown];
-  }
-|{
+      readonly name: "OnMismatch";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
       readonly name: "Tuple";
       readonly children: ReadonlyArray<SomeParser>;
       readonly extras: readonly [];
@@ -83,6 +83,11 @@ export type Description = {
     }
   | {
       readonly name: "Maybe";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [];
+    }
+  | {
+      readonly name: "Nullable";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [];
     }
@@ -137,6 +142,7 @@ export type ParserNames =
   | "Literal"
   | "Mapped"
   | "Maybe"
+  | "Nullable"
   | "Named"
   | "Null"
   | "Number"

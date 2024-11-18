@@ -1,10 +1,10 @@
 import { Parser } from ".";
-import { IParser, Optional, NonNull, OnParse } from "./interfaces";
+import { IParser, OnParse } from "./interfaces";
 
-export class OnMismatch<A, B> implements IParser<A, B> {
+export class OnMismatch<A, B, B2 extends B> implements IParser<A, B> {
   constructor(
     readonly parent: Parser<A, B>,
-    readonly defaultValue: (a: A) => B,
+    readonly defaultValue: (a: A) => B2,
     readonly description = {
       name: "OnMismatch" as const,
       children: [parent],
