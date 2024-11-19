@@ -7,7 +7,7 @@ export type ParserInto<P> = P extends IParser<any, infer A> ? A : never;
 export type ParserFrom<P> = P extends IParser<infer A, any> ? A : never;
 export type Nil = null | undefined;
 
-export type Optional<A> = A | null | undefined;
+export type Optional<A> = A | undefined;
 export type _<T> = T;
 export type SomeParser = IParser<unknown, unknown>;
 
@@ -47,7 +47,17 @@ export type Description = {
       readonly extras: readonly [unknown];
     }
   | {
+      readonly name: "Nullable";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
       readonly name: "OnMismatch";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
+      readonly name: "WithRetry";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [unknown];
     }
@@ -155,7 +165,9 @@ export type ParserNames =
   | "String"
   | "Tuple"
   | "Unknown"
-  | "Wrapper";
+  | "Wrapper"
+  | "WithRetry"
+  | "Nullable";
 
 export type OnParse<A, B, C, D> = {
   parsed(b: B): C;

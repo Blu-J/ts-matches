@@ -5,6 +5,7 @@ import { ArrayParser } from "./array-parser";
 import { BoolParser } from "./bool-parser";
 import { ConcatParsers } from "./concat-parser";
 import { DefaultParser } from "./default-parser";
+import { NullishParsed } from "./nullish-parser";
 import { FunctionParser } from "./function-parser";
 import { GuardParser } from "./guard-parser";
 import {
@@ -15,7 +16,8 @@ import {
   Optional,
 } from "./interfaces";
 import { MappedAParser } from "./mapped-parser";
-import { MaybeParser, NullableParser } from "./maybe-parser";
+import { MaybeParser } from "./maybe-parser";
+import { NullableParser } from "./nullable-parser";
 import { parserName } from "./named";
 import { NilParser } from "./nill-parser";
 import { NumberParser } from "./number-parser";
@@ -26,6 +28,7 @@ import { StringParser } from "./string-parser";
 import { booleanOnParse } from "./utils";
 import { OnMismatch } from "./on-mismatch";
 import { UnknownParser } from "./unknown-parser";
+import { WithRetry } from "./with-retry";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
   if (a instanceof Parser) return unwrapParser(a.parser);
   return a;
@@ -276,8 +279,19 @@ export class Parser<A, B> implements IParser<A, B> {
   nullable = (_name?: string): Parser<A | null, B | null> => {
     return new Parser(new NullableParser(this));
   };
+
   /**
-   * There are times that we would like to bring in a value that we know as null or undefined
+   * There are times that we would like to bring in a value that we know as null
+   * and want it to go to a default value
+   */
+  mapNullish = <C>(defaultValue: C): Parser<A | null, C | NonNull<B, C>> => {
+    return new Parser(
+      new NullishParsed(new Parser(new NullableParser(this)), defaultValue)
+    );
+  };
+
+  /**
+   * There are times that we would like to bring in a value that we know as undefined
    * and want it to go to a default value
    */
   defaultTo = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
@@ -300,16 +314,28 @@ export class Parser<A, B> implements IParser<A, B> {
   withMismatch = <C extends B>(otherValue: (a: A) => C): Parser<A, B> => {
     return new Parser(new OnMismatch(this, otherValue));
   };
-
-  isOptional = () => {
-    return (
-      this.parser instanceof MaybeParser || this.parser instanceof UnknownParser
-    );
+  /**
+   * There are times that the parse failed, and we just want to retry with a value
+   */
+  onRetry = <C extends A>(otherValue: C): Parser<unknown, B> => {
+    return new Parser(new WithRetry(this, () => otherValue));
+  };
+  /**
+   * There are times that the parse failed, and we just want to retry with a value based on the input
+   */
+  withRetry = <C extends A>(
+    otherValue: (a: unknown) => C
+  ): Parser<unknown, B> => {
+    return new Parser(new WithRetry(this, otherValue));
   };
 
-  isDefaultTo = () => {
+  retryable = () => {
     return (
-      this.parser instanceof DefaultParser || this.parser instanceof OnMismatch
+      this.parser instanceof MaybeParser ||
+      this.parser instanceof UnknownParser ||
+      this.parser instanceof DefaultParser ||
+      this.parser instanceof OnMismatch ||
+      this.parser instanceof WithRetry
     );
   };
 
