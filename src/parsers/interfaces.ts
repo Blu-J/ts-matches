@@ -47,7 +47,17 @@ export type Description = {
       readonly extras: readonly [unknown];
     }
   | {
+      readonly name: "Nullable";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
       readonly name: "OnMismatch";
+      readonly children: readonly [SomeParser];
+      readonly extras: readonly [unknown];
+    }
+  | {
+      readonly name: "WithRetry";
       readonly children: readonly [SomeParser];
       readonly extras: readonly [unknown];
     }
@@ -155,7 +165,9 @@ export type ParserNames =
   | "String"
   | "Tuple"
   | "Unknown"
-  | "Wrapper";
+  | "Wrapper"
+  | "WithRetry"
+  | "Nullable";
 
 export type OnParse<A, B, C, D> = {
   parsed(b: B): C;

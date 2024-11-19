@@ -1,5 +1,5 @@
 import matches from "./matches";
-import { any, every, Parser, shape } from "./parsers/index";
+import { any, every, Parser, shape, string } from "./parsers/index";
 import { saferStringify } from "./utils";
 const isNumber = (x: unknown): x is number => typeof x === "number";
 class Event {
@@ -250,6 +250,52 @@ test("should be able to test partial shape failure smaller", () => {
   );
 });
 
+test("should recover shape mismatch", () => {
+  const validator = matches.shape({
+    a: matches
+      .shape({
+        b: matches.number.onMismatch(-1),
+      })
+      .withMismatch(() => ({ b: -2 })),
+  });
+
+  expect(validator.parse({}, unFold)).toEqual({ a: { b: -2 } });
+  expect(validator.parse({ a: {} }, unFold)).toEqual({ a: { b: -1 } });
+  expect(validator.parse({ a: { b: 5 } }, unFold)).toEqual({ a: { b: 5 } });
+});
+
+test("should recover shape retry", () => {
+  const validator = matches.shape({
+    a: matches
+      .shape({
+        b: matches.number.onRetry(-1),
+      })
+      .withRetry(() => ({ b: -2 })),
+  });
+
+  expect(validator.parse({}, unFold)).toEqual({ a: { b: -2 } });
+  expect(validator.parse({ a: {} }, unFold)).toEqual({ a: { b: -1 } });
+  expect(validator.parse({ a: { b: 5 } }, unFold)).toEqual({ a: { b: 5 } });
+});
+
+test("should recover shape retry bad", () => {
+  const validator = matches.shape({
+    a: matches
+      .shape({
+        b: matches.number.onRetry("-1"),
+      })
+      .withRetry(() => "{ b: -2 }"),
+  });
+
+  expect(validator.parse({}, unFold)).toEqual(
+    '[TypeError: Failed type: Partial<{b:WithRetry<,number>}>(undefined) given input undefined]Mapped<"",Partial<{a:WithRetry<,Mapped<"",Partial<{b:WithRetry<,number>}>>>}>>({})'
+  );
+  expect(validator.parse({ a: {} }, unFold)).toEqual(
+    '["a"][TypeError: Failed type: number(undefined) given input undefined]Mapped<"",Partial<{b:WithRetry<,number>}>>({})'
+  );
+  expect(validator.parse({ a: { b: 5 } }, unFold)).toEqual({ a: { b: 5 } });
+});
+
 {
   const validator = matches.shape({
     a: matches.literal("c"),
@@ -293,7 +339,17 @@ test("should be able to test partial shape failure smaller", () => {
   test("should be able to test shape with value `b` as null", () => {
     const testValue = { b: null, a: "c" };
 
-    validator.unsafeCast(testValue);
+    expect(validator.parse(testValue, unFold)).toEqual(
+      '["b"]Maybe<Literal<"d">>(null)'
+    );
+  });
+  test("should be able to test shape with value `b` as undefined", () => {
+    const testValue = { b: undefined, a: "c" };
+
+    expect(validator.parse(testValue, unFold)).toEqual({
+      a: "c",
+      b: undefined,
+    });
   });
   test("should be able to test shape with partial is wrong", () => {
     const testValue = { a: "c", b: "e" };
@@ -836,11 +892,11 @@ test("should be able to map validation with name", () => {
   });
   test("with a number.maybe matcher: a null in", () => {
     const input = null;
-    expect(maybeNumber.parse(input, unFold)).toBe(null);
+    expect(maybeNumber.parse(input, unFold)).toBe("Maybe<number>(null)");
   });
   test("with a number.maybe matcher: a undefined in", () => {
     const input = undefined;
-    expect(maybeNumber.parse(input, unFold)).toBe(null);
+    expect(maybeNumber.parse(input, unFold)).toBe(undefined);
   });
   test("with a number.maybe matcher: a object in", () => {
     const input = {};
@@ -888,7 +944,7 @@ test("should be able to map validation with name", () => {
   });
   test("with a number.defaultTo matcher: a null in", () => {
     const input = null;
-    const expected = 0;
+    const expected = "Default<0,Maybe<number>>(null)";
     expect(maybeNumber.parse(input, unFold)).toBe(expected);
   });
   test("with a number.defaultTo matcher: a undefined in", () => {
@@ -900,6 +956,63 @@ test("should be able to map validation with name", () => {
     const input = {};
     assertSnapshot(
       '"Default<0,Maybe<number>>({})"',
+      maybeNumber.parse(input, unFold)
+    );
+  });
+}
+{
+  const retryNumber = matches.number.withRetry((a) =>
+    string.test(a) ? Number.parseFloat(a) : a
+  );
+
+  test("with a number.withRetry matcher: a number in", () => {
+    const input = 4;
+    const expected = 4;
+    expect(retryNumber.parse(input, unFold)).toBe(expected);
+  });
+
+  test("with a number.withRetry matcher: a string number in", () => {
+    const input = "7";
+    const expected = 7;
+    expect(retryNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withRetry matcher: a null in", () => {
+    const input = null;
+    const expected = "number(null)";
+    expect(retryNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withRetry matcher: a undefined in", () => {
+    const input = undefined;
+    const expected = "number(undefined)";
+    expect(retryNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.withRetry matcher: a object in", () => {
+    const input = {};
+    assertSnapshot('"number({})"', retryNumber.parse(input, unFold));
+  });
+}
+{
+  const maybeNumber = matches.number.mapNullish(0);
+
+  test("with a number.mapNullish matcher: a number in", () => {
+    const input = 4;
+    const expected = 4;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.mapNullish matcher: a null in", () => {
+    const input = null;
+    const expected = 0;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.mapNullish matcher: a undefined in", () => {
+    const input = undefined;
+    const expected = "Nullable<0,Nullable<number>>(undefined)";
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.mapNullish matcher: a object in", () => {
+    const input = {};
+    assertSnapshot(
+      '"Nullable<0,Nullable<number>>({})"',
       maybeNumber.parse(input, unFold)
     );
   });

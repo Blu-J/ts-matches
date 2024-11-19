@@ -14,11 +14,19 @@ export class MappedAParser<A, B, B2> implements IParser<A, B2> {
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B2, C, D>): C | D {
     const map = this.map;
-    const result = this.parent.enumParsed(a);
-    if ("error" in result) {
-      return onParse.invalid(result.error);
-    }
+    try {
+      const result = this.parent.enumParsed(a);
+      if ("error" in result) {
+        return onParse.invalid(result.error);
+      }
 
-    return onParse.parsed(map(result.value));
+      return onParse.parsed(map(result.value));
+    } catch (error) {
+      return onParse.invalid({
+        keys: [String(error)],
+        parser: this,
+        value: a,
+      });
+    }
   }
 }

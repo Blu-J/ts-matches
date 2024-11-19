@@ -113,7 +113,7 @@ export function shape<A extends {}>(testShape: {
   >;
   const [full, partials] = entries.reduce(
     ([full, partials], [key, parser]) =>
-      parser.isOptional() || parser.isDefaultTo()
+      parser.retryable()
         ? [full, [...partials, [key, parser]] as typeof entries]
         : [[...full, [key, parser]] as typeof entries, partials],
     [[] as typeof entries, [] as typeof entries]
@@ -129,7 +129,7 @@ export function shape<A extends {}>(testShape: {
         const keyAny = key as any;
         if (!(keyAny in ret)) {
           const newValue = parser.unsafeCast(undefined);
-          if (newValue != null) {
+          if (newValue !== undefined) {
             ret[keyAny] = newValue;
           }
         }
