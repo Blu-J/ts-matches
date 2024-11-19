@@ -2,7 +2,7 @@ import { IParser, Optional, NonNull, OnParse } from "./interfaces";
 import { Parser } from "./parser";
 
 export class NullishParsed<A, B, B2>
-  implements IParser<Optional<A>, NonNull<B, B2>>
+  implements IParser<A | null, NonNull<B, B2>>
 {
   constructor(
     readonly parent: Parser<A, B>,
@@ -13,10 +13,7 @@ export class NullishParsed<A, B, B2>
       extras: [defaultValue],
     } as const
   ) {}
-  parse<C, D>(
-    a: A,
-    onParse: OnParse<Optional<A>, NonNull<B, B2>, C, D>
-  ): C | D {
+  parse<C, D>(a: A, onParse: OnParse<A | null, NonNull<B, B2>, C, D>): C | D {
     const parser = this;
     const defaultValue = this.defaultValue;
     if (a === null) {
