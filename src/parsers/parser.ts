@@ -284,7 +284,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * There are times that we would like to bring in a value that we know as null
    * and want it to go to a default value
    */
-  mapNullish = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
+  mapNullish = <C>(defaultValue: C): Parser<A | null, C | NonNull<B, C>> => {
     return new Parser(
       new NullishParsed(new Parser(new NullableParser(this)), defaultValue)
     );

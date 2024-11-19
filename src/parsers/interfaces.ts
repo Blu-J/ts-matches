@@ -7,7 +7,7 @@ export type ParserInto<P> = P extends IParser<any, infer A> ? A : never;
 export type ParserFrom<P> = P extends IParser<infer A, any> ? A : never;
 export type Nil = null | undefined;
 
-export type Optional<A> = A | null | undefined;
+export type Optional<A> = A | undefined;
 export type _<T> = T;
 export type SomeParser = IParser<unknown, unknown>;
 
