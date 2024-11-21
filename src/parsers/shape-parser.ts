@@ -6,7 +6,7 @@ type _<T> = T;
 // prettier-ignore
 // deno-fmt-ignore
 export type MergeAll<T> =
-  T extends ReadonlyArray<infer U> ? ReadonlyArray<MergeAll<U>> :
+  T extends Array<infer U> ? Array<MergeAll<U>> :
   T extends object ?
   T extends null | undefined | never ? T :
   _<{ [k in keyof T]: MergeAll<T[k]> }>
