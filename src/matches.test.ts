@@ -445,6 +445,18 @@ test("should be able to test literal", () => {
   expect(validator.parse(testValue, unFold)).toEqual(testValue);
 });
 
+test("should be able to test array literal", () => {
+  const testValue = ["a", "b"];
+  const validator = matches.literal(["a", "b"] as const);
+  expect(validator.parse(testValue, unFold)).toEqual(testValue);
+});
+
+test("should be able to test object literal", () => {
+  const testValue = { a: "a", b: ["c", "d"] };
+  const validator = matches.literal({ a: "a", b: ["c", "d"] as const });
+  expect(validator.parse(testValue, unFold)).toEqual(testValue);
+});
+
 test("should be able to test literal with failure", () => {
   const testValue = "a";
   const validator = matches.literal("b");
