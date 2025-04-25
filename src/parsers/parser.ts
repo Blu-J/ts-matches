@@ -26,7 +26,7 @@ import { OrParsers } from "./or-parser";
 import { ShapeParser } from "./shape-parser";
 import { StringParser } from "./string-parser";
 import { booleanOnParse } from "./utils";
-import { OnMismatch } from "./on-mismatch";
+import { DeepReadonly, OnMismatch } from "./on-mismatch";
 import { UnknownParser } from "./unknown-parser";
 import { WithRetry } from "./with-retry";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
@@ -304,14 +304,16 @@ export class Parser<A, B> implements IParser<A, B> {
    * There are times that we would like to bring in a value that we may have as invalid,
    * and in those cases during the parse we want it to fall back to a value
    */
-  onMismatch = <C extends B>(otherValue: C): Parser<A, B> => {
+  onMismatch = <C extends DeepReadonly<B>>(otherValue: C): Parser<A, B> => {
     return new Parser(new OnMismatch(this, () => otherValue));
   };
   /**
    * There are times that we would like to bring in a value that we may have as invalid,
    * and in those cases during the parse we want it to fall back to a value
    */
-  withMismatch = <C extends B>(otherValue: (a: A) => C): Parser<A, B> => {
+  withMismatch = <C extends DeepReadonly<B>>(
+    otherValue: (a: A) => C
+  ): Parser<A, B> => {
     return new Parser(new OnMismatch(this, otherValue));
   };
   /**
