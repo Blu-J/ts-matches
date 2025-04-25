@@ -46,14 +46,32 @@ export class LiteralsParser<B extends unknown[]>
 }
 
 export function literal<
-  A extends string | number | bigint | boolean | symbol | undefined | object
+  A extends
+    | string
+    | number
+    | bigint
+    | boolean
+    | symbol
+    | undefined
+    | object
+    | null
 >(isEqualToValue: A) {
   return new Parser(new LiteralsParser<[A]>([isEqualToValue]));
 }
 
 export function literals<
-  A extends string | number | boolean | null | undefined,
-  Rest extends Array<string | number | boolean | null | undefined>
+  A extends
+    | string
+    | number
+    | bigint
+    | boolean
+    | symbol
+    | undefined
+    | object
+    | null,
+  Rest extends Array<
+    string | number | bigint | boolean | symbol | undefined | object | null
+  >
 >(firstValue: A, ...restValues: Rest): Parser<unknown, A | OneOf<Rest>> {
   return new Parser(new LiteralsParser([firstValue, ...restValues]));
 }
