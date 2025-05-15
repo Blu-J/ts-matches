@@ -11,7 +11,7 @@ export class NullishParsed<A, B, B2>
       name: "Nullable" as const,
       children: [parent],
       extras: [defaultValue],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A | null, NonNull<B, B2>, C, D>): C | D {
     const parser = this;

@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { IParser, OnParse, ParserInto } from "./interfaces";
 import { Parser } from "./parser";
 import { any } from "./simple-parsers";
@@ -12,7 +11,7 @@ import { any } from "./simple-parsers";
 export class RecursiveParser<B> implements IParser<unknown, B> {
   private parser?: Parser<unknown, B>;
   static create<B>(
-    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>
+    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>,
   ): RecursiveParser<B> {
     const parser = new RecursiveParser<any>(fn);
     parser.parser = fn(new Parser(parser));
@@ -20,13 +19,13 @@ export class RecursiveParser<B> implements IParser<unknown, B> {
   }
   private constructor(
     readonly recursive: (
-      parser: Parser<unknown, any>
+      parser: Parser<unknown, any>,
     ) => Parser<unknown, unknown>,
     readonly description = {
       name: "Recursive",
       children: [],
       extras: [recursive],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     if (!this.parser) {
