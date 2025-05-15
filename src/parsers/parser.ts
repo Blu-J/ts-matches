@@ -30,7 +30,7 @@ import { DeepReadonly, OnMismatch } from "./on-mismatch";
 import { UnknownParser } from "./unknown-parser";
 import { WithRetry } from "./with-retry";
 function unwrapParser(a: IParser<unknown, unknown>): IParser<unknown, unknown> {
-  if (a instanceof Parser) return unwrapParser(a.parser);
+  if (Parser.isParser(a)) return unwrapParser(a.parser);
   return a;
 }
 
@@ -62,8 +62,43 @@ const enumParsed = {
  * The parse function is the lower level function that will take in a value and a dictionary of what to do with success and failure.
  */
 export class Parser<A, B> implements IParser<A, B> {
+  /**
+   * This is a helper to check if the parser is an IParser.
+   * @param parser
+   * @returns
+   */
+  static isIParser<A, B>(parser: unknown): parser is IParser<A, B> {
+    return (
+      (typeof parser === "object" || typeof parser === "function") &&
+      parser !== null &&
+      "description" in parser &&
+      "parse" in parser &&
+      typeof parser.description === "object" &&
+      parser.description !== null &&
+      typeof parser.parse === "function" &&
+      "name" in parser.description &&
+      "children" in parser.description &&
+      "extras" in parser.description &&
+      typeof parser.description.name === "string" &&
+      Array.isArray(parser.description.children) &&
+      Array.isArray(parser.description.extras)
+    );
+  }
+  /**
+   * This is a helper to check if the parser is a wrapper parser.
+   * @param a
+   * @returns
+   */
+  static isParser<A, B>(a: unknown): a is Parser<A, B> {
+    if (!Parser.isIParser(a)) return false;
+    if (!("parser" in a && Parser.isIParser(a.parser))) return false;
+    return (
+      a.description.name === "Wrapper" &&
+      a.description.children.length === 1 &&
+      a.description.children[0] === a.parser
+    );
+  }
   /// This is a hack to get the type of what the parser is going to return.
-  // deno-lint-ignore no-explicit-any
   public _TYPE: B = null as any;
   constructor(
     public parser: IParser<A, B>,
@@ -71,7 +106,7 @@ export class Parser<A, B> implements IParser<A, B> {
       name: "Wrapper",
       children: [parser],
       extras: [],
-    } as const
+    } as const,
   ) {}
   /**
    * Use this when you want to decide what happens on the succes and failure cases of parsing
@@ -92,7 +127,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   public static isA<A, B extends A>(
     checkIsA: (value: A) => value is B,
-    name: string
+    name: string,
   ): Parser<A, B> {
     return new Parser(new IsAParser(checkIsA, name));
   }
@@ -103,19 +138,20 @@ export class Parser<A, B> implements IParser<A, B> {
    */
 
   public static validatorErrorAsString = <A, B>(
-    error: ISimpleParsedError
+    error: ISimpleParsedError,
   ): string => {
     const { parser, value, keys } = error;
 
-    const keysString = !keys.length
-      ? ""
-      : keys
+    const keysString =
+      !keys.length ? "" : (
+        keys
           .map((x) => `[${x}]`)
           .reverse()
-          .join("");
+          .join("")
+      );
 
     return `${keysString}${Parser.parserAsString(parser)}(${saferStringify(
-      value
+      value,
     )})`;
   };
 
@@ -125,7 +161,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   public static parserAsString(
-    parserComingIn: IParser<unknown, unknown>
+    parserComingIn: IParser<unknown, unknown>,
   ): string {
     const parser = unwrapParser(parserComingIn);
     const {
@@ -137,16 +173,30 @@ export class Parser<A, B> implements IParser<A, B> {
           (subParser, i) =>
             `${
               String(parser.description.extras[i]) || "?"
-            }:${Parser.parserAsString(subParser)}`
+            }:${Parser.parserAsString(subParser)}`,
         )
         .join(",")}}>`;
     }
     if (parser instanceof OrParsers) {
-      const parent = unwrapParser(parser.parent);
-      const parentString = Parser.parserAsString(parent);
-      if (parent instanceof OrParsers) return parentString;
+      const notOrs = [];
+      const matchers: IParser<unknown, unknown>[] = [
+        parser.parent,
+        parser.otherParser,
+      ];
+      while (matchers.length > 0) {
+        const current = matchers.pop();
+        if (!current) continue;
+        if (Parser.isParser(current)) {
+          matchers.push(current.parser);
+        } else if (current instanceof OrParsers) {
+          matchers.push(current.parent, current.otherParser);
+        } else {
+          notOrs.push(current);
+        }
+      }
+      const parentString = `${notOrs.map((x) => Parser.parserAsString(x)).join(",")}`;
 
-      return `${name}<${parentString},...>`;
+      return `${name}<${parentString}>`;
     }
     if (parser instanceof GuardParser) {
       return String(extras[0] || name);
@@ -171,7 +221,7 @@ export class Parser<A, B> implements IParser<A, B> {
     }
     const specifiers = [
       ...extras.map(saferStringify),
-      ...children.map(Parser.parserAsString),
+      ...children.map((x) => Parser.parserAsString(x)),
     ];
     const specifiersString = `<${specifiers.join(",")}>`;
 
@@ -189,8 +239,8 @@ export class Parser<A, B> implements IParser<A, B> {
     const { error } = state;
     throw new TypeError(
       `Failed type: ${Parser.validatorErrorAsString(
-        error
-      )} given input ${saferStringify(value)}`
+        error,
+      )} given input ${saferStringify(value)}`,
     );
   };
 
@@ -206,9 +256,9 @@ export class Parser<A, B> implements IParser<A, B> {
     return Promise.reject(
       new TypeError(
         `Failed type: ${Parser.validatorErrorAsString(
-          error
-        )} given input ${saferStringify(value)}`
-      )
+          error,
+        )} given input ${saferStringify(value)}`,
+      ),
     );
   };
 
@@ -240,7 +290,6 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   concat = <C>(otherParser: IParser<B, C>): Parser<A, C> => {
-    // deno-lint-ignore no-explicit-any
     return new Parser(ConcatParsers.of(this, new Parser(otherParser)) as any);
   };
 
@@ -280,13 +329,19 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(new NullableParser(this));
   };
 
+  mapVoid = <C>(
+    defaultValue: C,
+  ): Parser<Optional<A> | null, C | NonNull<B, C>> => {
+    return this.mapNullish(defaultValue).defaultTo(defaultValue);
+  };
+
   /**
    * There are times that we would like to bring in a value that we know as null
    * and want it to go to a default value
    */
   mapNullish = <C>(defaultValue: C): Parser<A | null, C | NonNull<B, C>> => {
     return new Parser(
-      new NullishParsed(new Parser(new NullableParser(this)), defaultValue)
+      new NullishParsed(new Parser(new NullableParser(this)), defaultValue),
     );
   };
 
@@ -296,7 +351,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   defaultTo = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
     return new Parser(
-      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue)
+      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue),
     );
   };
 
@@ -312,7 +367,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * and in those cases during the parse we want it to fall back to a value
    */
   withMismatch = <C extends DeepReadonly<B>>(
-    otherValue: (a: A) => C
+    otherValue: (a: A) => C,
   ): Parser<A, B> => {
     return new Parser(new OnMismatch(this, otherValue));
   };
@@ -326,7 +381,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * There are times that the parse failed, and we just want to retry with a value based on the input
    */
   withRetry = <C extends A>(
-    otherValue: (a: unknown) => C
+    otherValue: (a: unknown) => C,
   ): Parser<unknown, B> => {
     return new Parser(new WithRetry(this, otherValue));
   };
@@ -346,16 +401,15 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   validate = (
     isValid: (value: B) => boolean,
-    otherName: string
+    otherName: string,
   ): Parser<A, B> => {
     return new Parser(
       ConcatParsers.of(
         this,
         new Parser(
-          new IsAParser(isValid as (value: B) => value is B, otherName)
-        )
-        // deno-lint-ignore no-explicit-any
-      ) as any
+          new IsAParser(isValid as (value: B) => value is B, otherName),
+        ),
+      ) as any,
     );
   };
   /**
@@ -364,14 +418,13 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   refine = <C = B>(
     refinementTest: (value: B) => value is B & C,
-    otherName: string = refinementTest.name
+    otherName: string = refinementTest.name,
   ): Parser<A, B & C> => {
     return new Parser(
       ConcatParsers.of(
         this,
-        new Parser(new IsAParser(refinementTest, otherName))
-        // deno-lint-ignore no-explicit-any
-      ) as any
+        new Parser(new IsAParser(refinementTest, otherName)),
+      ) as any,
     );
   };
 
@@ -391,7 +444,6 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   enumParsed = (value: A): EnumType<B> => {
-    // deno-lint-ignore no-explicit-any
     return this.parse(value, enumParsed) as any;
   };
 
@@ -400,11 +452,10 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   unwrappedParser = () => {
-    // deno-lint-ignore no-this-alias no-explicit-any
     let answer: Parser<any, any> = this;
     while (true) {
       const next = answer.parser;
-      if (next instanceof Parser) {
+      if (Parser.isParser(next)) {
         answer = next;
       } else {
         return next;

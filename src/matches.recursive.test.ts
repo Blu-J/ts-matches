@@ -8,7 +8,7 @@ export const validatorError = every(
     parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
-  })
+  }),
 );
 
 const unFold = {
@@ -19,7 +19,7 @@ test("simple recursive option", () => {
   type Recursive = number | [Recursive];
   const testValue = [4];
   const validator = matches.recursive<Recursive>((self) =>
-    matches.some(matches.number, matches.tuple(self))
+    matches.some(matches.number, matches.tuple(self)),
   );
   const parsed = validator.unsafeCast(testValue);
   expect(parsed).toEqual(testValue);
@@ -33,7 +33,7 @@ test("simple recursive shape", () => {
   };
   const testValue = { test: { test: "test" } };
   const validator = matches.recursive<Recursive>((self) =>
-    matches.shape({ test: matches.some(matches.string, self) })
+    matches.shape({ test: matches.some(matches.string, self) }),
   );
   const parsed = validator.unsafeCast(testValue);
   expect(parsed).toEqual(testValue);
@@ -48,14 +48,14 @@ test("simple recursive shape with invalid", () => {
   };
   const testValue = [4];
   const validator = matches.recursive<Recursive>((self) =>
-    matches.shape({ test: matches.some(matches.string, self) })
+    matches.shape({ test: matches.some(matches.string, self) }),
   );
   try {
     validator.unsafeCast(testValue);
   } catch (e) {
     assertSnapshot(
-      '"[\\"test\\"]Shape<{test:Or<string,...>}>(\\"missingProperty\\")"',
-      validator.parse(testValue, unFold)
+      '"[\\"test\\"]Shape<{test:Or<Recursive<>,string>}>(\\"missingProperty\\")"',
+      validator.parse(testValue, unFold),
     );
     return;
   }
@@ -67,7 +67,7 @@ test("simple recursive shape with invalid", () => {
   };
   const testValue = { test: "test" };
   const validator = matches.recursive<Recursive>((self) =>
-    matches.shape({ test: matches.some(matches.string, self) })
+    matches.shape({ test: matches.some(matches.string, self) }),
   );
   (validator.parser as any).parser = null;
   try {
@@ -75,7 +75,7 @@ test("simple recursive shape with invalid", () => {
   } catch (e) {
     assertSnapshot(
       '"Recursive<>(\\"Recursive Invalid State\\")"',
-      validator.parse(testValue, unFold)
+      validator.parse(testValue, unFold),
     );
     return;
   }

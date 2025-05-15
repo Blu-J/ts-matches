@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any ban-types
 import { Parser } from "./index";
 
 export type NonNull<A, B> = A extends null | undefined ? B : A;
@@ -176,14 +175,14 @@ export type OnParse<A, B, C, D> = {
 
 export type AndParser<P1, P2> = [P1, P2] extends [
   Parser<infer A1, infer B1>,
-  Parser<infer A2, infer B2>
+  Parser<infer A2, infer B2>,
 ]
   ? Parser<A1 & A2, B1 & B2>
   : never;
 
 export type OrParser<P1, P2> = [P1, P2] extends [
   Parser<infer A1, infer B1>,
-  Parser<infer A2, infer B2>
+  Parser<infer A2, infer B2>,
 ]
   ? Parser<A1 | A2, B1 | B2>
   : never;

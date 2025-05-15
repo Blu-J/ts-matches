@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import { Parser } from "./index";
 import { IParser, NonNull, OnParse, Optional } from "./interfaces";
 
@@ -12,11 +11,11 @@ export class DefaultParser<A, B, B2>
       name: "Default" as const,
       children: [parent],
       extras: [defaultValue],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: A,
-    onParse: OnParse<Optional<A>, NonNull<B, B2>, C, D>
+    onParse: OnParse<Optional<A>, NonNull<B, B2>, C, D>,
   ): C | D {
     const parser = this;
     const defaultValue = this.defaultValue;

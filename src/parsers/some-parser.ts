@@ -1,16 +1,14 @@
-// deno-lint-ignore-file no-explicit-any
 import { Parser } from "./index";
 import { EnsureParser, IParser, OrParser } from "./interfaces";
 import { any } from "./simple-parsers";
 
-// prettier-ignore
-// deno-fmt-ignore
 export type SomeParsers<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
-  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? OrParser<A, SomeParsers<B>>
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
+    OrParser<A, SomeParsers<B>>
   : T extends Array<infer A> | ReadonlyArray<infer A> ? A
-  : never
+  : never;
 /**
  * Union is a good tool to make sure that the validated value
  * is in the union of all the validators passed in. Basically an `or`
