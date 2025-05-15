@@ -477,8 +477,8 @@ export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
   const defaultTest = {
     defaultValue,
     setupInformation: [] as [],
-    runMatch: (x: unknown) => matches(x).defaultTo(defaultValue),
-    runMatchLazy: (x: unknown) => matches(x).defaultToLazy(() => defaultValue),
+    runMatch: (x: unknown) => matches(x).defaultTo(-1),
+    runMatchLazy: (x: unknown) => matches(x).defaultToLazy(() => -1),
     randomExample: {
       value: defaultValue,
       counter: noPossibleCounter as any,
@@ -525,7 +525,7 @@ export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
               acc.when(matcher, () => index),
             matches(x),
           )
-          .defaultTo(defaultValue),
+          .defaultTo(-1),
       runMatchLazy: (x: unknown) =>
         setupInformation
           .reduce(
@@ -533,7 +533,7 @@ export const testSetup = fc.array(matcherPairs).chain((matcherPairsSets) => {
               acc.when(matcher, () => index),
             matches(x),
           )
-          .defaultToLazy(() => defaultValue),
+          .defaultToLazy(() => -1),
       randomExample,
       toString() {
         return `{

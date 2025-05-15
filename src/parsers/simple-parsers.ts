@@ -41,7 +41,7 @@ const objectMatcher = new Parser(new ObjectParser());
 
 export const object: typeof shape & Parser<unknown, object> = Object.assign(
   function objectOf(...args: any[]) {
-    return new Parser((shape as any)(...args));
+    return (shape as any)(...args);
   },
   objectMatcher,
 ) as any;

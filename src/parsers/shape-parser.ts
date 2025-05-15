@@ -40,14 +40,14 @@ export class ShapeParser<
         parser,
       });
     }
-    const { parserMap, isPartial } = this;
+    const { parserMap, isPartial, parserKeys } = this;
     const value: any = { ...(a as object) };
     if (Array.isArray(a)) {
       value.length = a.length;
     }
-    for (const key in parserMap) {
+    for (const key of parserKeys) {
       if (key in value) {
-        const parser = parserMap[key];
+        const parser = parserMap[key as keyof typeof parserMap];
         const state = parser.enumParsed((a as any)[key]);
         if ("error" in state) {
           const { error } = state;
