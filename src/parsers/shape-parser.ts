@@ -1,15 +1,13 @@
-// deno-lint-ignore-file no-explicit-any ban-types
 import { every, object, Parser } from "./index";
 import { saferStringify } from "../utils";
 import { IParser, OnParse } from "./interfaces";
 type _<T> = T;
-// prettier-ignore
-// deno-fmt-ignore
 export type MergeAll<T> =
-  T extends Array<infer U> ? Array<MergeAll<U>> :
-  T extends object ?
-  T extends null | undefined | never ? T :
-  _<{ [k in keyof T]: MergeAll<T[k]> }>
+  T extends Array<infer U> ? Array<MergeAll<U>>
+  : T extends object ?
+    T extends null | undefined | never ?
+      T
+    : _<{ [k in keyof T]: MergeAll<T[k]> }>
   : T;
 /**
  * Given an object, we want to make sure the key exists and that the value on
@@ -18,7 +16,7 @@ export type MergeAll<T> =
 export class ShapeParser<
   A extends unknown,
   Key extends string | number | symbol,
-  B
+  B,
 > implements IParser<A, B>
 {
   constructor(
@@ -31,10 +29,9 @@ export class ShapeParser<
       name: isPartial ? "Partial" : "Shape",
       children: parserKeys.map((key) => parserMap[key]),
       extras: parserKeys,
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
-    // deno-lint-ignore no-this-alias
     const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
       return onParse.invalid({
@@ -43,14 +40,14 @@ export class ShapeParser<
         parser,
       });
     }
-    const { parserMap, isPartial } = this;
+    const { parserMap, isPartial, parserKeys } = this;
     const value: any = { ...(a as object) };
     if (Array.isArray(a)) {
       value.length = a.length;
     }
-    for (const key in parserMap) {
+    for (const key of parserKeys) {
       if (key in value) {
-        const parser = parserMap[key];
+        const parser = parserMap[key as keyof typeof parserMap];
         const state = parser.enumParsed((a as any)[key]);
         if ("error" in state) {
           const { error } = state;
@@ -113,10 +110,10 @@ export function shape<A extends {}>(testShape: {
   >;
   const [full, partials] = entries.reduce(
     ([full, partials], [key, parser]) =>
-      parser.retryable()
-        ? [full, [...partials, [key, parser]] as typeof entries]
-        : [[...full, [key, parser]] as typeof entries, partials],
-    [[] as typeof entries, [] as typeof entries]
+      parser.retryable() ?
+        [full, [...partials, [key, parser]] as typeof entries]
+      : [[...full, [key, parser]] as typeof entries, partials],
+    [[] as typeof entries, [] as typeof entries],
   );
   if (!partials.length) {
     return isShape(testShape || {}) as any as Parser<
@@ -141,7 +138,7 @@ export function shape<A extends {}>(testShape: {
     } else {
       return every(
         partialParser,
-        isShape(Object.fromEntries(full))
+        isShape(Object.fromEntries(full)),
       ) as any as Parser<unknown, WithOptionalKeys<A>>;
     }
   }
