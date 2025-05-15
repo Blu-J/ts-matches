@@ -1,14 +1,12 @@
-// deno-lint-ignore-file no-explicit-any
 import { any, Parser } from "./index";
 import { AndParser, EnsureParser, IParser } from "./interfaces";
 
-// prettier-ignore
-// deno-fmt-ignore
 export type EveryParser<T> =
-  T extends [] | readonly [] ? IParser<unknown, any> 
+  T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
-  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? AndParser<A, EveryParser<B>>
-  : never
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
+    AndParser<A, EveryParser<B>>
+  : never;
 /**
  * Intersection is a good tool to make sure that the validated value
  * is in the intersection of all the validators passed in. Basically an `and`

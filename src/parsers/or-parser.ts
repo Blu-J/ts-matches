@@ -9,10 +9,9 @@ export class OrParsers<A, A2, B, B2> implements IParser<A | A2, B | B2> {
       name: "Or",
       children: [parent, otherParser],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A & A2, onParse: OnParse<A | A2, B | B2, C, D>): C | D {
-    // deno-lint-ignore no-this-alias
     const parser = this;
     const parent = this.parent.enumParsed(a);
     if ("value" in parent) {

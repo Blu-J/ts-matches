@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any ban-types
 import { object, Parser } from "./index";
 import {
   _,
@@ -8,26 +7,21 @@ import {
   SomeParser,
 } from "./interfaces";
 
-// prettier-ignore
-// deno-fmt-ignore
-export type DictionaryTuple<A> = A extends [
-  Parser<unknown, infer Keys>,
-  Parser<unknown, infer Values>
-]
-  ? Keys extends string | number
-  ? { [key in Keys]: Values }
-  : never
+export type DictionaryTuple<A> =
+  A extends [Parser<unknown, infer Keys>, Parser<unknown, infer Values>] ?
+    Keys extends string | number ?
+      { [key in Keys]: Values }
+    : never
   : never;
-// prettier-ignore
-// deno-fmt-ignore
 export type DictionaryShaped<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? DictionaryTuple<A>
-  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ? DictionaryTuple<A> & DictionaryShaped<B>
-  : never
+  : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
+    DictionaryTuple<A> & DictionaryShaped<B>
+  : never;
 export class DictionaryParser<
   A extends object | {},
-  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
+  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
 > implements IParser<A, DictionaryShaped<Parsers>>
 {
   constructor(
@@ -39,17 +33,16 @@ export class DictionaryParser<
           acc.push(k, v);
           return acc;
         },
-        []
+        [],
       ),
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(
     a: A,
-    onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>
+    onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>,
   ): C | D {
     const { parsers } = this;
-    // deno-lint-ignore no-this-alias
     const parser = this;
     const entries: Array<[string | number, unknown]> = Object.entries(a);
 
@@ -68,7 +61,7 @@ export class DictionaryParser<
   }
 }
 export const dictionary = <
-  ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][]
+  ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][],
 >(
   ...parsers: ParserSets
 ): Parser<unknown, _<DictionaryShaped<[...ParserSets]>>> => {
@@ -76,7 +69,7 @@ export const dictionary = <
 };
 
 function findOrError<
-  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>
+  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
 >(parsers: Parsers, key: string | number, value: unknown, parser: SomeParser) {
   let foundError: { error: ISimpleParsedError } | undefined;
   for (const [keyParser, valueParser] of parsers) {

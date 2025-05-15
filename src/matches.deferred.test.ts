@@ -18,7 +18,7 @@ export const validatorError = every(
     parser: matches.object,
     keys: matches.arrayOf(matches.string),
     value: any,
-  })
+  }),
 );
 const unFold = {
   invalid: Parser.validatorErrorAsString,
@@ -53,8 +53,8 @@ const unFold = {
       const parsed = matchThings.unsafeCast(testValue);
     } catch (e) {
       assertSnapshot(
-        '"[\\"0\\"][\\"value\\"][\\"0\\"][\\"type\\"]Or<string,...>(\\"ot2her\\")"',
-        matchThings.parse(testValue, unFold)
+        '"[\\"0\\"][\\"value\\"][\\"0\\"][\\"type\\"]Or<Tuple<Shape<{type:Literal<\\\"other\\\">,value:Deferred<>}>>,string>(\\"ot2her\\")"',
+        matchThings.parse(testValue, unFold),
       );
       return;
     }
@@ -74,7 +74,7 @@ test("deferred failed because we failed to complete ", () => {
   } catch (e) {
     assertSnapshot(
       '"Deferred<>(\\"Not Set Up\\")"',
-      matchThings.parse(testValue, unFold)
+      matchThings.parse(testValue, unFold),
     );
     return;
   }
