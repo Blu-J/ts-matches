@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any ban-types
 import { OnParse } from "./interfaces";
 
 export const isObject = (x: unknown): x is object =>
@@ -21,5 +20,5 @@ export const booleanOnParse: OnParse<unknown, unknown, true, false> = {
 export type OneOf<T> = T extends [infer A] | readonly [infer A]
   ? A
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B]
-  ? A | OneOf<B>
-  : never;
+    ? A | OneOf<B>
+    : never;

@@ -16,7 +16,7 @@ import { MergeAll, WithOptionalKeys } from "./shape-parser";
  */
 export function guard<A, B extends A>(
   test: (value: A) => value is B,
-  testName?: string
+  testName?: string,
 ): Parser<A, B> {
   return Parser.isA(test, testName || test.name);
 }
@@ -30,7 +30,7 @@ export const number = new Parser(new NumberParser());
 export const isNill = new Parser(new NilParser());
 
 export const natural = number.refine(
-  (x: number): x is number => x >= 0 && x === Math.floor(x)
+  (x: number): x is number => x >= 0 && x === Math.floor(x),
 );
 
 export const isFunction = new Parser(new FunctionParser());
@@ -43,14 +43,13 @@ export const object: typeof shape & Parser<unknown, object> = Object.assign(
   function objectOf(...args: any[]) {
     return (shape as any)(...args);
   },
-  objectMatcher
+  objectMatcher,
 ) as any;
 
 export const isArray = new Parser(new ArrayParser());
 
 export const string = new Parser(new StringParser());
 export const instanceOf = <C>(classCreator: {
-  // deno-lint-ignore no-explicit-any
   new (...args: any[]): C;
 }): Parser<unknown, C> =>
   guard((x): x is C => x instanceof classCreator, `is${classCreator.name}`);
