@@ -78,6 +78,10 @@ test("testing can match literal", () => {
     .unwrap();
   expect(value).toEqual(2);
 });
+
+test("testing can cast literal NaN", () => {
+  matches.literal(NaN).unsafeCast(NaN);
+});
 test("testing can match literal lazy", () => {
   const testValue = 5 as const;
   const value = matches(testValue)
