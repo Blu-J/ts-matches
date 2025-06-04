@@ -329,6 +329,22 @@ export class Parser<A, B> implements IParser<A, B> {
     return new Parser(new NullableParser(this));
   };
 
+  /**
+   * When we want to make sure that we handle the null/undefined later on in a monoid fashion,
+   * and this ensures we deal with the value
+   * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
+   */
+  voidable = (
+    _name?: string,
+  ): Parser<Optional<A> | null, Optional<B> | null> => {
+    return this.nullable().optional();
+  };
+
+  /**
+   * On the case of null or undefined, do something with a fallback value
+   * @param defaultValue
+   * @returns
+   */
   mapVoid = <C>(
     defaultValue: C,
   ): Parser<Optional<A> | null, C | NonNull<B, C>> => {

@@ -1029,6 +1029,33 @@ test("should be able to map validation with name", () => {
 }
 
 {
+  const maybeNumber = matches.number.voidable();
+
+  test("with a number.voidable matcher: a number in", () => {
+    const input = 4;
+    const expected = 4;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.voidable matcher: a null in", () => {
+    const input = null;
+    const expected = null;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.voidable matcher: a undefined in", () => {
+    const input = undefined;
+    const expected = undefined;
+    expect(maybeNumber.parse(input, unFold)).toBe(expected);
+  });
+  test("with a number.voidable matcher: a object in", () => {
+    const input = {};
+    assertSnapshot(
+      '"Maybe<Nullable<number>>({})"',
+      maybeNumber.parse(input, unFold),
+    );
+  });
+}
+
+{
   const maybeNumber = matches.number.onMismatch(0);
 
   test("with a number.onMismatch matcher a number in", () => {
