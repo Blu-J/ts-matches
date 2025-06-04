@@ -88,7 +88,7 @@ fetch("fishes.com/gold-fishes/12")
       position: t.tuple(t.number, t.number),
       age: t.natural,
       name: t.string,
-    }).unsafeCast
+    }).unsafeCast,
   );
 ```
 
@@ -114,7 +114,7 @@ const matchSome = matches.tuple(matches.literal("some"), matches.any);
 type option = ReturnType<typeof matchNone.unsafeCast> | typeof matchSome._TYPE;
 const matchInteger = matches.every(
   matchSome,
-  matches.tuple(matches.any, matches.number)
+  matches.tuple(matches.any, matches.number),
 );
 const testValue = ["some", 3];
 const currentValue = matches(testValue)

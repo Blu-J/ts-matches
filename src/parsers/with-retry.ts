@@ -9,7 +9,7 @@ export class WithRetry<A, B> implements IParser<unknown, B> {
       name: "WithRetry" as const,
       children: [parent],
       extras: [defaultValue],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     const parentCheck = this.parent.enumParsed(a as any);

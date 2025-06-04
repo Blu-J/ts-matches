@@ -8,7 +8,7 @@ export class NullableParser<A, B> implements IParser<A | null, B | null> {
       name: "Nullable",
       children: [parent],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A | null, B | null, C, D>): C | D {
     if (a === null) {

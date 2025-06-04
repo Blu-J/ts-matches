@@ -11,7 +11,7 @@ export class OnMismatch<A, B, B2 extends DeepReadonly<B>>
       name: "OnMismatch" as const,
       children: [parent],
       extras: [defaultValue],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     const parentCheck = this.parent.enumParsed(a);
