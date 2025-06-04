@@ -1,7 +1,7 @@
 import { IParser } from "../matches";
 
 export function parserAsTypescriptString(
-  validator?: IParser<unknown, unknown>
+  validator?: IParser<unknown, unknown>,
 ) {
   let result = null;
   let nextResult = parserAsTypescriptStringDuplicated(validator);
@@ -18,7 +18,7 @@ export function parserAsTypescriptString(
 }
 
 function parserAsTypescriptStringDuplicated(
-  validator?: IParser<unknown, unknown>
+  validator?: IParser<unknown, unknown>,
 ): string {
   if (!validator) {
     return "unknown";
@@ -30,15 +30,15 @@ function parserAsTypescriptStringDuplicated(
       return `Array<unknown>`;
     case "ArrayOf":
       return `Array<${parserAsTypescriptString(
-        validator.description.children[0]
+        validator.description.children[0],
       )}>`;
     case "Dictionary":
       return `{${validator.description.children
         .map(parserAsTypescriptString)
         .map((val, i, rest) =>
-          i % 2 == 0
-            ? `[keyT${i / 2} in ${val}]`
-            : `:${val}${i + 1 < rest.length ? "}&{" : ""}`
+          i % 2 == 0 ?
+            `[keyT${i / 2} in ${val}]`
+          : `:${val}${i + 1 < rest.length ? "}&{" : ""}`,
         )
         .join("")}}`;
     case "Concat":
@@ -54,7 +54,7 @@ function parserAsTypescriptStringDuplicated(
     case "Default":
     case "Maybe":
       return `null | ${parserAsTypescriptString(
-        validator.description.children[0]
+        validator.description.children[0],
       )}`;
     case "OnMismatch":
       return `onMismatch<${JSON.stringify(validator.description.extras[0])}>`;
@@ -71,7 +71,7 @@ function parserAsTypescriptStringDuplicated(
         .map((x) => parserAsTypescriptString(x))
         .map(
           (val, i) =>
-            `${JSON.stringify(validator.description.extras[i])}:${val}`
+            `${JSON.stringify(validator.description.extras[i])}:${val}`,
         )
         .join(", ")}}`;
       return shapeString;
@@ -82,7 +82,7 @@ function parserAsTypescriptStringDuplicated(
         .map((x) => parserAsTypescriptString(x))
         .map(
           (val, i) =>
-            `${JSON.stringify(validator.description.extras[i])}:${val}`
+            `${JSON.stringify(validator.description.extras[i])}:${val}`,
         )
         .join(", ")}}`;
 

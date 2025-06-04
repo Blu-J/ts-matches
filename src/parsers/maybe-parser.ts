@@ -7,7 +7,7 @@ export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
       name: "Maybe",
       children: [parent],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: A, onParse: OnParse<Optional<A>, Optional<B>, C, D>): C | D {
     if (a === undefined) {

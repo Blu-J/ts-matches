@@ -7,7 +7,7 @@ export class NumberParser implements IParser<unknown, number> {
       name: "Number",
       children: [],
       extras: [],
-    } as const
+    } as const,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, number, C, D>): C | D {
     if (isNumber(a)) return onParse.parsed(a);

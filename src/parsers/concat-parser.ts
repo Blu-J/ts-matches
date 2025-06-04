@@ -9,7 +9,7 @@ export class ConcatParsers<A, B, B2> implements IParser<A, B2> {
       name: "Concat",
       children: [parent, otherParser],
       extras: [],
-    } as const
+    } as const,
   ) {}
   static of<A, B, B2>(parent: Parser<A, B>, otherParser: Parser<B, B2>) {
     if (parent.unwrappedParser().description.name === "Any") {
