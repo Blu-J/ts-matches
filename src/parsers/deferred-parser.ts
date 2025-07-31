@@ -1,6 +1,7 @@
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 import { Parser } from "./parser";
 
+const NAME = "Deferred";
 /**
  * This is needed when the typescript has a recursive, mutual types
  * type Things = string | [OtherThings]
@@ -13,11 +14,20 @@ export class DeferredParser<B> implements IParser<unknown, B> {
   }
   private constructor(
     readonly description = {
-      name: "Deferred",
+      name: NAME,
       children: [],
       extras: [],
     } as const,
   ) {}
+  fromDescription(description: Description): IParser<unknown, B> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new DeferredParser(description);
+  }
   setParser(parser: IParser<unknown, B>) {
     this.parser = new Parser(parser);
     return this;

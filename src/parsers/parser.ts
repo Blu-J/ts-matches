@@ -9,6 +9,7 @@ import { NullishParsed } from "./nullish-parser";
 import { FunctionParser } from "./function-parser";
 import { GuardParser } from "./guard-parser";
 import {
+  Description,
   IParser,
   ISimpleParsedError,
   NonNull,
@@ -281,7 +282,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   map = <C>(fn: (apply: B) => C, mappingName?: string): Parser<A, C> => {
-    return new Parser(new MappedAParser(this, fn, mappingName));
+    return new Parser(MappedAParser.of(this, fn, mappingName));
   };
 
   /**
@@ -299,7 +300,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * @returns
    */
   orParser = <C>(otherParser: IParser<A, C>): Parser<A, B | C> => {
-    return new Parser(new OrParsers(this, new Parser(otherParser)));
+    return new Parser(OrParsers.of(this, new Parser(otherParser)));
   };
 
   /**
@@ -318,7 +319,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
    */
   optional = (_name?: string): Parser<Optional<A>, Optional<B>> => {
-    return new Parser(new MaybeParser(this));
+    return new Parser(MaybeParser.of(this));
   };
   /**
    * When we want to make sure that we handle the null later on in a monoid fashion,
@@ -326,7 +327,7 @@ export class Parser<A, B> implements IParser<A, B> {
    * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#optional-chaining
    */
   nullable = (_name?: string): Parser<A | null, B | null> => {
-    return new Parser(new NullableParser(this));
+    return new Parser(NullableParser.of(this));
   };
 
   /**
@@ -357,7 +358,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   mapNullish = <C>(defaultValue: C): Parser<A | null, C | NonNull<B, C>> => {
     return new Parser(
-      new NullishParsed(new Parser(new NullableParser(this)), defaultValue),
+      NullishParsed.of(new Parser(NullableParser.of(this)), defaultValue),
     );
   };
 
@@ -367,7 +368,7 @@ export class Parser<A, B> implements IParser<A, B> {
    */
   defaultTo = <C>(defaultValue: C): Parser<Optional<A>, C | NonNull<B, C>> => {
     return new Parser(
-      new DefaultParser(new Parser(new MaybeParser(this)), defaultValue),
+      DefaultParser.of(new Parser(MaybeParser.of(this)), defaultValue),
     );
   };
 
@@ -478,4 +479,8 @@ export class Parser<A, B> implements IParser<A, B> {
       }
     }
   };
+
+  fromDescription(description: Description): IParser<A, B> {
+    throw new Error("Not Implemented Yet");
+  }
 }

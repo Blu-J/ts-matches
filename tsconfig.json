@@ -1,9 +1,9 @@
 {
   "extends": "./tsconfig-base.json",
   "compilerOptions": {
-    "lib": ["es2022"],
-    "module": "commonjs",
+    "lib": ["esnext", "es2024"],
+    "module": "node16",
     "outDir": "lib",
-    "target": "es2022"
+    "target": "ES2024"
   }
 }

@@ -1,6 +1,6 @@
 import { isArray, literal, Parser } from "./index";
 import { saferStringify } from "../utils";
-import { IParser, OnParse, ParserInto } from "./interfaces";
+import { Description, IParser, OnParse, ParserInto } from "./interfaces";
 
 export type TupleParserInto<T> =
   T extends [infer A] | readonly [infer A] ? [ParserInto<A>]
@@ -8,18 +8,47 @@ export type TupleParserInto<T> =
     [ParserInto<A>, ...TupleParserInto<B>]
   : never;
 
+const NAME = "Tuple";
 export class TupleParser<A extends Parser<unknown, unknown>[]>
   implements IParser<unknown, TupleParserInto<A>>
 {
-  constructor(
-    readonly parsers: A,
-    readonly lengthMatcher = literal(parsers.length),
-    readonly description = {
-      name: "Tuple",
+  static of<A extends Parser<unknown, unknown>[]>(
+    parsers: A,
+    lengthMatcher = literal(parsers.length),
+  ) {
+    return new TupleParser({
+      name: NAME,
       children: parsers,
-      extras: [],
-    } as const,
+      extras: [lengthMatcher],
+    });
+  }
+  constructor(
+    readonly description: {
+      name: typeof NAME;
+      children: A;
+      extras: [Parser<unknown, number>];
+    },
   ) {}
+  get lengthMatcher() {
+    return this.description.extras[0];
+  }
+  get parsers() {
+    return this.description.children;
+  }
+  get length(): number {
+    return this.parsers.length;
+  }
+  fromDescription(
+    description: Description,
+  ): IParser<unknown, TupleParserInto<A>> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new TupleParser(description as typeof this.description);
+  }
   parse<C, D>(
     input: unknown,
     onParse: OnParse<unknown, TupleParserInto<A>, C, D>,
@@ -51,5 +80,5 @@ export class TupleParser<A extends Parser<unknown, unknown>[]>
 export function tuple<A extends Parser<unknown, unknown>[]>(
   ...parsers: A
 ): Parser<unknown, TupleParserInto<A>> {
-  return new Parser(new TupleParser(parsers));
+  return new Parser(TupleParser.of(parsers));
 }

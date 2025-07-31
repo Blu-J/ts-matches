@@ -1,5 +1,5 @@
 import { Parser } from ".";
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 
 export class OnMismatch<A, B, B2 extends DeepReadonly<B>>
   implements IParser<A, B>
@@ -19,6 +19,9 @@ export class OnMismatch<A, B, B2 extends DeepReadonly<B>>
       return onParse.parsed(this.defaultValue(a) as any as B);
     }
     return onParse.parsed(parentCheck.value as any);
+  }
+  fromDescription(description: Description): IParser<A, B> {
+    throw new Error("not implemented");
   }
 }
 

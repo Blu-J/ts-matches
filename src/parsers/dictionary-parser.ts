@@ -1,6 +1,7 @@
 import { object, Parser } from "./index";
 import {
   _,
+  Description,
   IParser,
   ISimpleParsedError,
   OnParse,
@@ -19,25 +20,54 @@ export type DictionaryShaped<T> =
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
     DictionaryTuple<A> & DictionaryShaped<B>
   : never;
+const NAME = "Dictionary";
 export class DictionaryParser<
   A extends object | {},
   Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
 > implements IParser<A, DictionaryShaped<Parsers>>
 {
+  static of<
+    Parsers extends Iterable<
+      [Parser<unknown, unknown>, Parser<unknown, unknown>]
+    >,
+  >(parsers: Parsers) {
+    const children = Iterator.from(parsers).reduce(
+      (acc: Array<Parser<unknown, unknown>>, [k, v]) => {
+        acc.push(k, v);
+        return acc;
+      },
+      [],
+    );
+    return new DictionaryParser({ name: NAME, children, extras: [] });
+  }
   constructor(
-    readonly parsers: Parsers,
-    readonly description = {
-      name: "Dictionary" as const,
-      children: parsers.reduce(
-        (acc: Array<IParser<unknown, unknown>>, [k, v]) => {
-          acc.push(k, v);
-          return acc;
-        },
-        [],
-      ),
-      extras: [],
-    } as const,
+    readonly description: {
+      name: typeof NAME;
+      children: Array<Parser<unknown, unknown>>;
+      extras: [];
+    },
   ) {}
+  fromDescription(
+    description: Description,
+  ): IParser<A, DictionaryShaped<Parsers>> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new DictionaryParser(description as typeof this.description);
+  }
+  *parsers(): Generator<[Parser<unknown, unknown>, Parser<unknown, unknown>]> {
+    const children = this.description.children[Symbol.iterator]();
+    while (true) {
+      const keyParser = children.next();
+      const valueParser = children.next();
+
+      if (keyParser.done || valueParser.done) break;
+      yield [keyParser.value, valueParser.value];
+    }
+  }
   parse<C, D>(
     a: A,
     onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>,
@@ -49,7 +79,7 @@ export class DictionaryParser<
     for (const entry of entries) {
       const [key, value] = entry;
 
-      const found = findOrError<Parsers>(parsers, key, value, parser);
+      const found = findOrError(parsers(), key, value, parser);
 
       if (found == undefined) return onParse.parsed(a as any);
       if ("error" in found) return onParse.invalid(found.error);
@@ -65,11 +95,13 @@ export const dictionary = <
 >(
   ...parsers: ParserSets
 ): Parser<unknown, _<DictionaryShaped<[...ParserSets]>>> => {
-  return object.concat(new DictionaryParser([...parsers])) as any;
+  return object.concat(DictionaryParser.of(parsers)) as any;
 };
 
 function findOrError<
-  Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
+  Parsers extends Iterable<
+    [Parser<unknown, unknown>, Parser<unknown, unknown>]
+  >,
 >(parsers: Parsers, key: string | number, value: unknown, parser: SomeParser) {
   let foundError: { error: ISimpleParsedError } | undefined;
   for (const [keyParser, valueParser] of parsers) {

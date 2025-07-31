@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 import { Parser } from "./parser";
 import { OneOf } from "./utils";
 
@@ -24,17 +24,36 @@ function eq(a: unknown, b: unknown): boolean {
   return false;
 }
 
+const NAME = "Literal";
 export class LiteralsParser<B extends unknown[]>
   implements IParser<unknown, OneOf<B>>
 {
-  constructor(
-    readonly values: B,
-    readonly description = {
-      name: "Literal",
+  static of<B extends unknown[]>(values: B) {
+    return new LiteralsParser({
+      name: NAME,
       children: [],
       extras: values,
-    } as const,
+    });
+  }
+  constructor(
+    readonly description: {
+      name: typeof NAME;
+      children: [];
+      extras: B;
+    },
   ) {}
+  get values() {
+    return this.description.extras;
+  }
+  fromDescription(description: Description): IParser<unknown, OneOf<B>> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new LiteralsParser(description as typeof this.description);
+  }
   parse<C, D>(a: unknown, onParse: OnParse<unknown, OneOf<B>, C, D>): C | D {
     for (const value of this.values) {
       if (eq(value, a)) return onParse.parsed(a as OneOf<B>);
@@ -59,7 +78,7 @@ export function literal<
     | object
     | null,
 >(isEqualToValue: A) {
-  return new Parser(new LiteralsParser<[A]>([isEqualToValue]));
+  return new Parser(LiteralsParser.of<[A]>([isEqualToValue]));
 }
 
 export function literals<
@@ -76,5 +95,5 @@ export function literals<
     string | number | bigint | boolean | symbol | undefined | object | null
   >,
 >(firstValue: A, ...restValues: Rest): Parser<unknown, A | OneOf<Rest>> {
-  return new Parser(new LiteralsParser([firstValue, ...restValues]));
+  return new Parser(LiteralsParser.of([firstValue, ...restValues]));
 }

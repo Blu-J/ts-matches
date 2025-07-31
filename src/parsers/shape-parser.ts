@@ -1,6 +1,6 @@
 import { every, object, Parser } from "./index";
 import { saferStringify } from "../utils";
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 type _<T> = T;
 export type MergeAll<T> =
   T extends Array<infer U> ? Array<MergeAll<U>>
@@ -9,28 +9,63 @@ export type MergeAll<T> =
       T
     : _<{ [k in keyof T]: MergeAll<T[k]> }>
   : T;
+
+const PARTIAL_NAME = "Partial";
+const SHAPE_NAME = "Shape";
+type Name = typeof PARTIAL_NAME | typeof SHAPE_NAME;
 /**
  * Given an object, we want to make sure the key exists and that the value on
  * the key matches the parser
  */
-export class ShapeParser<
-  A extends unknown,
-  Key extends string | number | symbol,
-  B,
-> implements IParser<A, B>
-{
-  constructor(
-    readonly parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
-    readonly isPartial: boolean,
-    readonly parserKeys = Object.keys(parserMap) as Array<
+export class ShapeParser<A extends unknown, B> implements IParser<A, B> {
+  static of<A, B>(
+    parserMap: { [key in keyof B]: Parser<unknown, B[key]> },
+    isPartial: boolean,
+    parserKeys = Object.keys(parserMap) as Array<
       string & keyof typeof parserMap
     >,
-    readonly description = {
+  ) {
+    const children = parserKeys.map((key) => parserMap[key]);
+    return new ShapeParser({
       name: isPartial ? "Partial" : "Shape",
-      children: parserKeys.map((key) => parserMap[key]),
+      children,
       extras: parserKeys,
-    } as const,
+    });
+  }
+  constructor(
+    readonly description: {
+      name: Name;
+      children: Array<Parser<unknown, B[keyof B]>>;
+      extras: Array<keyof B & string>;
+    },
   ) {}
+  fromDescription(description: Description): IParser<A, B> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== PARTIAL_NAME && description.name !== SHAPE_NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new ShapeParser(description as typeof this.description);
+  }
+
+  get isPartial() {
+    return this.description.name === PARTIAL_NAME;
+  }
+
+  get parserKeys() {
+    return this.description.extras;
+  }
+
+  *parserSet() {
+    const parserIter = this.description.children[Symbol.iterator]();
+    for (const key of this.parserKeys) {
+      const { value: parser, done } = parserIter.next();
+      if (done) break;
+      yield [key, parser] as const;
+    }
+  }
+
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
@@ -40,14 +75,14 @@ export class ShapeParser<
         parser,
       });
     }
-    const { parserMap, isPartial, parserKeys } = this;
+    const { isPartial } = this;
+    const parserSet = this.parserSet();
     const value: any = { ...(a as object) };
     if (Array.isArray(a)) {
       value.length = a.length;
     }
-    for (const key of parserKeys) {
+    for (const [key, parser] of parserSet) {
       if (key in value) {
-        const parser = parserMap[key as keyof typeof parserMap];
         const state = parser.enumParsed((a as any)[key]);
         if ("error" in state) {
           const { error } = state;
@@ -71,7 +106,7 @@ export class ShapeParser<
 export const isPartial = <A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
 }): Parser<unknown, Partial<A>> => {
-  return new Parser(new ShapeParser(testShape, true)) as any;
+  return new Parser(ShapeParser.of(testShape, true)) as any;
 };
 
 /**
@@ -87,7 +122,7 @@ export const partial = isPartial;
 export const isShape = <A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
 }): Parser<unknown, A> => {
-  return new Parser(new ShapeParser(testShape, false)) as any;
+  return new Parser(ShapeParser.of(testShape, false)) as any;
 };
 
 export type OptionalKeys<Obj extends {}> = {

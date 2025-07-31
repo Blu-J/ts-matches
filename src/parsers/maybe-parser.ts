@@ -1,14 +1,33 @@
 import { Parser } from "./index";
-import { IParser, OnParse, Optional } from "./interfaces";
+import { Description, IParser, OnParse, Optional } from "./interfaces";
+const NAME = "Maybe";
 export class MaybeParser<A, B> implements IParser<Optional<A>, Optional<B>> {
-  constructor(
-    readonly parent: Parser<A, B>,
-    readonly description = {
-      name: "Maybe",
+  static of<A, B>(parent: Parser<A, B>) {
+    return new MaybeParser({
+      name: NAME,
       children: [parent],
       extras: [],
-    } as const,
+    });
+  }
+  constructor(
+    readonly description: Description & {
+      name: typeof NAME;
+      children: [Parser<A, B>];
+      extras: [];
+    },
   ) {}
+  get parent() {
+    return this.description.children[0];
+  }
+  fromDescription(description: Description): IParser<Optional<A>, Optional<B>> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new MaybeParser(description as typeof this.description);
+  }
   parse<C, D>(a: A, onParse: OnParse<Optional<A>, Optional<B>, C, D>): C | D {
     if (a === undefined) {
       return onParse.parsed(undefined);

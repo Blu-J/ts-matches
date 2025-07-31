@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 import { Parser } from "./parser";
 
 export class WithRetry<A, B> implements IParser<unknown, B> {
@@ -20,5 +20,8 @@ export class WithRetry<A, B> implements IParser<unknown, B> {
       return onParse.parsed(parentCheckTwice.value as any);
     }
     return onParse.parsed(parentCheck.value as any);
+  }
+  fromDescription(description: Description): IParser<A, B> {
+    throw new Error("not implemented");
   }
 }

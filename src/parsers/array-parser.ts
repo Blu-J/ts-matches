@@ -1,13 +1,22 @@
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 
+const DESCRIPTION = {
+  name: "Array",
+  children: [],
+  extras: [],
+} as const;
 export class ArrayParser implements IParser<unknown, Array<unknown>> {
-  constructor(
-    readonly description = {
-      name: "Array",
-      children: [],
-      extras: [],
-    } as const,
-  ) {}
+  readonly description = DESCRIPTION;
+  constructor() {}
+  fromDescription(description: Description): IParser<unknown, unknown[]> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== "Array") {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new ArrayParser();
+  }
   parse<C, D>(
     a: unknown,
     onParse: OnParse<unknown, Array<unknown>, C, D>,

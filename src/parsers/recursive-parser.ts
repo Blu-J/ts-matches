@@ -1,7 +1,9 @@
-import { IParser, OnParse, ParserInto } from "./interfaces";
+import { Description, IParser, OnParse, ParserInto } from "./interfaces";
 import { Parser } from "./parser";
 import { any } from "./simple-parsers";
 
+const NAME = "Recursive";
+type LazyParser<A> = (parser: Parser<unknown, any>) => Parser<unknown, A>;
 /**
  * This parser is used when trying to create parsers that
  * user their own definitions in their types, like interface Tree<Leaf> {
@@ -10,23 +12,34 @@ import { any } from "./simple-parsers";
  */
 export class RecursiveParser<B> implements IParser<unknown, B> {
   private parser?: Parser<unknown, B>;
-  static create<B>(
-    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>,
-  ): RecursiveParser<B> {
-    const parser = new RecursiveParser<any>(fn);
+  static create<B>(fn: LazyParser<B>): RecursiveParser<B> {
+    const parser = RecursiveParser.of<any>(fn);
     parser.parser = fn(new Parser(parser));
     return parser;
   }
-  private constructor(
-    readonly recursive: (
-      parser: Parser<unknown, any>,
-    ) => Parser<unknown, unknown>,
-    readonly description = {
-      name: "Recursive",
+  private static of<B>(recursive: LazyParser<B>) {
+    return new RecursiveParser({
+      name: NAME,
       children: [],
       extras: [recursive],
-    } as const,
+    });
+  }
+  private constructor(
+    readonly description: {
+      name: typeof NAME;
+      children: [];
+      extras: [LazyParser<B>];
+    },
   ) {}
+  fromDescription(description: Description): IParser<unknown, B> {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== NAME) {
+      throw new Error(`The description sent in is invalid type`);
+    }
+    return new RecursiveParser(description as typeof this.description);
+  }
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
     if (!this.parser) {
       return onParse.invalid({

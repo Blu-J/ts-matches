@@ -1,4 +1,4 @@
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 
 export class GuardParser<A, B> implements IParser<A, B> {
   constructor(
@@ -19,5 +19,8 @@ export class GuardParser<A, B> implements IParser<A, B> {
       keys: [],
       parser: this,
     });
+  }
+  fromDescription(description: Description): IParser<A, B> {
+    throw new Error("not implemented");
   }
 }

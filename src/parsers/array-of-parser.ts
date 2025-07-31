@@ -1,5 +1,5 @@
 import { Parser } from "./index";
-import { IParser, OnParse } from "./interfaces";
+import { Description, IParser, OnParse } from "./interfaces";
 
 /**
  * Given an object, we want to make sure the key exists and that the value on
@@ -7,13 +7,18 @@ import { IParser, OnParse } from "./interfaces";
  * Note: This will mutate the value sent through
  */
 export class ArrayOfParser<B> implements IParser<unknown, B[]> {
-  constructor(
-    readonly parser: Parser<unknown, B>,
-    readonly description = {
+  static of<B>(parser: Parser<unknown, B>) {
+    return new ArrayOfParser({
       name: "ArrayOf",
       children: [parser],
       extras: [],
-    } as const,
+    });
+  }
+  constructor(
+    readonly description: {
+      name: "ArrayOf";
+      children: [Parser<unknown, B>];
+    } & Description,
   ) {}
   parse<C, D>(a: unknown, onParse: OnParse<unknown, B[], C, D>): C | D {
     if (!Array.isArray(a)) {
@@ -24,8 +29,9 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
       });
     }
     const values = [...a];
+    const parser = this.description.children[0];
     for (let index = 0; index < values.length; index++) {
-      const result = this.parser.enumParsed(values[index]);
+      const result = parser.enumParsed(values[index]);
       if ("error" in result) {
         result.error.keys.push("" + index);
         return onParse.invalid(result.error);
@@ -35,6 +41,23 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
     }
     return onParse.parsed(values as any);
   }
+  fromDescription(description: Description) {
+    if (description === this.description) {
+      return this;
+    }
+    if (description.name !== "ArrayOf") {
+      throw new Error(`The description sent in is invalid type`);
+    }
+
+    const [parser] = description.children;
+    if (!Parser.isParser(parser)) {
+      throw new Error(`The parser sent in is invalid type`);
+    }
+    return new ArrayOfParser({
+      ...description,
+      children: [parser] as const,
+    });
+  }
 }
 /**
  * We would like to validate that all of the array is of the same type
@@ -43,5 +66,7 @@ export class ArrayOfParser<B> implements IParser<unknown, B[]> {
 export function arrayOf<A>(
   validator: Parser<unknown, A>,
 ): Parser<unknown, A[]> {
-  return new Parser(new ArrayOfParser(validator));
+  const parser = ArrayOfParser.of(validator);
+  const arrayParser = new Parser(parser) as Parser<unknown, A[]>;
+  return arrayParser;
 }
