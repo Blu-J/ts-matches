@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "strict": true,
+    "outDir": "lib",
+    "target": "es2017",
+    "pretty": true,
+    "declaration": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "lib": ["es2022"]
+  },
+  "include": ["src/**/*", "mod.ts"],
+  "exclude": ["src/**/*.spec", "src/**/*.gen", "list", "node_modules"]
+}

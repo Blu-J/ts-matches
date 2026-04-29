@@ -1,16 +1,30 @@
 import { any, Parser } from "./index";
 import { AndParser, EnsureParser, IParser } from "./interfaces";
 
+/**
+ * Extracts the intersection type from an array of parsers.
+ * @typeParam T - An array of parsers.
+ * @returns The intersection type of all parser outputs.
+ */
 export type EveryParser<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
     AndParser<A, EveryParser<B>>
   : never;
+
 /**
- * Intersection is a good tool to make sure that the validated value
- * is in the intersection of all the validators passed in. Basically an `and`
- * operator for validators
+ * Creates a parser that validates a value against all provided parsers (intersection/AND).
+ * The value must pass every parser to be considered valid.
+ *
+ * @example
+ * ```ts
+ * const isEvenNumber = every(number, guard((x) => x % 2 === 0, "isEven"));
+ * ```
+ *
+ * @typeParam RestParsers - The parsers to intersect.
+ * @param parsers - The parsers to combine with AND logic.
+ * @returns A parser that validates against all input parsers.
  */
 export function every<RestParsers extends Parser<unknown, unknown>[]>(
   ...parsers: RestParsers

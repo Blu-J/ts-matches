@@ -1,0 +1,15 @@
+{
+  "entryPoints": ["mod.ts"],
+  "out": "docs/api",
+  "tsconfig": "tsconfig.json",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "readme": "none",
+  "theme": "default",
+  "name": "ts-matches",
+  "navigation": {
+    "includeGroups": true
+  },
+  "sort": ["kind", "visibility", "required-first", "instance-first", "alphabetical"],
+  "hideGenerator": false
+}

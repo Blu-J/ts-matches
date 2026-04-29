@@ -4,6 +4,10 @@ import { saferStringify } from "./utils";
 import { validatorError } from "./matches.test";
 import { fc } from "@fast-check/jest";
 
+/**
+ * Internal interface for chain matches used in property-based testing.
+ * @typeParam OutcomeType - The type of the matched outcome.
+ */
 export interface ChainMatches<OutcomeType> {
   when<B>(
     test: Parser<unknown, B>,
@@ -13,10 +17,22 @@ export interface ChainMatches<OutcomeType> {
   defaultToLazy(getValue: () => OutcomeType): OutcomeType;
 }
 
+/**
+ * Sentinel value indicating no valid counter-example exists.
+ */
 export const noPossibleCounter = {
   noPossibleCounter: true,
 };
 
+/**
+ * Creates a match pair object for property-based testing.
+ * @typeParam A - The type of the parsed value.
+ * @param matcher - The parser being tested.
+ * @param example - A valid example value.
+ * @param type - A description of the parser type.
+ * @param counterExample - An invalid counter-example value.
+ * @returns A MatchPair object.
+ */
 export const matchPairOf = <A>(
   matcher: Parser<unknown, A>,
   example: A,
@@ -37,6 +53,10 @@ export const matchPairOf = <A>(
   },
 });
 
+/**
+ * Represents a parser with its valid example and invalid counter-example for property-based testing.
+ * @typeParam A - The type of the parsed value.
+ */
 export type MatchPair<A> = {
   matcher: Parser<unknown, A>;
   example: A;

@@ -7,7 +7,7 @@
   "main": "lib/matches.js",
   "scripts": {
     "build": "tsc",
-    "test": "jest **/*.test.ts",
+    "test": "jest",
     "prepublish": "npm run build",
     "format": "prettier --write ."
   },
@@ -27,6 +27,7 @@
     "prettier": "^3.5.3",
     "ts-jest": "^29.3.3",
     "ts-node": "^10.9.2",
+    "typedoc": "^0.28.19",
     "typescript": "^5.8.3"
   }
 }

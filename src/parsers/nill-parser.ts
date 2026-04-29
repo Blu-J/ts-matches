@@ -1,4 +1,8 @@
 import { IParser, OnParse } from "./interfaces";
+
+/**
+ * A parser that validates whether a value is `null` or `undefined`.
+ */
 export class NilParser implements IParser<unknown, null | undefined> {
   constructor(
     readonly description = {
@@ -7,6 +11,12 @@ export class NilParser implements IParser<unknown, null | undefined> {
       extras: [],
     } as const,
   ) {}
+  /**
+   * Validates that the input is `null` or `undefined`.
+   * @param a - The input value to validate.
+   * @param onParse - The callbacks for success and failure.
+   * @returns The parsed nullish value on success, or an error on failure.
+   */
   parse<C, D>(
     a: unknown,
     onParse: OnParse<unknown, null | undefined, C, D>,

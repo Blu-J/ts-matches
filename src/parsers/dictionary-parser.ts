@@ -7,18 +7,38 @@ import {
   SomeParser,
 } from "./interfaces";
 
+/**
+ * Extracts the dictionary type from a tuple of [keyParser, valueParser] pairs.
+ * @typeParam A - A tuple of [keyParser, valueParser] pairs.
+ * @returns The resulting dictionary type.
+ */
 export type DictionaryTuple<A> =
   A extends [Parser<unknown, infer Keys>, Parser<unknown, infer Values>] ?
     Keys extends string | number ?
       { [key in Keys]: Values }
     : never
   : never;
+
+/**
+ * Extracts the dictionary type from an array of [keyParser, valueParser] pairs.
+ * @typeParam T - An array of [keyParser, valueParser] pairs.
+ * @returns The resulting dictionary type.
+ */
 export type DictionaryShaped<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? DictionaryTuple<A>
   : T extends [infer A, ...infer B] | readonly [infer A, ...infer B] ?
     DictionaryTuple<A> & DictionaryShaped<B>
   : never;
+/**
+ * A parser that validates object key-value pairs using key and value parsers.
+ * Each pair in `parsers` is a `[keyParser, valueParser]` tuple.
+ * The parser validates that each key matches its corresponding keyParser
+ * and each value matches its corresponding valueParser.
+ *
+ * @typeParam A - The input object type.
+ * @typeParam Parsers - The array of [keyParser, valueParser] tuples.
+ */
 export class DictionaryParser<
   A extends object | {},
   Parsers extends Array<[Parser<unknown, unknown>, Parser<unknown, unknown>]>,
@@ -38,6 +58,12 @@ export class DictionaryParser<
       extras: [],
     } as const,
   ) {}
+  /**
+   * Parses the input object, validating each key-value pair.
+   * @param a - The input object to validate.
+   * @param onParse - The callbacks for success and failure.
+   * @returns The parsed object on success, or an error on failure.
+   */
   parse<C, D>(
     a: A,
     onParse: OnParse<A, DictionaryShaped<Parsers>, C, D>,
@@ -60,6 +86,23 @@ export class DictionaryParser<
     return onParse.parsed(answer as any);
   }
 }
+
+/**
+ * Creates a dictionary parser that validates object key-value pairs.
+ *
+ * @example
+ * ```ts
+ * const dict = dictionary(
+ *   [literal("name"), string],
+ *   [literal("age"), number],
+ * );
+ * const result = dict.unsafeCast({ name: "Alice", age: 30 });
+ * ```
+ *
+ * @typeParam ParserSets - An array of [keyParser, valueParser] tuples.
+ * @param parsers - The key-value parser pairs.
+ * @returns A Parser that validates dictionary objects.
+ */
 export const dictionary = <
   ParserSets extends [Parser<unknown, unknown>, Parser<unknown, unknown>][],
 >(

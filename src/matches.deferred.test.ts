@@ -10,20 +10,7 @@ import {
   string,
   tuple,
 } from "./parsers/index";
-import { saferStringify } from "./utils";
-import { assertSnapshot, isType } from "./matches.test";
-
-export const validatorError = every(
-  shape({
-    parser: matches.object,
-    keys: matches.arrayOf(matches.string),
-    value: any,
-  }),
-);
-const unFold = {
-  invalid: Parser.validatorErrorAsString,
-  parsed: (x: any): any => x,
-};
+import { assertSnapshot, isType, validatorError, unFold } from "./tests/helpers";
 
 {
   type Things = string | [OtherThings];

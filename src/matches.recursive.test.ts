@@ -1,20 +1,5 @@
 import matches from "./matches";
-import { any, every, Parser, shape } from "./parsers/index";
-import { saferStringify } from "./utils";
-import { assertSnapshot, isType } from "./matches.test";
-
-export const validatorError = every(
-  shape({
-    parser: matches.object,
-    keys: matches.arrayOf(matches.string),
-    value: any,
-  }),
-);
-
-const unFold = {
-  invalid: Parser.validatorErrorAsString,
-  parsed: (x: any): any => x,
-};
+import { assertSnapshot, isType, validatorError, unFold } from "./tests/helpers";
 test("simple recursive option", () => {
   type Recursive = number | [Recursive];
   const testValue = [4];

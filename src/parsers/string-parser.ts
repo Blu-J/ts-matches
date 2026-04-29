@@ -1,6 +1,9 @@
 import { IParser, OnParse } from "./interfaces";
 import { isString } from "./utils";
 
+/**
+ * A parser that validates whether a value is a string.
+ */
 export class StringParser implements IParser<unknown, string> {
   constructor(
     readonly description = {
@@ -9,6 +12,12 @@ export class StringParser implements IParser<unknown, string> {
       extras: [],
     } as const,
   ) {}
+  /**
+   * Validates that the input is a string.
+   * @param a - The input value to validate.
+   * @param onParse - The callbacks for success and failure.
+   * @returns The parsed string on success, or an error on failure.
+   */
   parse<C, D>(a: unknown, onParse: OnParse<unknown, string, C, D>): C | D {
     if (isString(a)) return onParse.parsed(a);
 
