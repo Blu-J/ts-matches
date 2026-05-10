@@ -2,6 +2,11 @@ import { Parser } from "./index";
 import { EnsureParser, IParser, OrParser } from "./interfaces";
 import { any } from "./simple-parsers";
 
+/**
+ * Extracts the union type from an array of parsers.
+ * @typeParam T - An array of parsers.
+ * @returns The union type of all parser outputs.
+ */
 export type SomeParsers<T> =
   T extends [] | readonly [] ? IParser<unknown, any>
   : T extends [infer A] | readonly [infer A] ? EnsureParser<A>
@@ -9,10 +14,20 @@ export type SomeParsers<T> =
     OrParser<A, SomeParsers<B>>
   : T extends Array<infer A> | ReadonlyArray<infer A> ? A
   : never;
+
 /**
- * Union is a good tool to make sure that the validated value
- * is in the union of all the validators passed in. Basically an `or`
- * operator for validators.
+ * Creates a parser that validates a value against one of the provided parsers (union/OR).
+ * The value must pass at least one parser to be considered valid.
+ *
+ * @example
+ * ```ts
+ * const stringOrNumber = some(string, number);
+ * const result = stringOrNumber.unsafeCast("hello"); // "hello"
+ * ```
+ *
+ * @typeParam RestParsers - The parsers to union.
+ * @param parsers - The parsers to combine with OR logic.
+ * @returns A parser that validates against any of the input parsers.
  */
 export function some<RestParsers extends Parser<unknown, unknown>[]>(
   ...parsers: RestParsers

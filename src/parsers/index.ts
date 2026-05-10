@@ -25,7 +25,17 @@ import { arrayOf } from "./array-of-parser";
 import { literal, literals } from "./literal-parser";
 import { recursive } from "./recursive-parser";
 import { deferred } from "./deferred-parser";
+
+/**
+ * Represents a parsing/validation error.
+ * Re-exported from `./interfaces` for convenience.
+ */
 export type { ValidatorError };
+
+/**
+ * Re-exports all parser factory functions and types from the ts-matches library.
+ * This is the main entry point for accessing parsers programmatically.
+ */
 export {
   any,
   arrayOf,

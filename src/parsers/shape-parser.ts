@@ -2,6 +2,11 @@ import { every, object, Parser } from "./index";
 import { saferStringify } from "../utils";
 import { IParser, OnParse } from "./interfaces";
 type _<T> = T;
+
+/**
+ * Recursively merges array and object types.
+ * @typeParam T - The type to merge.
+ */
 export type MergeAll<T> =
   T extends Array<infer U> ? Array<MergeAll<U>>
   : T extends object ?
@@ -9,9 +14,13 @@ export type MergeAll<T> =
       T
     : _<{ [k in keyof T]: MergeAll<T[k]> }>
   : T;
+
 /**
- * Given an object, we want to make sure the key exists and that the value on
- * the key matches the parser
+ * A parser that validates object shapes against a schema of key-value parsers.
+ * Supports both required and optional keys based on the input type.
+ * @typeParam A - The input object type.
+ * @typeParam Key - The key type (string, number, or symbol).
+ * @typeParam B - The expected output object type.
  */
 export class ShapeParser<
   A extends unknown,
@@ -31,6 +40,12 @@ export class ShapeParser<
       extras: parserKeys,
     } as const,
   ) {}
+  /**
+   * Parses the input object against the shape schema.
+   * @param a - The input object to validate.
+   * @param onParse - The callbacks for success and failure.
+   * @returns The parsed object on success, or an error on failure.
+   */
   parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     const parser: IParser<unknown, unknown> = this;
     if (!object.test(a)) {
@@ -68,6 +83,23 @@ export class ShapeParser<
     return onParse.parsed(value);
   }
 }
+
+/**
+ * Creates a partial shape parser where all keys are optional.
+ *
+ * @example
+ * ```ts
+ * const partialUser = partial({
+ *   name: string,
+ *   age: number,
+ * });
+ * const result = partialUser.unsafeCast({ name: "Alice" });
+ * ```
+ *
+ * @typeParam A - The expected shape type.
+ * @param testShape - The shape of validators for each key.
+ * @returns A Parser for partial objects.
+ */
 export const isPartial = <A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
 }): Parser<unknown, Partial<A>> => {
@@ -75,25 +107,58 @@ export const isPartial = <A extends {}>(testShape: {
 };
 
 /**
- * Good for duck typing an object, with optional values
- * @param testShape Shape of validators, to ensure we match the shape
+ * Creates a partial shape parser where all keys are optional.
+ * Alias for `isPartial`.
+ *
+ * @example
+ * ```ts
+ * const partialUser = partial({
+ *   name: string,
+ *   age: number,
+ * });
+ * ```
+ *
+ * @typeParam A - The expected shape type.
+ * @param testShape - The shape of validators for each key.
+ * @returns A Parser for partial objects.
  */
 export const partial = isPartial;
-/**
- * Good for duck typing an object
- * @param testShape Shape of validators, to ensure we match the shape
- */
 
+/**
+ * Creates a shape parser where all keys are required.
+ * Good for duck typing an object.
+ *
+ * @example
+ * ```ts
+ * const user = shape({
+ *   name: string,
+ *   age: number,
+ * });
+ * const result = user.unsafeCast({ name: "Alice", age: 30 });
+ * ```
+ *
+ * @typeParam A - The expected shape type.
+ * @param testShape - The shape of validators for each key.
+ * @returns A Parser for objects matching the shape.
+ */
 export const isShape = <A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
 }): Parser<unknown, A> => {
   return new Parser(new ShapeParser(testShape, false)) as any;
 };
 
+/**
+ * Extracts the keys of an object type that have `undefined` in their type.
+ * @typeParam Obj - The object type to inspect.
+ */
 export type OptionalKeys<Obj extends {}> = {
   [K in keyof Obj]: undefined extends Obj[K] ? K : never;
 }[keyof Obj];
 
+/**
+ * Computes the type of an object with optional keys properly marked.
+ * @typeParam Obj - The object type.
+ */
 export type WithOptionalKeys<Obj extends {}> = MergeAll<
   {
     [K in keyof Omit<Obj, OptionalKeys<Obj>>]: Obj[K];
@@ -102,6 +167,26 @@ export type WithOptionalKeys<Obj extends {}> = MergeAll<
   }
 >;
 
+/**
+ * Creates a shape parser for validating object structures with required keys
+ * and optional keys inferred from the type.
+ *
+ * Keys whose parsers are "retryable" (Maybe, Unknown, Default, OnMismatch, WithRetry)
+ * are treated as optional.
+ *
+ * @example
+ * ```ts
+ * const user = shape({
+ *   name: string,
+ *   age: number.optional(),
+ * });
+ * const result = user.unsafeCast({ name: "Alice" });
+ * ```
+ *
+ * @typeParam A - The expected shape type.
+ * @param testShape - The shape of validators for each key.
+ * @returns A Parser for objects matching the shape with optional keys.
+ */
 export function shape<A extends {}>(testShape: {
   [key in keyof A]: Parser<unknown, A[key]>;
 }): Parser<unknown, WithOptionalKeys<A>> {
