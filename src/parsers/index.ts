@@ -23,8 +23,11 @@ import { partial, shape } from "./shape-parser";
 import { tuple } from "./tuple-parser";
 import { arrayOf } from "./array-of-parser";
 import { literal, literals } from "./literal-parser";
+import { deepPartial } from "./deep-partial";
 import { recursive } from "./recursive-parser";
 import { deferred } from "./deferred-parser";
+
+export type { DeepPartial } from "./deep-partial";
 
 /**
  * Represents a parsing/validation error.
@@ -55,6 +58,7 @@ export {
   natural,
   number,
   object,
+  deepPartial,
   Parser,
   partial,
   recursive,

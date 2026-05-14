@@ -3,6 +3,7 @@ import {
   arrayOf,
   boolean,
   deferred,
+  deepPartial,
   dictionary,
   every,
   guard,
@@ -297,6 +298,7 @@ export const matches = Object.assign(
     parserName,
     recursive,
     deferred,
+    deepPartial,
   },
 );
 
@@ -322,6 +324,7 @@ export {
   literal,
   literals,
   natural,
+  deepPartial,
   nill,
   number,
   object,
