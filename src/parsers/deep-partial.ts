@@ -1,5 +1,6 @@
 import { Parser } from "./parser";
 import { ShapeParser } from "./shape-parser";
+import { ArrayOfParser } from "./array-of-parser";
 import { IParser } from "./interfaces";
 
 /**
@@ -47,6 +48,12 @@ function transformParser<A, B>(
       );
     }
     return new ShapeParser(newParserMap, true);
+  }
+
+  // Handle ArrayOfParser — recurse into item parser
+  if (unwrapped instanceof ArrayOfParser) {
+    const transformed = transformParser(unwrapped.parser.parser, visited);
+    return new ArrayOfParser(new Parser(transformed)) as any;
   }
 
   // Default: pass through unchanged

@@ -1,5 +1,6 @@
 import { test, expect } from "@jest/globals";
 import { shape } from "./shape-parser";
+import { arrayOf } from "./array-of-parser";
 import { string, number } from "./simple-parsers";
 
 describe("deepPartial", () => {
@@ -40,6 +41,32 @@ describe("deepPartial", () => {
     const original = shape({ name: string, age: number });
     deepPartial(original);
     const result = original.enumParsed({});
+    expect("error" in result).toBe(true);
+  });
+
+  /* ---- Phase 2: Array recursion ---- */
+
+  test("deepPartial recurses into arrayOf", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number, name: string })),
+    }));
+    const result = parser.enumParsed({ items: [{}] });
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial arrayOf accepts partial items", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number, name: string })),
+    }));
+    const result = parser.enumParsed({ items: [{ id: 1 }, { name: "foo" }] });
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial arrayOf rejects invalid item values", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number })),
+    }));
+    const result = parser.enumParsed({ items: [{ id: "not-a-number" }] });
     expect("error" in result).toBe(true);
   });
 });
