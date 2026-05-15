@@ -1,6 +1,8 @@
 import { test, expect } from "@jest/globals";
 import { shape } from "./shape-parser";
 import { arrayOf } from "./array-of-parser";
+import { tuple } from "./tuple-parser";
+import { recursive } from "./recursive-parser";
 import { string, number } from "./simple-parsers";
 
 describe("deepPartial", () => {
@@ -68,5 +70,36 @@ describe("deepPartial", () => {
     }));
     const result = parser.enumParsed({ items: [{ id: "not-a-number" }] });
     expect("error" in result).toBe(true);
+  });
+
+  /* ---- Phase 3: Tuple recursion + circular refs ---- */
+
+  test("deepPartial recurses into tuple", () => {
+    const parser = deepPartial(tuple(
+      shape({ a: string }),
+      shape({ b: number }),
+    ));
+    const result = parser.enumParsed([{}, {}]);
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial handles circular references without stack overflow", () => {
+    const nodeParser = recursive((self: any) =>
+      shape({
+        value: number,
+        children: arrayOf(self),
+      }),
+    );
+    const dp = deepPartial(nodeParser);
+    const result = dp.enumParsed({});
+    expect("value" in result).toBe(true);
+  });
+
+  test("matches.deepPartial is accessible", () => {
+    const matches = require("../matches");
+    expect(typeof matches.deepPartial).toBe("function");
+    const parser = matches.deepPartial(matches.shape({ x: matches.string }));
+    const result = parser.enumParsed({});
+    expect("value" in result).toBe(true);
   });
 });

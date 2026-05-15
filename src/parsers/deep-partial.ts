@@ -1,6 +1,8 @@
 import { Parser } from "./parser";
 import { ShapeParser } from "./shape-parser";
 import { ArrayOfParser } from "./array-of-parser";
+import { TupleParser } from "./tuple-parser";
+import { RecursiveParser } from "./recursive-parser";
 import { IParser } from "./interfaces";
 
 /**
@@ -54,6 +56,23 @@ function transformParser<A, B>(
   if (unwrapped instanceof ArrayOfParser) {
     const transformed = transformParser(unwrapped.parser.parser, visited);
     return new ArrayOfParser(new Parser(transformed)) as any;
+  }
+
+  // Handle TupleParser — recurse into each element parser
+  if (unwrapped instanceof TupleParser) {
+    const transformedParsers = unwrapped.parsers.map((p: Parser<unknown, unknown>) =>
+      new Parser(transformParser(p.parser, visited)),
+    );
+    return new TupleParser(transformedParsers) as any;
+  }
+
+  // Handle RecursiveParser — recurse into inner parser
+  if (unwrapped instanceof RecursiveParser) {
+    const inner = (unwrapped as any).parser;
+    if (inner) {
+      return transformParser(inner.parser, visited);
+    }
+    return unwrapped as any;
   }
 
   // Default: pass through unchanged
