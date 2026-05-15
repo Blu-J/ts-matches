@@ -46,8 +46,6 @@ describe("deepPartial", () => {
     expect("error" in result).toBe(true);
   });
 
-  /* ---- Phase 2: Array recursion ---- */
-
   test("deepPartial recurses into arrayOf", () => {
     const parser = deepPartial(shape({
       items: arrayOf(shape({ id: number, name: string })),
@@ -71,8 +69,6 @@ describe("deepPartial", () => {
     const result = parser.enumParsed({ items: [{ id: "not-a-number" }] });
     expect("error" in result).toBe(true);
   });
-
-  /* ---- Phase 3: Tuple recursion + circular refs ---- */
 
   test("deepPartial recurses into tuple", () => {
     const parser = deepPartial(tuple(
