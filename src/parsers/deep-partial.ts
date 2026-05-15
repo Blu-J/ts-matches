@@ -9,7 +9,8 @@ import { IParser } from "./interfaces";
  * Recursively makes all properties of an object type optional,
  * including nested objects, arrays, and tuples.
  */
-export type DeepPartial<T> = T extends Array<infer U> ? Array<DeepPartial<U>>
+export type DeepPartial<T> =
+  T extends Array<infer U> ? Array<DeepPartial<U>>
   : T extends readonly (infer U)[] ? readonly DeepPartial<U>[]
   : T extends [infer A, ...infer Rest] ? [DeepPartial<A>, ...DeepPartial<Rest>]
   : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> }
@@ -18,63 +19,83 @@ export type DeepPartial<T> = T extends Array<infer U> ? Array<DeepPartial<U>>
 /**
  * Transforms a parser tree so all nested ShapeParsers have isPartial: true.
  */
-export function deepPartial<A, B>(parser: Parser<A, B>): Parser<A, DeepPartial<B>> {
-  return new Parser(
+export function deepPartial<A, B>(
+  parser: Parser<A, B>,
+): Parser<A, DeepPartial<B>> {
+  return new Parser<A, DeepPartial<B>>(
     transformParser(parser.parser, new WeakSet()),
-  ) as any;
+  );
 }
 
-function unwrapParser(p: IParser<unknown, unknown>): IParser<unknown, unknown> {
+function unwrapParser<A, B>(p: IParser<A, B>): IParser<A, B> {
   if (Parser.isParser(p)) return unwrapParser(p.parser);
   return p;
 }
 
-function transformParser<A, B>(
-  iparser: IParser<A, B>,
+function tryTransformShapeParser(
+  parser: ShapeParser<unknown, string | number | symbol, unknown>,
   visited: WeakSet<IParser<unknown, unknown>>,
-): IParser<A, DeepPartial<B>> {
-  // Unwrap Parser wrappers to reach the inner IParser
-  const unwrapped = unwrapParser(iparser) as IParser<A, B>;
+): IParser<unknown, unknown> {
+  if (visited.has(parser)) return parser;
+  visited.add(parser);
 
-  // Handle ShapeParser — clone with isPartial: true
-  if (unwrapped instanceof ShapeParser) {
-    if (visited.has(unwrapped)) {
-      return unwrapped as any;
-    }
-    visited.add(unwrapped);
-
-    const newParserMap: any = {};
-    for (const key of unwrapped.parserKeys) {
-      newParserMap[key] = new Parser(
-        transformParser(unwrapped.parserMap[key], visited),
-      );
-    }
-    return new ShapeParser(newParserMap, true);
-  }
-
-  // Handle ArrayOfParser — recurse into item parser
-  if (unwrapped instanceof ArrayOfParser) {
-    const transformed = transformParser(unwrapped.parser.parser, visited);
-    return new ArrayOfParser(new Parser(transformed)) as any;
-  }
-
-  // Handle TupleParser — recurse into each element parser
-  if (unwrapped instanceof TupleParser) {
-    const transformedParsers = unwrapped.parsers.map((p: Parser<unknown, unknown>) =>
-      new Parser(transformParser(p.parser, visited)),
+  const newParserMap: Record<string, Parser<unknown, unknown>> = {};
+  for (const key of parser.parserKeys) {
+    newParserMap[key] = new Parser(
+      transformParser(parser.parserMap[key], visited),
     );
-    return new TupleParser(transformedParsers) as any;
   }
 
-  // Handle RecursiveParser — recurse into inner parser
-  if (unwrapped instanceof RecursiveParser) {
-    const inner = (unwrapped as any).parser;
-    if (inner) {
-      return transformParser(inner.parser, visited);
-    }
-    return unwrapped as any;
-  }
+  return new ShapeParser(newParserMap, true);
+}
 
-  // Default: pass through unchanged
-  return iparser as any;
+function tryTransformArrayOfParser<A, B>(
+  parser: ArrayOfParser<B>,
+  visited: WeakSet<IParser<A, B>>,
+): IParser<A, DeepPartial<B>> {
+  const transformed = transformParser(parser.parser.parser, visited);
+  return new ArrayOfParser(new Parser(transformed)) as IParser<
+    A,
+    DeepPartial<B>
+  >;
+}
+
+function tryTransformTupleParser<A, B>(
+  parser: TupleParser<Parser<unknown, unknown>[]>,
+  visited: WeakSet<IParser<A, B>>,
+): IParser<A, DeepPartial<B>> {
+  const transformedParsers = parser.parsers.map(
+    (p) => new Parser(transformParser(p.parser, visited)),
+  );
+  return new TupleParser(transformedParsers);
+}
+
+function tryTransformRecursiveParser<A, B>(
+  parser: RecursiveParser<A, B>,
+  visited: WeakSet<IParser<A, B>>,
+): IParser<A, DeepPartial<B>> {
+  if (!("parser" in parser)) return parser;
+  const inner = parser.parser;
+  return transformParser(inner.parser, visited);
+}
+
+function transformParser<A, B>(
+  iParser: IParser<A, B>,
+  visited: WeakSet<IParser<A, B>>,
+): IParser<A, DeepPartial<B>> {
+  const unwrapped = unwrapParser(iParser);
+
+  if (unwrapped instanceof ShapeParser)
+    return tryTransformShapeParser(unwrapped, visited);
+
+  if (unwrapped instanceof ArrayOfParser)
+    return tryTransformArrayOfParser(unwrapped, visited);
+
+  if (unwrapped instanceof TupleParser)
+    return tryTransformTupleParser(unwrapped, visited);
+
+  if (unwrapped instanceof RecursiveParser)
+    return tryTransformRecursiveParser(unwrapped, visited);
+
+  return iParser as IParser<A, DeepPartial<B>>;
 }

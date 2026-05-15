@@ -1,6 +1,5 @@
-import { IParser, OnParse, ParserInto } from "./interfaces";
+import { IParser, OnParse } from "./interfaces";
 import { Parser } from "./parser";
-import { any } from "./simple-parsers";
 
 /**
  * A parser for recursive and mutually recursive type definitions.
@@ -19,38 +18,36 @@ import { any } from "./simple-parsers";
  *
  * @typeParam B - The output type of the recursive parser.
  */
-export class RecursiveParser<B> implements IParser<unknown, B> {
-  private parser?: Parser<unknown, B>;
+export class RecursiveParser<A, B> implements IParser<A, B> {
+  readonly parser: Parser<A, B>;
   /**
    * Creates a new RecursiveParser with the given factory function.
    * @typeParam B - The output type.
    * @param fn - A function that receives a parser (the recursive reference) and returns a parser.
    * @returns A new RecursiveParser.
    */
-  static create<B>(
-    fn: (parser: Parser<unknown, any>) => Parser<unknown, unknown>,
-  ): RecursiveParser<B> {
-    const parser = new RecursiveParser<any>(fn);
-    parser.parser = fn(new Parser(parser));
-    return parser;
+  static create<A, B>(
+    fn: (parser: Parser<A, B>) => Parser<A, B>,
+  ): RecursiveParser<A, B> {
+    return new RecursiveParser(fn);
   }
   private constructor(
-    readonly recursive: (
-      parser: Parser<unknown, any>,
-    ) => Parser<unknown, unknown>,
+    readonly recursive: (parser: Parser<A, B>) => Parser<A, B>,
     readonly description = {
       name: "Recursive",
       children: [],
       extras: [recursive],
     } as const,
-  ) {}
+  ) {
+    this.parser = recursive(new Parser(this));
+  }
   /**
    * Parses the input using the recursive parser.
    * @param a - The input value.
    * @param onParse - The callbacks for success and failure.
    * @returns The parsed value on success, or an error if in invalid state.
    */
-  parse<C, D>(a: unknown, onParse: OnParse<unknown, B, C, D>): C | D {
+  parse<C, D>(a: A, onParse: OnParse<A, B, C, D>): C | D {
     if (!this.parser) {
       return onParse.invalid({
         value: "Recursive Invalid State",
@@ -85,8 +82,6 @@ type EnsurredType<A, B = A> = (A extends never ? never : unknown) &
  * @returns A Parser for the recursive type.
  */
 export function recursive<B = never>(fn: EnsurredType<B>) {
-  const value = fn(any);
-  const created: RecursiveParser<ParserInto<typeof value>> =
-    RecursiveParser.create<B>(fn);
+  const created = RecursiveParser.create<unknown, B>(fn);
   return new Parser(created);
 }
