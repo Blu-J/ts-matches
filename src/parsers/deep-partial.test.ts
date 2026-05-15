@@ -1,0 +1,101 @@
+import { test, expect } from "@jest/globals";
+import { shape } from "./shape-parser";
+import { arrayOf } from "./array-of-parser";
+import { tuple } from "./tuple-parser";
+import { recursive } from "./recursive-parser";
+import { string, number } from "./simple-parsers";
+
+describe("deepPartial", () => {
+  let deepPartial: typeof import("./deep-partial").deepPartial;
+
+  beforeEach(async () => {
+    const mod = await import("./deep-partial");
+    deepPartial = mod.deepPartial;
+  });
+
+  test("deepPartial accepts empty object for top-level keys", () => {
+    const parser = deepPartial(shape({ name: string, age: number }));
+    const result = parser.enumParsed({});
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial accepts empty object for nested shapes", () => {
+    const parser = deepPartial(shape({ addr: shape({ city: string }) }));
+    const result = parser.enumParsed({});
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial accepts partial nested object", () => {
+    const parser = deepPartial(shape({
+      addr: shape({ city: string, zip: number }),
+    }));
+    const result = parser.enumParsed({ addr: { city: "NY" } });
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial rejects invalid values in present keys", () => {
+    const parser = deepPartial(shape({ name: string }));
+    const result = parser.enumParsed({ name: 42 });
+    expect("error" in result).toBe(true);
+  });
+
+  test("original parser is unchanged after deepPartial", () => {
+    const original = shape({ name: string, age: number });
+    deepPartial(original);
+    const result = original.enumParsed({});
+    expect("error" in result).toBe(true);
+  });
+
+  test("deepPartial recurses into arrayOf", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number, name: string })),
+    }));
+    const result = parser.enumParsed({ items: [{}] });
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial arrayOf accepts partial items", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number, name: string })),
+    }));
+    const result = parser.enumParsed({ items: [{ id: 1 }, { name: "foo" }] });
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial arrayOf rejects invalid item values", () => {
+    const parser = deepPartial(shape({
+      items: arrayOf(shape({ id: number })),
+    }));
+    const result = parser.enumParsed({ items: [{ id: "not-a-number" }] });
+    expect("error" in result).toBe(true);
+  });
+
+  test("deepPartial recurses into tuple", () => {
+    const parser = deepPartial(tuple(
+      shape({ a: string }),
+      shape({ b: number }),
+    ));
+    const result = parser.enumParsed([{}, {}]);
+    expect("value" in result).toBe(true);
+  });
+
+  test("deepPartial handles circular references without stack overflow", () => {
+    const nodeParser = recursive((self: any) =>
+      shape({
+        value: number,
+        children: arrayOf(self),
+      }),
+    );
+    const dp = deepPartial(nodeParser);
+    const result = dp.enumParsed({});
+    expect("value" in result).toBe(true);
+  });
+
+  test("matches.deepPartial is accessible", () => {
+    const matches = require("../matches");
+    expect(typeof matches.deepPartial).toBe("function");
+    const parser = matches.deepPartial(matches.shape({ x: matches.string }));
+    const result = parser.enumParsed({});
+    expect("value" in result).toBe(true);
+  });
+});
